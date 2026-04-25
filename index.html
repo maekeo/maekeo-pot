@@ -505,6 +505,18 @@ if (window.speechSynthesis) {
   window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 }
 
+// iOS PWA 음성 언락 — 첫 터치 시 무음 재생으로 활성화
+let speechUnlocked = false;
+function unlockSpeech() {
+  if (speechUnlocked || !window.speechSynthesis) return;
+  const u = new SpeechSynthesisUtterance('');
+  u.volume = 0;
+  window.speechSynthesis.speak(u);
+  speechUnlocked = true;
+}
+document.addEventListener('touchstart', unlockSpeech, { once: true });
+document.addEventListener('click', unlockSpeech, { once: true });
+
 function showResult(r) {
   document.getElementById('resultPanel').classList.add('show');
   setTimeout(() => { document.getElementById('meterFill').style.width = r.percent + '%'; }, 80);
