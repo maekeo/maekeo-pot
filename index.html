@@ -198,13 +198,13 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   </div>
   <div class="seg-wrap">
     <div class="segmented">
-      <button class="seg-btn active" onclick="switchTab('grind',this)">분쇄 분석</button>
+      <button class="seg-btn active" onclick="switchTab('grind',this)">분쇄분석AI</button>
       <button class="seg-btn" onclick="switchTab('timer',this)">타이머</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ 분쇄 분석 ═══ -->
+<!-- ═══ 분쇄분석AI ═══ -->
 <div class="section active" id="grindSection">
   <div class="gap"></div>
 
@@ -260,6 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <div class="row"><span class="row-label">매커포트 적합도</span><span class="row-value" id="resMokaFit">—</span></div>
           <div class="row"><span class="row-label">적합 추출</span><span class="row-value" id="resBrew">—</span></div>
           <div class="row"><span class="row-label">분석 신뢰도</span><span class="badge" id="resBadge">—</span></div>
+          <div id="confReason" style="display:none; padding:10px 16px 12px; font-size:13px; color:var(--label2); line-height:1.5; border-top:.5px solid var(--sep);"></div>
         </div>
       </div>
     </div>
@@ -368,7 +369,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 <!-- Tab Bar -->
 <div class="tab-bar">
   <button class="tab-item active" id="tab-grind" onclick="switchTab('grind',null,this)">
-    <span class="tab-pip">GR</span><span class="tab-lbl">분쇄 분석</span>
+    <span class="tab-pip">GR</span><span class="tab-lbl">분쇄분석AI</span>
   </button>
   <button class="tab-item" id="tab-timer" onclick="switchTab('timer',null,this)">
     <span class="tab-pip">TM</span><span class="tab-lbl">타이머</span>
@@ -480,6 +481,30 @@ function normalize(r) {
   };
 }
 
+// ═══ 한국어 TTS ═══
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel(); // 이전 음성 중단
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'ko-KR';
+  utter.rate = 0.95;
+  utter.pitch = 1.0;
+  utter.volume = 1.0;
+
+  // iOS에서 한국어 음성 찾기
+  const voices = window.speechSynthesis.getVoices();
+  const koVoice = voices.find(v => v.lang.startsWith('ko'));
+  if (koVoice) utter.voice = koVoice;
+
+  window.speechSynthesis.speak(utter);
+}
+
+// 음성 목록 미리 로드 (iOS 필요)
+if (window.speechSynthesis) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
 function showResult(r) {
   document.getElementById('resultPanel').classList.add('show');
   setTimeout(() => { document.getElementById('meterFill').style.width = r.percent + '%'; }, 80);
@@ -499,6 +524,25 @@ function showResult(r) {
   const confEl = document.getElementById('resBadge');
   confEl.textContent = conf === 'high' ? '높음' : conf === 'mid' ? '보통' : '낮음';
   confEl.className = `badge badge-${conf}`;
+
+  // 신뢰도 이유 안내
+  const reasonEl = document.getElementById('confReason');
+  if (conf === 'high') {
+    reasonEl.style.display = 'none';
+  } else {
+    reasonEl.style.display = 'block';
+    reasonEl.textContent = conf === 'mid'
+      ? '💡 정확도를 높이려면: 흰 종이 위에 원두를 더 넓게 펼치고, 자연광에서 최대한 가까이 촬영해주세요.'
+      : '⚠️ 신뢰도가 낮습니다. 흰 배경 사용, 균일하게 펼치기, 그림자 없는 밝은 환경에서 다시 촬영하면 정확도가 높아집니다.';
+  }
+
+  // 분석 결과 음성 읽기
+  const mokaMsg = r.mokaFit === '최적' ? '매커포트에 최적입니다.' :
+    r.mokaFit.includes('고움') ? '분쇄도가 조금 곱습니다. 그라인더를 굵게 조정하세요.' :
+    r.mokaFit.includes('굵음') ? '분쇄도가 조금 굵습니다. 그라인더를 곱게 조정하세요.' : '';
+  setTimeout(() => {
+    speak(`분석 완료. 분쇄 레벨은 ${r.levelKor}입니다. ${mokaMsg}`);
+  }, 600);
 }
 
 function resetAnalysis() {
@@ -621,11 +665,13 @@ function checkAlarms() {
     warnFired = true; playBeep('warn'); flash('warn');
     document.getElementById('alertWarn').classList.add('show');
     toast('3분 경과 — 불을 줄이세요');
+    speak('3분 경과. 불을 중약불로 줄이세요. 압력을 안정화하세요.');
   }
   if (t >= DANGER_AT && !dangerFired) {
     dangerFired = true; playBeep('danger'); flash('danger');
     document.getElementById('alertDanger').classList.add('show');
     toast('6분 초과 — 과추출 주의');
+    speak('6분을 초과했습니다. 추출 시간이 너무 길어졌습니다. 과추출 주의하세요.');
   }
 }
 
