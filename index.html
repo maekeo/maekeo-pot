@@ -617,7 +617,7 @@ function saveAndAnalyze() {
 }
 
 // ═══ TIMER ═══
-const RING_C = 534, WARN_AT = 180, DANGER_AT = 360;
+const RING_C = 534, WARN_AT = 180, DANGER_AT = 360, STOP_AT = 420;
 let startedAt = null, accElapsed = 0, timerRAF = null, timerInterval = null;
 let isRunning = false, warnFired = false, dangerFired = false;
 
@@ -649,11 +649,11 @@ function updateTimerUI() {
   document.getElementById('stageName').textContent = nm;
   document.getElementById('stageDesc').textContent = dc;
   document.getElementById('timerDisplay').textContent   = fmt(t);
-  document.getElementById('timerSub').textContent       = t < DANGER_AT ? `/ ${fmt(DANGER_AT)}` : '초과';
+  document.getElementById('timerSub').textContent       = t < STOP_AT ? `/ ${fmt(STOP_AT)}` : '종료';
   document.getElementById('elapsedDisplay').textContent = fmt(t);
 
   const rf = document.getElementById('ringFill');
-  rf.style.strokeDashoffset = RING_C - RING_C * Math.min(t/DANGER_AT, 1);
+  rf.style.strokeDashoffset = RING_C - RING_C * Math.min(t/STOP_AT, 1);
   rf.style.stroke = t>=DANGER_AT ? '#FF3B30' : t>=WARN_AT ? '#FF9500' : 'url(#rg)';
 
   const sd = (i,c) => { const d=document.getElementById('dot'+i); if(d) d.className='prog-dot '+c; };
@@ -691,6 +691,17 @@ function checkAlarms() {
     document.getElementById('alertDanger').classList.add('show');
     toast('6분 초과 — 과추출 주의');
     speak('6분을 초과했습니다. 추출 시간이 너무 길어졌습니다. 과추출 주의하세요.');
+  }
+  if (t >= STOP_AT) {
+    // 7분 — 타이머 자동 정지
+    cancelAnimationFrame(timerRAF); timerRAF = null;
+    clearInterval(timerInterval); timerInterval = null;
+    isRunning = false;
+    document.getElementById('startBtn').textContent = '시작';
+    playBeep('danger');
+    toast('7분 — 타이머 종료');
+    speak('7분이 경과했습니다. 타이머를 종료합니다.');
+    updateTimerUI();
   }
 }
 
