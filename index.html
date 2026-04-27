@@ -289,6 +289,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </div>
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="resetAnalysis()">다시 분석</button>
+      <button class="btn btn-secondary" id="speakBtn" onclick="speakResult()" style="display:none">🔊 음성 듣기</button>
     </div>
   </div>
 </div>
@@ -548,13 +549,18 @@ function showResult(r) {
       : '⚠️ 신뢰도가 낮습니다. 흰 배경 사용, 균일하게 펼치기, 그림자 없는 밝은 환경에서 다시 촬영하면 정확도가 높아집니다.';
   }
 
-  // 분석 결과 음성 읽기
+  // 음성 듣기 버튼 표시
+  document.getElementById('speakBtn').style.display = 'flex';
+
+  // 결과 음성 텍스트 저장
   const mokaMsg = r.mokaFit === '최적' ? '매커포트에 최적입니다.' :
     r.mokaFit.includes('고움') ? '분쇄도가 조금 곱습니다. 그라인더를 굵게 조정하세요.' :
     r.mokaFit.includes('굵음') ? '분쇄도가 조금 굵습니다. 그라인더를 곱게 조정하세요.' : '';
-  setTimeout(() => {
-    speak(`분석 완료. 분쇄 레벨은 ${r.levelKor}입니다. ${mokaMsg}`);
-  }, 600);
+  window._lastResultText = `분석 완료. 분쇄 레벨은 ${r.levelKor}입니다. ${mokaMsg} ${r.advice}`;
+}
+
+function speakResult() {
+  if (window._lastResultText) speak(window._lastResultText);
 }
 
 function resetAnalysis() {
@@ -744,6 +750,12 @@ function flash(type) {
 
 function toggleTimer() {
   ensureAudio();
+  // iOS 음성 언락 — 시작 버튼 탭 시 무음 재생
+  if (window.speechSynthesis) {
+    const u = new SpeechSynthesisUtterance('');
+    u.volume = 0;
+    window.speechSynthesis.speak(u);
+  }
   if (isRunning) {
     accElapsed += Date.now() - startedAt;
     isRunning = false;
