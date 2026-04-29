@@ -678,13 +678,32 @@ function updateTimerUI() {
 
 function rafLoop() { updateTimerUI(); timerRAF = requestAnimationFrame(rafLoop); }
 
+let min1Fired = false, min2Fired = false, min4Fired = false, min5Fired = false;
+
 function checkAlarms() {
   const t = getElapsed();
+
+  if (t >= 60 && !min1Fired) {
+    min1Fired = true;
+    speak('1분이 지났습니다.');
+  }
+  if (t >= 120 && !min2Fired) {
+    min2Fired = true;
+    speak('2분이 지났습니다.');
+  }
   if (t >= WARN_AT && !warnFired) {
     warnFired = true; playBeep('warn'); flash('warn');
     document.getElementById('alertWarn').classList.add('show');
     toast('3분 경과 — 불을 줄이세요');
     speak('3분 경과. 불을 중약불로 줄이세요. 압력을 안정화하세요.');
+  }
+  if (t >= 240 && !min4Fired) {
+    min4Fired = true;
+    speak('4분. 가장 이상적인 추출 시간대입니다.');
+  }
+  if (t >= 300 && !min5Fired) {
+    min5Fired = true;
+    speak('5분. 적정 추출 시간대입니다.');
   }
   if (t >= DANGER_AT && !dangerFired) {
     dangerFired = true; playBeep('danger'); flash('danger');
@@ -693,7 +712,6 @@ function checkAlarms() {
     speak('6분을 초과했습니다. 추출 시간이 너무 길어졌습니다. 과추출 주의하세요.');
   }
   if (t >= STOP_AT) {
-    // 7분 — 타이머 자동 정지
     cancelAnimationFrame(timerRAF); timerRAF = null;
     clearInterval(timerInterval); timerInterval = null;
     isRunning = false;
@@ -788,7 +806,9 @@ function toggleTimer() {
 function resetTimer() {
   cancelAnimationFrame(timerRAF); timerRAF = null;
   clearInterval(timerInterval); timerInterval = null;
-  isRunning=false; startedAt=null; accElapsed=0; warnFired=false; dangerFired=false;
+  isRunning=false; startedAt=null; accElapsed=0;
+  warnFired=false; dangerFired=false;
+  min1Fired=false; min2Fired=false; min4Fired=false; min5Fired=false;
   document.getElementById('startBtn').textContent = '시작';
   document.getElementById('alertWarn').classList.remove('show');
   document.getElementById('alertDanger').classList.remove('show');
