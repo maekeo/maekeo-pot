@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>MAEKEO LAB</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="MAEKEO LAB">
+<meta name="theme-color" content="#007AFF">
 <style>
 :root {
   --bg:#F2F2F7; --bg2:#FFFFFF; --bg3:#E5E5EA;
@@ -182,9 +187,22 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 
 #fileInput,#camFileInput{display:none}
 .gap{height:16px}.gap-sm{height:10px}
+/* 업데이트 배너 */
+.update-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:500;background:var(--blue);color:#fff;padding:max(env(safe-area-inset-top),12px) 16px 12px;flex-direction:row;align-items:center;justify-content:space-between;gap:12px;font-size:14px;font-weight:500}
+.update-banner.show{display:flex}
+.update-btn{background:rgba(255,255,255,.25);border:none;border-radius:8px;color:#fff;font-family:inherit;font-size:13px;font-weight:600;padding:6px 14px;cursor:pointer;white-space:nowrap}
 </style>
 </head>
 <body>
+<!-- 업데이트 배너 -->
+<div class="update-banner" id="updateBanner">
+  <span>새 버전이 있습니다 🎉</span>
+  <div style="display:flex;gap:8px">
+    <button class="update-btn" onclick="dismissUpdate()">나중에</button>
+    <button class="update-btn" onclick="applyUpdate()" style="background:rgba(255,255,255,.4)">업데이트</button>
+  </div>
+</div>
+
 <div class="app">
 
 <!-- NAV -->
@@ -977,6 +995,48 @@ function renderHistory() {
       ${r.memo ? `<div style="padding:10px 16px;font-size:13px;color:var(--label2)">📝 ${r.memo}</div>` : ''}
     </div>
   `).join('');
+}
+
+// ═══ SERVICE WORKER & 업데이트 ═══
+let _newWorker = null;
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+
+    // 새 버전 대기 중인 경우
+    if (reg.waiting) showUpdateBanner(reg.waiting);
+
+    reg.addEventListener('updatefound', () => {
+      const newWorker = reg.installing;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          showUpdateBanner(newWorker);
+        }
+      });
+    });
+  });
+
+  // Service Worker 메시지 수신
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
+}
+
+function showUpdateBanner(worker) {
+  _newWorker = worker;
+  document.getElementById('updateBanner').classList.add('show');
+}
+
+function dismissUpdate() {
+  document.getElementById('updateBanner').classList.remove('show');
+}
+
+function applyUpdate() {
+  if (_newWorker) {
+    _newWorker.postMessage({ action: 'skipWaiting' });
+  } else {
+    window.location.reload();
+  }
 }
 
 initTimer();
