@@ -200,6 +200,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="segmented">
       <button class="seg-btn active" onclick="switchTab('grind',this)">분쇄분석AI</button>
       <button class="seg-btn" onclick="switchTab('timer',this)">타이머</button>
+      <button class="seg-btn" onclick="switchTab('history',this)">기록</button>
     </div>
   </div>
 </div>
@@ -289,7 +290,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </div>
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="resetAnalysis()">다시 분석</button>
-      <button class="btn btn-secondary" id="speakBtn" onclick="speakResult()" style="display:none">🔊 음성 듣기</button>
+      <button class="btn btn-primary" id="saveGrindBtn" onclick="showSaveModal('grind')" style="display:none">기록 저장</button>
+      <button class="btn btn-secondary" id="speakBtn" onclick="speakResult()" style="display:none">🔊 음성</button>
     </div>
   </div>
 </div>
@@ -346,6 +348,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div class="timer-btns">
         <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()" style="flex:2">시작</button>
         <button class="btn btn-secondary" onclick="resetTimer()">초기화</button>
+        <button class="btn btn-secondary" id="stopBtn" onclick="stopExtraction()" style="display:none;color:var(--red)">추출 종료</button>
       </div>
     </div>
   </div>
@@ -366,6 +369,18 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   </div>
 </div>
 
+<!-- ═══ 기록 ═══ -->
+<div class="section" id="historySection">
+  <div class="gap"></div>
+  <div class="group">
+    <div class="group-hd">추출 기록</div>
+    <div id="historyList"></div>
+    <div id="historyEmpty" style="background:var(--bg2);border-radius:12px;padding:40px 20px;text-align:center;color:var(--label2);font-size:15px;display:none">
+      아직 저장된 기록이 없습니다.<br>분석 또는 타이머 후 저장해보세요.
+    </div>
+  </div>
+</div>
+
 </div><!-- /app -->
 
 <!-- Tab Bar -->
@@ -376,6 +391,23 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <button class="tab-item" id="tab-timer" onclick="switchTab('timer',null,this)">
     <span class="tab-pip">TM</span><span class="tab-lbl">타이머</span>
   </button>
+  <button class="tab-item" id="tab-history" onclick="switchTab('history',null,this)">
+    <span class="tab-pip">REC</span><span class="tab-lbl">기록</span>
+  </button>
+</div>
+
+<!-- 기록 저장 모달 -->
+<div class="modal-bg" id="saveModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">기록 저장</div>
+    <div class="modal-desc" id="saveModalDesc"></div>
+    <input class="modal-input" id="memoInput" type="text" placeholder="메모 입력 (선택)" maxlength="100">
+    <div class="modal-btns">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeSaveModal()">취소</button>
+      <button class="btn btn-primary" style="flex:2" onclick="saveRecord()">저장</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -384,13 +416,18 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 // ═══ TAB ═══
 function switchTab(tab, segBtn, tabBtn) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById(tab === 'grind' ? 'grindSection' : 'timerSection').classList.add('active');
+  const sectionMap = { grind: 'grindSection', timer: 'timerSection', history: 'historySection' };
+  document.getElementById(sectionMap[tab]).classList.add('active');
   document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
   if (segBtn) segBtn.classList.add('active');
-  else document.querySelectorAll('.seg-btn')[tab === 'grind' ? 0 : 1].classList.add('active');
+  else {
+    const idx = { grind: 0, timer: 1, history: 2 }[tab];
+    document.querySelectorAll('.seg-btn')[idx].classList.add('active');
+  }
   document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
   if (tabBtn) tabBtn.classList.add('active');
   else document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'history') renderHistory();
 }
 
 // ═══ 분석 ═══
@@ -550,8 +587,12 @@ function showResult(r) {
       : '⚠️ 신뢰도가 낮습니다. 흰 배경 사용, 균일하게 펼치기, 그림자 없는 밝은 환경에서 다시 촬영하면 정확도가 높아집니다.';
   }
 
-  // 음성 듣기 버튼 표시
+  // 음성 듣기 + 기록 저장 버튼 표시
   document.getElementById('speakBtn').style.display = 'flex';
+  document.getElementById('saveGrindBtn').style.display = 'flex';
+
+  // 결과 저장용
+  window._lastGrindResult = r;
 
   // 결과 음성 텍스트 저장
   const mokaMsg = r.mokaFit === '최적' ? '매커포트에 최적입니다.' :
@@ -720,6 +761,7 @@ function checkAlarms() {
     toast('7분 — 타이머 종료');
     speak('7분이 경과했습니다. 타이머를 종료합니다.');
     updateTimerUI();
+    setTimeout(() => showSaveModal('timer'), 1500);
   }
 }
 
@@ -780,7 +822,6 @@ function flash(type) {
 
 function toggleTimer() {
   ensureAudio();
-  // iOS 음성 언락 — 시작 버튼 탭 시 무음 재생
   if (window.speechSynthesis) {
     const u = new SpeechSynthesisUtterance('');
     u.volume = 0;
@@ -800,7 +841,24 @@ function toggleTimer() {
     timerRAF = requestAnimationFrame(rafLoop);
     timerInterval = setInterval(checkAlarms, 500);
   }
+  // 추출 종료 버튼 — 타이머 시작되면 표시
+  document.getElementById('stopBtn').style.display = accElapsed > 0 || isRunning ? 'flex' : 'none';
   updateTimerUI();
+}
+
+function stopExtraction() {
+  // 타이머 정지
+  if (isRunning) {
+    accElapsed += Date.now() - startedAt;
+    isRunning = false;
+    cancelAnimationFrame(timerRAF); timerRAF = null;
+    clearInterval(timerInterval); timerInterval = null;
+  }
+  document.getElementById('startBtn').textContent = '시작';
+  document.getElementById('stopBtn').style.display = 'none';
+  updateTimerUI();
+  // 기록 저장 팝업
+  setTimeout(() => showSaveModal('timer'), 400);
 }
 
 function resetTimer() {
@@ -810,6 +868,7 @@ function resetTimer() {
   warnFired=false; dangerFired=false;
   min1Fired=false; min2Fired=false; min4Fired=false; min5Fired=false;
   document.getElementById('startBtn').textContent = '시작';
+  document.getElementById('stopBtn').style.display = 'none';
   document.getElementById('alertWarn').classList.remove('show');
   document.getElementById('alertDanger').classList.remove('show');
   document.getElementById('ringFill').style.stroke = 'url(#rg)';
@@ -821,6 +880,103 @@ function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ═══ 기록 저장 ═══
+let _saveType = 'grind';
+
+function showSaveModal(type) {
+  _saveType = type;
+  const modal = document.getElementById('saveModal');
+  const desc = document.getElementById('saveModalDesc');
+
+  if (type === 'grind' && window._lastGrindResult) {
+    const r = window._lastGrindResult;
+    desc.innerHTML = `<b>${r.levelKor}</b> · ${r.particleSize}μm · 적합도: ${r.mokaFit}`;
+  } else if (type === 'timer') {
+    const t = getElapsed();
+    desc.innerHTML = `추출 시간: <b>${fmt(t)}</b>`;
+  }
+
+  document.getElementById('memoInput').value = '';
+  modal.classList.add('show');
+  setTimeout(() => document.getElementById('memoInput').focus(), 350);
+}
+
+function closeSaveModal() {
+  document.getElementById('saveModal').classList.remove('show');
+}
+
+function saveRecord() {
+  const memo = document.getElementById('memoInput').value.trim();
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  const record = { id: Date.now(), date: dateStr, memo, type: _saveType };
+
+  if (_saveType === 'grind' && window._lastGrindResult) {
+    const r = window._lastGrindResult;
+    record.levelKor    = r.levelKor;
+    record.particleSize = r.particleSize;
+    record.uniformity  = r.uniformity;
+    record.mokaFit     = r.mokaFit;
+    record.advice      = r.advice;
+  } else if (_saveType === 'timer') {
+    record.extractTime = fmt(getElapsed());
+  }
+
+  const records = JSON.parse(localStorage.getItem('maekeo_records') || '[]');
+  records.unshift(record);
+  if (records.length > 50) records.pop(); // 최대 50개
+  localStorage.setItem('maekeo_records', JSON.stringify(records));
+
+  closeSaveModal();
+  toast('기록이 저장되었습니다');
+}
+
+function deleteRecord(id) {
+  const records = JSON.parse(localStorage.getItem('maekeo_records') || '[]');
+  const filtered = records.filter(r => r.id !== id);
+  localStorage.setItem('maekeo_records', JSON.stringify(filtered));
+  renderHistory();
+}
+
+function renderHistory() {
+  const records = JSON.parse(localStorage.getItem('maekeo_records') || '[]');
+  const list = document.getElementById('historyList');
+  const empty = document.getElementById('historyEmpty');
+
+  if (records.length === 0) {
+    list.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  list.innerHTML = records.map(r => `
+    <div style="background:var(--bg2);border-radius:12px;margin-bottom:10px;overflow:hidden">
+      <div style="padding:12px 16px;border-bottom:.5px solid var(--sep);display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:13px;color:var(--label2)">${r.date}</span>
+        <button onclick="deleteRecord(${r.id})" style="border:none;background:none;color:var(--red);font-size:13px;cursor:pointer;padding:0">삭제</button>
+      </div>
+      ${r.type === 'grind' ? `
+        <div style="padding:10px 16px;border-bottom:.5px solid var(--sep);display:flex;justify-content:space-between">
+          <span style="font-size:15px;font-weight:500;color:var(--label)">${r.levelKor} · ${r.particleSize}μm</span>
+          <span style="font-size:14px;color:${r.mokaFit==='최적'?'var(--green)':r.mokaFit.includes('약간')?'var(--orange)':'var(--red)'}">${r.mokaFit}</span>
+        </div>
+        <div style="padding:10px 16px;border-bottom:.5px solid var(--sep);display:flex;justify-content:space-between">
+          <span style="font-size:13px;color:var(--label2)">균일도</span>
+          <span style="font-size:13px;color:var(--label)">${r.uniformity}%</span>
+        </div>
+      ` : `
+        <div style="padding:10px 16px;border-bottom:.5px solid var(--sep);display:flex;justify-content:space-between">
+          <span style="font-size:15px;font-weight:500;color:var(--label)">추출 시간</span>
+          <span style="font-size:15px;color:var(--blue)">${r.extractTime}</span>
+        </div>
+      `}
+      ${r.memo ? `<div style="padding:10px 16px;font-size:13px;color:var(--label2)">📝 ${r.memo}</div>` : ''}
+    </div>
+  `).join('');
 }
 
 initTimer();
