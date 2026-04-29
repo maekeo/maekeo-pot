@@ -187,6 +187,16 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 
 #fileInput,#camFileInput{display:none}
 .gap{height:16px}.gap-sm{height:10px}
+/* PWA 설치 안내 */
+.install-overlay{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:flex-end;justify-content:center}
+.install-overlay.show{display:flex}
+.install-sheet{background:var(--bg2);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:430px;animation:sheetUp .3s cubic-bezier(.25,.46,.45,.94)}
+.install-title{font-size:20px;font-weight:700;color:var(--label);letter-spacing:-.5px;margin-bottom:8px}
+.install-desc{font-size:15px;color:var(--label2);line-height:1.6;margin-bottom:20px}
+.install-steps{background:var(--bg3);border-radius:12px;padding:16px;margin-bottom:20px}
+.install-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;color:var(--label);line-height:1.5}
+.install-step:last-child{margin-bottom:0}
+.install-step-num{background:var(--blue);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
 /* 업데이트 배너 */
 .update-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:500;background:var(--blue);color:#fff;padding:max(env(safe-area-inset-top),12px) 16px 12px;flex-direction:row;align-items:center;justify-content:space-between;gap:12px;font-size:14px;font-weight:500}
 .update-banner.show{display:flex}
@@ -194,6 +204,21 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 </style>
 </head>
 <body>
+<!-- PWA 설치 안내 팝업 -->
+<div class="install-overlay" id="installOverlay">
+  <div class="install-sheet">
+    <div class="modal-handle"></div>
+    <div class="install-title">앱으로 설치하기 📲</div>
+    <div class="install-desc">홈 화면에 추가하면 앱처럼 빠르게 실행할 수 있습니다.</div>
+    <div class="install-steps" id="installSteps">
+      <!-- iOS / Android 별로 JS에서 채움 -->
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-secondary" style="flex:1" onclick="dismissInstall()">오늘 하루 안 보기</button>
+      <button class="btn btn-primary" style="flex:1" onclick="dismissInstall()">확인</button>
+    </div>
+  </div>
+</div>
 <!-- 업데이트 배너 -->
 <div class="update-banner" id="updateBanner">
   <span>새 버전이 있습니다 🎉</span>
@@ -996,6 +1021,75 @@ function renderHistory() {
     </div>
   `).join('');
 }
+
+// ═══ PWA 설치 안내 ═══
+let _deferredPrompt = null; // Android 설치 프롬프트 저장
+
+// Android: 설치 프롬프트 이벤트 캡처
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  _deferredPrompt = e;
+  // 이미 설치됐거나 오늘 닫은 경우 스킵
+  if (!isInstalled() && !isDismissedToday()) {
+    showInstallPromptAndroid();
+  }
+});
+
+// iOS: Safari + 홈화면 미등록 상태 감지
+function checkIOSInstall() {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isInStandalone = window.navigator.standalone === true;
+  if (isIOS && !isInStandalone && !isDismissedToday()) {
+    setTimeout(() => showInstallPromptIOS(), 2000);
+  }
+}
+
+function isInstalled() {
+  return window.navigator.standalone === true ||
+    window.matchMedia('(display-mode: standalone)').matches;
+}
+
+function isDismissedToday() {
+  const d = localStorage.getItem('install_dismissed');
+  if (!d) return false;
+  return Date.now() - Number(d) < 86400000; // 24시간
+}
+
+function showInstallPromptIOS() {
+  document.getElementById('installSteps').innerHTML = `
+    <div class="install-step"><div class="install-step-num">1</div><div>하단 가운데 <b>공유 버튼</b> (□↑) 탭</div></div>
+    <div class="install-step"><div class="install-step-num">2</div><div>스크롤해서 <b>"홈 화면에 추가"</b> 탭</div></div>
+    <div class="install-step"><div class="install-step-num">3</div><div>오른쪽 상단 <b>"추가"</b> 탭</div></div>
+  `;
+  document.getElementById('installOverlay').classList.add('show');
+}
+
+function showInstallPromptAndroid() {
+  document.getElementById('installSteps').innerHTML = `
+    <div class="install-step"><div class="install-step-num">1</div><div>아래 <b>"홈 화면에 추가"</b> 버튼을 탭하세요</div></div>
+    <div class="install-step"><div class="install-step-num">2</div><div><b>"설치"</b> 버튼을 탭하면 완료!</div></div>
+  `;
+  // Android는 버튼을 설치 버튼으로 교체
+  const btn = document.querySelector('#installOverlay .btn-primary');
+  btn.textContent = '홈 화면에 추가';
+  btn.onclick = async () => {
+    if (_deferredPrompt) {
+      _deferredPrompt.prompt();
+      const { outcome } = await _deferredPrompt.userChoice;
+      _deferredPrompt = null;
+    }
+    dismissInstall();
+  };
+  document.getElementById('installOverlay').classList.add('show');
+}
+
+function dismissInstall() {
+  localStorage.setItem('install_dismissed', Date.now());
+  document.getElementById('installOverlay').classList.remove('show');
+}
+
+// 이미 설치된 경우 안내 안 함
+if (!isInstalled()) checkIOSInstall();
 
 // ═══ SERVICE WORKER & 업데이트 ═══
 let _newWorker = null;
