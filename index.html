@@ -444,12 +444,12 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 <div class="modal-bg" id="saveModal">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">기록 저장</div>
+    <div class="modal-title" id="saveModalTitle">기록 저장</div>
     <div class="modal-desc" id="saveModalDesc"></div>
     <input class="modal-input" id="memoInput" type="text" placeholder="메모 입력 (선택)" maxlength="100">
     <div class="modal-btns">
-      <button class="btn btn-secondary" style="flex:1" onclick="closeSaveModal()">취소</button>
-      <button class="btn btn-primary" style="flex:2" onclick="saveRecord()">저장</button>
+      <button class="btn btn-secondary" style="flex:1" id="saveCancelBtn" onclick="closeSaveModal()">취소</button>
+      <button class="btn btn-primary" style="flex:2" id="saveSaveBtn" onclick="saveRecord()">저장</button>
     </div>
   </div>
 </div>
@@ -929,19 +929,24 @@ let _saveType = 'grind';
 
 function showSaveModal(type) {
   _saveType = type;
-  const modal = document.getElementById('saveModal');
-  const desc = document.getElementById('saveModalDesc');
 
+  // 다국어 적용
+  document.getElementById('saveModalTitle').textContent = t('saveTitle');
+  document.getElementById('memoInput').placeholder = t('saveMemo');
+  document.getElementById('saveCancelBtn').textContent = t('saveCancel');
+  document.getElementById('saveSaveBtn').textContent = t('saveSave');
+
+  const desc = document.getElementById('saveModalDesc');
   if (type === 'grind' && window._lastGrindResult) {
     const r = window._lastGrindResult;
-    desc.innerHTML = `<b>${r.levelKor}</b> · ${r.particleSize}μm · 적합도: ${r.mokaFit}`;
+    desc.innerHTML = `<b>${r.levelKor}</b> · ${r.particleSize}μm · ${r.mokaFit}`;
   } else if (type === 'timer') {
-    const t = getElapsed();
-    desc.innerHTML = `추출 시간: <b>${fmt(t)}</b>`;
+    const elapsed = getElapsed();
+    desc.innerHTML = `${t('elapsedLbl')}: <b>${fmt(elapsed)}</b>`;
   }
 
   document.getElementById('memoInput').value = '';
-  modal.classList.add('show');
+  document.getElementById('saveModal').classList.add('show');
   setTimeout(() => document.getElementById('memoInput').focus(), 350);
 }
 
@@ -973,7 +978,7 @@ function saveRecord() {
   localStorage.setItem('maekeo_records', JSON.stringify(records));
 
   closeSaveModal();
-  toast('기록이 저장되었습니다');
+  toast(t('savedToast'));
 }
 
 function deleteRecord(id) {
@@ -1361,6 +1366,12 @@ function applyLang() {
   // Install overlay
   document.querySelector('.install-title').textContent = t('installTitle');
   document.querySelector('.install-desc').textContent = t('installDesc');
+
+  // 기록 저장 모달
+  document.getElementById('saveModalTitle').textContent = t('saveTitle');
+  document.getElementById('memoInput').placeholder = t('saveMemo');
+  document.getElementById('saveCancelBtn').textContent = t('saveCancel');
+  document.getElementById('saveSaveBtn').textContent = t('saveSave');
 
   // Timer UI refresh
   updateTimerUI();
