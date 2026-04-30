@@ -417,7 +417,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 <div class="section" id="historySection">
   <div class="gap"></div>
   <div class="group">
-    <div class="group-hd">추출 기록</div>
+    <div class="group-hd" id="historyHd">추출 기록</div>
     <div id="historyList"></div>
     <div id="historyEmpty" style="background:var(--bg2);border-radius:12px;padding:40px 20px;text-align:center;color:var(--label2);font-size:15px;display:none">
       아직 저장된 기록이 없습니다.<br>분석 또는 타이머 후 저장해보세요.
@@ -756,7 +756,7 @@ function updateTimerUI() {
     if(!row) return;
     row.className='tl-row '+s;
     dot.className='tl-dot '+(s==='current'?'current':s==='done'?'done':'');
-    b.textContent=s==='done'?'완료':s==='current'?'진행 중':'대기';
+    b.textContent = s==='done' ? t('confHigh') : s==='current' ? t('timerPause') : t('timerStart');
     b.className='tl-badge '+(s==='done'?'done':s==='current'?'current':'');
   };
   if      (t===0)       { upd(0,'upcoming');upd(1,'upcoming');upd(2,'upcoming');upd(3,'upcoming'); }
@@ -995,6 +995,7 @@ function renderHistory() {
 
   if (records.length === 0) {
     list.innerHTML = '';
+    empty.innerHTML = t('historyEmpty').replace('\n','<br>');
     empty.style.display = 'block';
     return;
   }
@@ -1004,20 +1005,20 @@ function renderHistory() {
     <div style="background:var(--bg2);border-radius:12px;margin-bottom:10px;overflow:hidden">
       <div style="padding:12px 16px;border-bottom:.5px solid var(--sep);display:flex;justify-content:space-between;align-items:center">
         <span style="font-size:13px;color:var(--label2)">${r.date}</span>
-        <button onclick="deleteRecord(${r.id})" style="border:none;background:none;color:var(--red);font-size:13px;cursor:pointer;padding:0">삭제</button>
+        <button onclick="deleteRecord(${r.id})" style="border:none;background:none;color:var(--red);font-size:13px;cursor:pointer;padding:0">${t('deleteBtn')}</button>
       </div>
       ${r.type === 'grind' ? `
         <div style="padding:10px 16px;border-bottom:.5px solid var(--sep);display:flex;justify-content:space-between">
           <span style="font-size:15px;font-weight:500;color:var(--label)">${r.levelKor} · ${r.particleSize}μm</span>
-          <span style="font-size:14px;color:${r.mokaFit==='최적'?'var(--green)':r.mokaFit.includes('약간')?'var(--orange)':'var(--red)'}">${r.mokaFit}</span>
+          <span style="font-size:14px;color:${r.mokaFit==='최적'||r.mokaFit==='Perfect'?'var(--green)':r.mokaFit.includes('약간')||r.mokaFit.includes('slightly')?'var(--orange)':'var(--red)'}">${r.mokaFit}</span>
         </div>
         <div style="padding:10px 16px;border-bottom:.5px solid var(--sep);display:flex;justify-content:space-between">
-          <span style="font-size:13px;color:var(--label2)">균일도</span>
+          <span style="font-size:13px;color:var(--label2)">${t('uniHd')}</span>
           <span style="font-size:13px;color:var(--label)">${r.uniformity}%</span>
         </div>
       ` : `
         <div style="padding:10px 16px;border-bottom:.5px solid var(--sep);display:flex;justify-content:space-between">
-          <span style="font-size:15px;font-weight:500;color:var(--label)">추출 시간</span>
+          <span style="font-size:15px;font-weight:500;color:var(--label)">${t('elapsedLbl')}</span>
           <span style="font-size:15px;color:var(--blue)">${r.extractTime}</span>
         </div>
       `}
@@ -1366,6 +1367,11 @@ function applyLang() {
   // Install overlay
   document.querySelector('.install-title').textContent = t('installTitle');
   document.querySelector('.install-desc').textContent = t('installDesc');
+
+  // 기록 탭
+  const historyHdEl = document.getElementById('historyHd');
+  if (historyHdEl) historyHdEl.textContent = t('historyHd');
+  renderHistory();
 
   // 기록 저장 모달
   document.getElementById('saveModalTitle').textContent = t('saveTitle');
