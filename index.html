@@ -187,6 +187,17 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 
 #fileInput,#camFileInput{display:none}
 .gap{height:16px}.gap-sm{height:10px}
+/* 히스토그램 */
+.histogram{padding:12px 16px 16px;border-top:.5px solid var(--sep)}
+.histogram-lbl{font-size:11px;font-weight:500;color:var(--label2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.histogram-bars{display:flex;align-items:flex-end;gap:3px;height:60px}
+.histogram-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.histogram-bar{width:100%;border-radius:3px 3px 0 0;transition:height .6s ease;min-height:2px}
+.histogram-bar.optimal{background:var(--blue)}
+.histogram-bar.warn{background:var(--orange)}
+.histogram-bar.danger{background:var(--red)}
+.histogram-bar.empty{background:var(--fill)}
+.histogram-range{font-size:7px;color:var(--label3);text-align:center;white-space:nowrap;overflow:hidden}
 /* PWA 설치 안내 */
 .install-overlay{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:flex-end;justify-content:center}
 .install-overlay.show{display:flex}
@@ -315,6 +326,13 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         <div class="stats-grid">
           <div class="stat-cell"><div class="stat-lbl">평균 입자</div><div class="stat-val" id="resSize">—</div></div>
           <div class="stat-cell"><div class="stat-lbl">균일도</div><div class="stat-val" id="resUni">—</div></div>
+          <div class="stat-cell" id="resCountCell" style="display:none"><div class="stat-lbl">입자 수</div><div class="stat-val" id="resCount">—</div></div>
+          <div class="stat-cell" id="resFinesCell" style="display:none"><div class="stat-lbl">미분 비율</div><div class="stat-val" id="resFines">—</div></div>
+        </div>
+        <!-- 입자 분포 히스토그램 -->
+        <div class="histogram" id="histogramWrap" style="display:none">
+          <div class="histogram-lbl">입자 분포</div>
+          <div class="histogram-bars" id="histogramBars"></div>
         </div>
         <div class="row" style="border-top:.5px solid var(--sep)">
           <span class="row-label" style="font-size:14px;color:var(--label2)">매커포트 적합 범위</span>
@@ -605,6 +623,39 @@ function showResult(r) {
   document.getElementById('resSize').innerHTML     = `${r.particleSize}<span class="stat-unit"> μm</span>`;
   document.getElementById('resUni').innerHTML      = `${r.uniformity}<span class="stat-unit"> %</span>`;
 
+  // 입자 수 (OpenCV 서버 결과일 때만)
+  if (r.particleCount) {
+    document.getElementById('resCountCell').style.display = 'block';
+    document.getElementById('resCount').innerHTML = `${r.particleCount}<span class="stat-unit"> 개</span>`;
+  }
+
+  // 미분 비율 (OpenCV 서버 결과일 때만)
+  if (r.finesRatio !== undefined) {
+    document.getElementById('resFinesCell').style.display = 'block';
+    document.getElementById('resFines').innerHTML = `${r.finesRatio}<span class="stat-unit"> %</span>`;
+  }
+
+  // 입자 분포 히스토그램
+  if (r.histogram && r.histogram.length > 0) {
+    const wrap = document.getElementById('histogramWrap');
+    const bars = document.getElementById('histogramBars');
+    wrap.style.display = 'block';
+    const maxCount = Math.max(...r.histogram.map(h => h.count), 1);
+    const optimalRanges = ['300-400', '400-500'];
+    const dangerRanges  = ['<200'];
+    bars.innerHTML = r.histogram.map(h => {
+      const heightPct = Math.round((h.count / maxCount) * 100);
+      const cls = h.count === 0 ? 'empty'
+        : optimalRanges.includes(h.range) ? 'optimal'
+        : dangerRanges.includes(h.range)  ? 'danger'
+        : 'warn';
+      return `<div class="histogram-bar-wrap">
+        <div class="histogram-bar ${cls}" style="height:${Math.max(heightPct, 2)}%"></div>
+        <div class="histogram-range">${h.range}</div>
+      </div>`;
+    }).join('');
+  }
+
   const fitEl = document.getElementById('resMokaFit');
   fitEl.textContent = r.mokaFit;
   fitEl.style.color = r.mokaFit.includes('최적') ? 'var(--green)'
@@ -660,6 +711,10 @@ function resetAnalysis() {
   document.getElementById('scanOverlay').classList.remove('show');
   document.getElementById('analyzeRow').style.display = 'none';
   document.getElementById('meterFill').style.width = '0%';
+  document.getElementById('resCountCell').style.display = 'none';
+  document.getElementById('resFinesCell').style.display = 'none';
+  document.getElementById('histogramWrap').style.display = 'none';
+  document.getElementById('histogramBars').innerHTML = '';
   document.getElementById('camFileInput').value = '';
   document.getElementById('fileInput').value = '';
 }
