@@ -234,16 +234,17 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 <div class="nav">
   <div class="nav-inner">
     <span class="nav-title">MAEKEO LAB</span>
-    <div style="display:flex;gap:6px">
-      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="padding:8px 14px;font-size:13px">소모품</a>
-      <a class="nav-link" href="https://www.maekeo.kr/" target="_blank" style="padding:8px 14px;font-size:13px">매커포트</a>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
+      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="padding:8px 14px;font-size:13px" id="navShop">소모품</a>
+      <a class="nav-link" href="https://www.maekeo.kr/" target="_blank" style="padding:8px 14px;font-size:13px" id="navProduct">매커포트</a>
     </div>
   </div>
   <div class="seg-wrap">
     <div class="segmented">
-      <button class="seg-btn active" onclick="switchTab('grind',this)">분쇄분석AI</button>
-      <button class="seg-btn" onclick="switchTab('timer',this)">타이머</button>
-      <button class="seg-btn" onclick="switchTab('history',this)">기록</button>
+      <button class="seg-btn active" onclick="switchTab('grind',this)" id="seg0">분쇄분석AI</button>
+      <button class="seg-btn" onclick="switchTab('timer',this)" id="seg1">타이머</button>
+      <button class="seg-btn" onclick="switchTab('history',this)" id="seg2">기록</button>
     </div>
   </div>
 </div>
@@ -566,18 +567,14 @@ function normalize(r) {
 // ═══ 한국어 TTS ═══
 function speak(text) {
   if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel(); // 이전 음성 중단
+  window.speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'ko-KR';
-  utter.rate = 0.95;
-  utter.pitch = 1.0;
-  utter.volume = 1.0;
-
-  // iOS에서 한국어 음성 찾기
+  utter.lang = LANG_VOICE[currentLang] || 'ko-KR';
+  utter.rate = 0.95; utter.pitch = 1.0; utter.volume = 1.0;
   const voices = window.speechSynthesis.getVoices();
-  const koVoice = voices.find(v => v.lang.startsWith('ko'));
-  if (koVoice) utter.voice = koVoice;
-
+  const langCode = LANG_VOICE[currentLang];
+  const voice = voices.find(v => v.lang.startsWith(langCode.split('-')[0]));
+  if (voice) utter.voice = voice;
   window.speechSynthesis.speak(utter);
 }
 
@@ -645,7 +642,15 @@ function showResult(r) {
 }
 
 function speakResult() {
-  if (window._lastResultText) speak(window._lastResultText);
+  if (window._lastGrindResult) {
+    const r = window._lastGrindResult;
+    const mokaMsg = r.mokaFit === '최적' || r.mokaFit === 'Perfect' || r.mokaFit === '最適'
+      ? t('voiceOptimal')
+      : r.mokaFit.includes('고움') || r.mokaFit.includes('fine') || r.mokaFit.includes('細')
+      ? t('voiceFine')
+      : t('voiceCoarse');
+    speak(t('voiceResult', r.levelKor) + ' ' + mokaMsg);
+  }
 }
 
 function resetAnalysis() {
@@ -714,10 +719,10 @@ function initTimer() { renderStages(); updateTimerUI(); }
 
 function renderStages() {
   document.getElementById('stageList').innerHTML = `
-    <div class="tl-row upcoming" id="sRow0"><div class="tl-dot" id="tDot0"></div><div class="tl-info"><div class="tl-name">중불 가열</div><div class="tl-time">0:00 — 3:00 · 압력 생성 대기</div></div><div class="tl-badge" id="sBadge0">대기</div></div>
-    <div class="tl-row upcoming" id="sRow1"><div class="tl-dot" id="tDot1"></div><div class="tl-info"><div class="tl-name">불 줄이기</div><div class="tl-time">3:00 알람 · 압력 안정화</div></div><div class="tl-badge" id="sBadge1">대기</div></div>
-    <div class="tl-row upcoming" id="sRow2"><div class="tl-dot" id="tDot2"></div><div class="tl-info"><div class="tl-name">추출 시간 초과</div><div class="tl-time">6:00 알람 · 과추출 주의</div></div><div class="tl-badge" id="sBadge2">대기</div></div>
-    <div class="tl-row upcoming" id="sRow3"><div class="tl-dot" id="tDot3"></div><div class="tl-info"><div class="tl-name">불 끄기</div><div class="tl-time">추출이 시작될 때 즉시</div></div><div class="tl-badge" id="sBadge3">대기</div></div>
+    <div class="tl-row upcoming" id="sRow0"><div class="tl-dot" id="tDot0"></div><div class="tl-info"><div class="tl-name">${t('tl0name')}</div><div class="tl-time">${t('tl0time')}</div></div><div class="tl-badge" id="sBadge0">${t('timerStart')}</div></div>
+    <div class="tl-row upcoming" id="sRow1"><div class="tl-dot" id="tDot1"></div><div class="tl-info"><div class="tl-name">${t('tl1name')}</div><div class="tl-time">${t('tl1time')}</div></div><div class="tl-badge" id="sBadge1">${t('timerStart')}</div></div>
+    <div class="tl-row upcoming" id="sRow2"><div class="tl-dot" id="tDot2"></div><div class="tl-info"><div class="tl-name">${t('tl2name')}</div><div class="tl-time">${t('tl2time')}</div></div><div class="tl-badge" id="sBadge2">${t('timerStart')}</div></div>
+    <div class="tl-row upcoming" id="sRow3"><div class="tl-dot" id="tDot3"></div><div class="tl-info"><div class="tl-name">${t('tl3name')}</div><div class="tl-time">${t('tl3time')}</div></div><div class="tl-badge" id="sBadge3">${t('timerStart')}</div></div>
   `;
 }
 
@@ -765,44 +770,38 @@ function rafLoop() { updateTimerUI(); timerRAF = requestAnimationFrame(rafLoop);
 let min1Fired = false, min2Fired = false, min4Fired = false, min5Fired = false;
 
 function checkAlarms() {
-  const t = getElapsed();
+  const elapsed = getElapsed();
 
-  if (t >= 60 && !min1Fired) {
-    min1Fired = true;
-    speak('1분이 지났습니다.');
+  if (elapsed >= 60 && !min1Fired) {
+    min1Fired = true; speak(t('voice1min'));
   }
-  if (t >= 120 && !min2Fired) {
-    min2Fired = true;
-    speak('2분이 지났습니다.');
+  if (elapsed >= 120 && !min2Fired) {
+    min2Fired = true; speak(t('voice2min'));
   }
-  if (t >= WARN_AT && !warnFired) {
+  if (elapsed >= WARN_AT && !warnFired) {
     warnFired = true; playBeep('warn'); flash('warn');
     document.getElementById('alertWarn').classList.add('show');
-    toast('3분 경과 — 불을 줄이세요');
-    speak('3분 경과. 불을 중약불로 줄이세요. 압력을 안정화하세요.');
+    toast(t('warnTitle')); speak(t('voice3min'));
   }
-  if (t >= 240 && !min4Fired) {
-    min4Fired = true;
-    speak('4분. 가장 이상적인 추출 시간대입니다.');
+  if (elapsed >= 240 && !min4Fired) {
+    min4Fired = true; speak(t('voice4min'));
   }
-  if (t >= 300 && !min5Fired) {
-    min5Fired = true;
-    speak('5분. 적정 추출 시간대입니다.');
+  if (elapsed >= 300 && !min5Fired) {
+    min5Fired = true; speak(t('voice5min'));
   }
-  if (t >= DANGER_AT && !dangerFired) {
+  if (elapsed >= DANGER_AT && !dangerFired) {
     dangerFired = true; playBeep('danger'); flash('danger');
     document.getElementById('alertDanger').classList.add('show');
-    toast('6분 초과 — 과추출 주의');
-    speak('6분을 초과했습니다. 추출 시간이 너무 길어졌습니다. 과추출 주의하세요.');
+    toast(t('dangerTitle')); speak(t('voice6min'));
   }
-  if (t >= STOP_AT) {
+  if (elapsed >= STOP_AT) {
     cancelAnimationFrame(timerRAF); timerRAF = null;
     clearInterval(timerInterval); timerInterval = null;
     isRunning = false;
-    document.getElementById('startBtn').textContent = '시작';
+    document.getElementById('startBtn').textContent = t('timerStart');
+    document.getElementById('stopBtn').style.display = 'none';
     playBeep('danger');
-    toast('7분 — 타이머 종료');
-    speak('7분이 경과했습니다. 타이머를 종료합니다.');
+    speak(t('voice7min'));
     updateTimerUI();
     setTimeout(() => showSaveModal('timer'), 1500);
   }
@@ -880,7 +879,7 @@ function toggleTimer() {
     const first = accElapsed === 0;
     startedAt = Date.now(); isRunning = true;
     document.getElementById('startBtn').textContent = '일시정지';
-    if (first) { playStartSound(); toast('추출 시작'); }
+    if (first) { playStartSound(); toast(t('voiceStart')); }
     timerRAF = requestAnimationFrame(rafLoop);
     timerInterval = setInterval(checkAlarms, 500);
   }
@@ -1133,7 +1132,242 @@ function applyUpdate() {
   }
 }
 
+// ═══ 다국어 (한국어 / English) ═══
+const LANGS = ['ko', 'en'];
+const LANG_LABELS = { ko: '한', en: 'EN' };
+const LANG_VOICE = { ko: 'ko-KR', en: 'en-US' };
+
+const I18N = {
+  ko: {
+    seg0: '분쇄분석AI', seg1: '타이머', seg2: '기록',
+    navShop: '소모품', navProduct: '매커포트',
+    camTitle: '원두 사진 촬영 안내',
+    camSub: '흰색 바탕 위에 분쇄된 원두를 넓게 펼쳐 촬영하세요\n100원 동전을 함께 놓으면 더 정확합니다',
+    camTip: '렌즈를 최대한 가깝게 대고\n터치해 초점을 맞춘 후 촬영하세요',
+    btnCamera: '카메라로 촬영', btnGallery: '갤러리에서 선택',
+    btnAnalyze: '분석 시작', btnReset: '다시 분석',
+    btnSpeak: '🔊 음성', btnSaveGrind: '기록 저장',
+    scanLbl: '분석 중',
+    grindHd: '분쇄 굵기', measureHd: '측정값', aiHd: 'AI 추천',
+    levelLbl: '분쇄 레벨', mokaLbl: '매커포트 적합도',
+    brewLbl: '적합 추출', confLbl: '분석 신뢰도',
+    sizeHd: '평균 입자', uniHd: '균일도',
+    rangeNote: '매커포트 적합 범위', rangeVal: '300 — 500 μm',
+    measureNote: '측정값은 AI 시각 추정치입니다. 방향 판단 참고용으로 활용하세요.',
+    adviceCap: '바리스타 조언',
+    confHigh: '높음', confMid: '보통', confLow: '낮음',
+    confMidReason: '💡 정확도를 높이려면: 흰 종이 위에 원두를 더 넓게 펼치고, 자연광에서 최대한 가까이 촬영해주세요.',
+    confLowReason: '⚠️ 신뢰도가 낮습니다. 흰 배경 사용, 균일하게 펼치기, 그림자 없는 밝은 환경에서 다시 촬영하면 정확도가 높아집니다.',
+    timerStart: '시작', timerPause: '일시정지', timerResume: '계속',
+    timerReset: '초기화', timerStop: '추출 종료',
+    timerStageName0: '시작 준비', timerStageDesc0: '버튼을 눌러 추출을 시작하세요',
+    timerRecommend: '권장 추출 시간 4 ~ 5분',
+    screenWarn: '화면을 끄지 마세요.',
+    screenWarnSub: '화면이 꺼지면 알람이 울리지 않을 수 있습니다.',
+    warnTitle: '불을 줄이세요 — 압력 안정화',
+    warnBody: '3분 경과. 중약불로 낮춰 7bar 압력을 안정적으로 유지하세요.',
+    dangerTitle: '추출 시간 초과 — 과추출 주의',
+    dangerBody: '6분을 넘었습니다. 고압 추출이 길어지면 크레마가 무너지고 쓴맛이 강해집니다.',
+    elapsedLbl: '총 경과 시간', dosingLbl: '권장 도징량', dosingVal: '20g ~ 23g',
+    waterLbl: '물 사용량', waterVal: '뜨거운 물 150 ~ 170 ml',
+    tl0name: '중불 가열', tl0time: '0:00 — 3:00 · 압력 생성 대기',
+    tl1name: '불 줄이기', tl1time: '3:00 알람 · 압력 안정화',
+    tl2name: '추출 시간 초과', tl2time: '6:00 알람 · 과추출 주의',
+    tl3name: '불 끄기', tl3time: '추출이 시작될 때 즉시',
+    historyHd: '추출 기록',
+    historyEmpty: '아직 저장된 기록이 없습니다.\n분석 또는 타이머 후 저장해보세요.',
+    saveTitle: '기록 저장', saveMemo: '메모 입력 (선택)',
+    saveCancel: '취소', saveSave: '저장',
+    savedToast: '기록이 저장되었습니다',
+    deleteBtn: '삭제',
+    updateNew: '새 버전이 있습니다 🎉',
+    updateLater: '나중에', updateNow: '업데이트',
+    installTitle: '앱으로 설치하기 📲',
+    installDesc: '홈 화면에 추가하면 앱처럼 빠르게 실행할 수 있습니다.',
+    installDismiss: '오늘 하루 안 보기', installOk: '확인',
+    // 음성
+    voice1min: '1분이 지났습니다.',
+    voice2min: '2분이 지났습니다.',
+    voice3min: '3분 경과. 불을 중약불로 줄이세요. 압력을 안정화하세요.',
+    voice4min: '4분. 가장 이상적인 추출 시간대입니다.',
+    voice5min: '5분. 적정 추출 시간대입니다.',
+    voice6min: '6분을 초과했습니다. 추출 시간이 너무 길어졌습니다. 과추출 주의하세요.',
+    voice7min: '7분이 경과했습니다. 타이머를 종료합니다.',
+    voiceStart: '추출 시작',
+    voiceOptimal: '매커포트에 최적입니다.',
+    voiceFine: '분쇄도가 조금 곱습니다. 그라인더를 굵게 조정하세요.',
+    voiceCoarse: '분쇄도가 조금 굵습니다. 그라인더를 곱게 조정하세요.',
+    voiceResult: (lv) => `분석 완료. 분쇄 레벨은 ${lv}입니다.`,
+  },
+  en: {
+    seg0: 'Grind AI', seg1: 'Timer', seg2: 'History',
+    navShop: 'Supplies', navProduct: 'Maekerpot',
+    camTitle: 'Photo Guide',
+    camSub: 'Place ground coffee on white paper and take a photo.\nAdding a coin improves accuracy.',
+    camTip: 'Get as close as possible\nand tap to focus before shooting.',
+    btnCamera: 'Camera', btnGallery: 'Gallery',
+    btnAnalyze: 'Analyze', btnReset: 'Re-Analyze',
+    btnSpeak: '🔊 Voice', btnSaveGrind: 'Save',
+    scanLbl: 'Analyzing...',
+    grindHd: 'Grind Size', measureHd: 'Measurements', aiHd: 'AI Advice',
+    levelLbl: 'Grind Level', mokaLbl: 'Maekerpot Fit',
+    brewLbl: 'Best Brew', confLbl: 'Confidence',
+    sizeHd: 'Avg Particle', uniHd: 'Uniformity',
+    rangeNote: 'Maekerpot Range', rangeVal: '300 — 500 μm',
+    measureNote: 'Values are AI visual estimates. Use as a reference guide.',
+    adviceCap: 'Barista Advice',
+    confHigh: 'High', confMid: 'Medium', confLow: 'Low',
+    confMidReason: '💡 For better accuracy: spread grounds wider on white paper and shoot in natural light, up close.',
+    confLowReason: '⚠️ Low confidence. Try again with white background, spread evenly, in bright lighting without shadows.',
+    timerStart: 'Start', timerPause: 'Pause', timerResume: 'Resume',
+    timerReset: 'Reset', timerStop: 'Stop Brew',
+    timerStageName0: 'Ready', timerStageDesc0: 'Press start to begin extraction',
+    timerRecommend: 'Recommended: 4 ~ 5 min',
+    screenWarn: 'Keep screen on.',
+    screenWarnSub: 'Alarms may not sound if the screen turns off.',
+    warnTitle: 'Reduce Heat — Stabilize Pressure',
+    warnBody: '3 min passed. Lower to medium-low heat to maintain 7bar pressure.',
+    dangerTitle: 'Over-Extraction Warning',
+    dangerBody: 'Exceeded 6 minutes. Long extraction destroys crema and causes bitterness.',
+    elapsedLbl: 'Elapsed Time', dosingLbl: 'Recommended Dose', dosingVal: '20g ~ 23g',
+    waterLbl: 'Water Amount', waterVal: 'Hot water 150 ~ 170 ml',
+    tl0name: 'Medium Heat', tl0time: '0:00 — 3:00 · Building pressure',
+    tl1name: 'Reduce Heat', tl1time: '3:00 alarm · Stabilize pressure',
+    tl2name: 'Overtime', tl2time: '6:00 alarm · Over-extraction risk',
+    tl3name: 'Turn Off', tl3time: 'Turn off when brew starts',
+    historyHd: 'Brew History',
+    historyEmpty: 'No records yet.\nSave after analysis or timer.',
+    saveTitle: 'Save Record', saveMemo: 'Add memo (optional)',
+    saveCancel: 'Cancel', saveSave: 'Save',
+    savedToast: 'Record saved',
+    deleteBtn: 'Delete',
+    updateNew: 'New version available 🎉',
+    updateLater: 'Later', updateNow: 'Update',
+    installTitle: 'Install App 📲',
+    installDesc: 'Add to home screen to launch like a native app.',
+    installDismiss: 'Not today', installOk: 'OK',
+    voice1min: '1 minute passed.',
+    voice2min: '2 minutes passed.',
+    voice3min: '3 minutes. Reduce to medium-low heat and stabilize pressure.',
+    voice4min: '4 minutes. This is the ideal extraction window.',
+    voice5min: '5 minutes. Good extraction time.',
+    voice6min: 'Over 6 minutes. Risk of over-extraction. Watch your brew.',
+    voice7min: '7 minutes reached. Timer stopped.',
+    voiceStart: 'Extraction started.',
+    voiceOptimal: 'Perfect grind for Maekerpot.',
+    voiceFine: 'Grind is slightly too fine. Adjust coarser.',
+    voiceCoarse: 'Grind is slightly too coarse. Adjust finer.',
+    voiceResult: (lv) => `Analysis complete. Grind level: ${lv}.`,
+  }
+};
+
+let currentLang = localStorage.getItem('maekeo_lang') || 'ko';
+
+function t(key, ...args) {
+  const val = I18N[currentLang][key];
+  if (typeof val === 'function') return val(...args);
+  return val || I18N['ko'][key] || key;
+}
+
+function cycleLang() {
+  const idx = LANGS.indexOf(currentLang);
+  currentLang = LANGS[(idx + 1) % LANGS.length];
+  localStorage.setItem('maekeo_lang', currentLang);
+  applyLang();
+}
+
+function applyLang() {
+  const l = currentLang;
+  document.getElementById('langBtn').textContent = LANG_LABELS[l];
+
+  // Nav
+  document.getElementById('seg0').textContent = t('seg0');
+  document.getElementById('seg1').textContent = t('seg1');
+  document.getElementById('seg2').textContent = t('seg2');
+  document.getElementById('navShop').textContent = t('navShop');
+  document.getElementById('navProduct').textContent = t('navProduct');
+
+  // Tab bar
+  document.querySelectorAll('.tab-lbl')[0].textContent = t('seg0');
+  document.querySelectorAll('.tab-lbl')[1].textContent = t('seg1');
+  document.querySelectorAll('.tab-lbl')[2].textContent = t('seg2');
+
+  // Grind section
+  document.querySelector('.cam-ph-title').textContent = t('camTitle');
+  document.querySelector('.cam-ph-sub').innerHTML = t('camSub').replace('\n','<br>');
+  document.querySelector('.cam-ph-tip').innerHTML = t('camTip').replace('\n','<br>');
+  document.querySelector('.scan-lbl').textContent = t('scanLbl');
+
+  // Buttons
+  document.querySelectorAll('.btn-primary.btn-sm')[0].textContent = t('btnCamera');
+  document.querySelectorAll('.btn-secondary.btn-sm')[0].textContent = t('btnGallery');
+  const analyzeBtn = document.querySelector('#analyzeRow .btn-primary');
+  if (analyzeBtn) analyzeBtn.textContent = t('btnAnalyze');
+  const resetBtn = document.querySelector('[onclick="resetAnalysis()"]');
+  if (resetBtn) resetBtn.textContent = t('btnReset');
+  const speakBtn = document.getElementById('speakBtn');
+  if (speakBtn) speakBtn.textContent = t('btnSpeak');
+  const saveGrindBtn = document.getElementById('saveGrindBtn');
+  if (saveGrindBtn) saveGrindBtn.textContent = t('btnSaveGrind');
+
+  // Result labels
+  const rows = document.querySelectorAll('.row-label');
+  const rowMap = {
+    [t('levelLbl', )]: 'levelLbl', // dynamic
+  };
+  // Timer
+  document.getElementById('startBtn').textContent = t('timerStart');
+  document.getElementById('stopBtn').textContent = t('timerStop');
+  document.querySelector('[onclick="resetTimer()"]').textContent = t('timerReset');
+
+  // Timer info rows
+  const timerRows = document.querySelectorAll('#timerSection .row-label');
+  if (timerRows[1]) timerRows[1].textContent = t('dosingLbl');
+  if (timerRows[2]) timerRows[2].textContent = t('waterLbl');
+
+  const timerVals = document.querySelectorAll('#timerSection .row-value');
+  if (timerVals[1]) timerVals[1].textContent = t('dosingVal');
+  if (timerVals[2]) timerVals[2].textContent = t('waterVal');
+
+  // Timer recommend text
+  const recommend = document.querySelector('.timer-hero [style*="green"]');
+  if (recommend) recommend.textContent = t('timerRecommend');
+
+  // Screen warn
+  const warnStrong = document.querySelector('.screen-warn-text strong');
+  const warnText = document.querySelector('.screen-warn-text');
+  if (warnStrong) warnStrong.textContent = t('screenWarn');
+  if (warnText) warnText.innerHTML = `<strong>${t('screenWarn')}</strong> ${t('screenWarnSub')}`;
+
+  // Alert banners
+  const warnTitle = document.querySelector('#alertWarn .alert-title');
+  const warnBody = document.querySelector('#alertWarn .alert-body');
+  if (warnTitle) warnTitle.textContent = t('warnTitle');
+  if (warnBody) warnBody.textContent = t('warnBody');
+
+  const dangerTitle = document.querySelector('#alertDanger .alert-title');
+  const dangerBody = document.querySelector('#alertDanger .alert-body');
+  if (dangerTitle) dangerTitle.textContent = t('dangerTitle');
+  if (dangerBody) dangerBody.textContent = t('dangerBody');
+
+  // Timeline
+  renderStages();
+
+  // Update banner
+  document.querySelector('#updateBanner span').textContent = t('updateNew');
+  document.querySelectorAll('.update-btn')[0].textContent = t('updateLater');
+  document.querySelectorAll('.update-btn')[1].textContent = t('updateNow');
+
+  // Install overlay
+  document.querySelector('.install-title').textContent = t('installTitle');
+  document.querySelector('.install-desc').textContent = t('installDesc');
+
+  // Timer UI refresh
+  updateTimerUI();
+}
+
 initTimer();
+applyLang();
 </script>
 </body>
 </html>
