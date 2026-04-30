@@ -634,11 +634,9 @@ function showResult(r) {
   // 결과 저장용
   window._lastGrindResult = r;
 
-  // 결과 음성 텍스트 저장
-  const mokaMsg = r.mokaFit === '최적' ? '매커포트에 최적입니다.' :
-    r.mokaFit.includes('고움') ? '분쇄도가 조금 곱습니다. 그라인더를 굵게 조정하세요.' :
-    r.mokaFit.includes('굵음') ? '분쇄도가 조금 굵습니다. 그라인더를 곱게 조정하세요.' : '';
-  window._lastResultText = `분석 완료. 분쇄 레벨은 ${r.levelKor}입니다. ${mokaMsg} ${r.advice}`;
+  // 분석 완료 음성 자동 출력
+  const completeMsg = currentLang === 'en' ? 'Analysis complete.' : '분석이 완료되었습니다.';
+  setTimeout(() => speak(completeMsg), 600);
 }
 
 function speakResult() {
@@ -729,27 +727,27 @@ function renderStages() {
 function fmt(s) { return `${Math.floor(Math.abs(s)/60)}:${String(Math.abs(s)%60).padStart(2,'0')}`; }
 
 function updateTimerUI() {
-  const t = getElapsed();
+  const elapsed = getElapsed();
   let nm, dc;
-  if      (t===0)        { nm='시작 준비';   dc='버튼을 눌러 추출을 시작하세요'; }
-  else if (t<WARN_AT)    { nm='중불 가열 중'; dc=`압력 생성 대기 — 3분 알람까지 ${fmt(WARN_AT-t)} 남음`; }
-  else if (t<DANGER_AT)  { nm='압력 안정화';  dc=`불 줄이기 — 7bar 유지 중 · ${fmt(t)} 경과`; }
-  else                   { nm='과추출 주의';  dc=`${fmt(t)} 경과 — 다음엔 초반 불을 더 강하게`; }
+  if      (elapsed===0)       { nm=t('timerStageName0'); dc=t('timerStageDesc0'); }
+  else if (elapsed<WARN_AT)   { nm=t('tl0name'); dc=`${t('tl0time')} — ${fmt(WARN_AT-elapsed)}`; }
+  else if (elapsed<DANGER_AT) { nm=t('tl1name'); dc=`${fmt(elapsed)} ${t('elapsedLbl')}`; }
+  else                        { nm=t('tl2name'); dc=`${fmt(elapsed)} ${t('elapsedLbl')}`; }
   document.getElementById('stageName').textContent = nm;
   document.getElementById('stageDesc').textContent = dc;
-  document.getElementById('timerDisplay').textContent   = fmt(t);
-  document.getElementById('timerSub').textContent       = t < STOP_AT ? `/ ${fmt(STOP_AT)}` : '종료';
-  document.getElementById('elapsedDisplay').textContent = fmt(t);
+  document.getElementById('timerDisplay').textContent   = fmt(elapsed);
+  document.getElementById('timerSub').textContent       = elapsed < STOP_AT ? `/ ${fmt(STOP_AT)}` : (currentLang==='en'?'Stopped':'종료');
+  document.getElementById('elapsedDisplay').textContent = fmt(elapsed);
 
   const rf = document.getElementById('ringFill');
-  rf.style.strokeDashoffset = RING_C - RING_C * Math.min(t/STOP_AT, 1);
-  rf.style.stroke = t>=DANGER_AT ? '#FF3B30' : t>=WARN_AT ? '#FF9500' : 'url(#rg)';
+  rf.style.strokeDashoffset = RING_C - RING_C * Math.min(elapsed/STOP_AT, 1);
+  rf.style.stroke = elapsed>=DANGER_AT ? '#FF3B30' : elapsed>=WARN_AT ? '#FF9500' : 'url(#rg)';
 
   const sd = (i,c) => { const d=document.getElementById('dot'+i); if(d) d.className='prog-dot '+c; };
-  if      (t===0)       { sd(0,'');      sd(1,'');      sd(2,''); }
-  else if (t<WARN_AT)   { sd(0,'active');sd(1,'');      sd(2,''); }
-  else if (t<DANGER_AT) { sd(0,'done'); sd(1,'active'); sd(2,''); }
-  else                  { sd(0,'done'); sd(1,'done');   sd(2,'active'); }
+  if      (elapsed===0)       { sd(0,'');      sd(1,'');      sd(2,''); }
+  else if (elapsed<WARN_AT)   { sd(0,'active');sd(1,'');      sd(2,''); }
+  else if (elapsed<DANGER_AT) { sd(0,'done');  sd(1,'active');sd(2,''); }
+  else                        { sd(0,'done');  sd(1,'done');  sd(2,'active'); }
 
   const upd = (i,s) => {
     const row=document.getElementById('sRow'+i),dot=document.getElementById('tDot'+i),b=document.getElementById('sBadge'+i);
@@ -759,10 +757,10 @@ function updateTimerUI() {
     b.textContent = s==='done' ? t('confHigh') : s==='current' ? t('timerPause') : t('timerStart');
     b.className='tl-badge '+(s==='done'?'done':s==='current'?'current':'');
   };
-  if      (t===0)       { upd(0,'upcoming');upd(1,'upcoming');upd(2,'upcoming');upd(3,'upcoming'); }
-  else if (t<WARN_AT)   { upd(0,'current'); upd(1,'upcoming');upd(2,'upcoming');upd(3,'upcoming'); }
-  else if (t<DANGER_AT) { upd(0,'done');    upd(1,'current'); upd(2,'upcoming');upd(3,'upcoming'); }
-  else                  { upd(0,'done');    upd(1,'done');    upd(2,'current'); upd(3,'upcoming'); }
+  if      (elapsed===0)       { upd(0,'upcoming');upd(1,'upcoming');upd(2,'upcoming');upd(3,'upcoming'); }
+  else if (elapsed<WARN_AT)   { upd(0,'current'); upd(1,'upcoming');upd(2,'upcoming');upd(3,'upcoming'); }
+  else if (elapsed<DANGER_AT) { upd(0,'done');    upd(1,'current'); upd(2,'upcoming');upd(3,'upcoming'); }
+  else                        { upd(0,'done');    upd(1,'done');    upd(2,'current'); upd(3,'upcoming'); }
 }
 
 function rafLoop() { updateTimerUI(); timerRAF = requestAnimationFrame(rafLoop); }
