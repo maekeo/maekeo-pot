@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.0.3</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.0.4</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -319,6 +319,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <div class="row"><span class="row-label">매커포트 적합도</span><span class="row-value" id="resMokaFit">—</span></div>
           <div class="row"><span class="row-label">적합 추출</span><span class="row-value" id="resBrew">—</span></div>
           <div class="row"><span class="row-label">분석 신뢰도</span><span class="badge" id="resBadge">—</span></div>
+          <div class="row"><span class="row-label">분석 방식</span><span class="row-value" id="resMethod" style="font-size:13px;color:var(--label2)">—</span></div>
           <div id="confReason" style="display:none; padding:10px 16px 12px; font-size:13px; color:var(--label2); line-height:1.5; border-top:.5px solid var(--sep);"></div>
         </div>
       </div>
@@ -569,42 +570,72 @@ async function doAnalysis() {
   }
 }
 
-async function callAPI(base64) {
-  // Netlify Function 호출 (API 키는 서버에서 관리, 사용자 입력 불필요)
-  const ctrl = new AbortController();
-  const tid = setTimeout(() => ctrl.abort(), 30000);
+// Render OpenCV 서버 주소 (자동 우선 사용)
+const CV_SERVER = 'https://maekeo-grind-server.onrender.com';
 
-  let r;
+async function callAPI(base64) {
+
+  // 1) OpenCV 서버 우선 시도 (실측값 — 정밀)
   try {
-    r = await fetch('/.netlify/functions/analyze-grind', {
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => ctrl.abort(), 60000); // Render 콜드스타트 대비
+    const r = await fetch(CV_SERVER + '/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       signal: ctrl.signal,
       body: JSON.stringify({ image: base64 })
     });
-  } catch(e) {
     clearTimeout(tid);
-    if (e.name === 'AbortError') throw new Error('시간 초과. 네트워크를 확인하세요.');
-    throw new Error('네트워크 오류가 발생했습니다.');
+    if (r.ok) {
+      const d = await r.json();
+      if (d.result) {
+        console.log('✅ OpenCV 서버 분석 완료');
+        return normalize(d.result);
+      }
+    }
+  } catch(e) {
+    console.warn('OpenCV 서버 실패, GPT-4o로 전환:', e.message);
   }
-  clearTimeout(tid);
 
-  const d = await r.json();
-  if (!r.ok) throw new Error(d.error || `서버 오류 (${r.status})`);
-  if (!d.result) throw new Error('분석 결과가 없습니다.');
-  return normalize(d.result);
+  // 2) Netlify Function fallback (GPT-4o AI 추정)
+  try {
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => ctrl.abort(), 30000);
+    const r = await fetch('/.netlify/functions/analyze-grind', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      signal: ctrl.signal,
+      body: JSON.stringify({ image: base64 })
+    });
+    clearTimeout(tid);
+    const d = await r.json();
+    if (r.ok && d.result) {
+      console.log('✅ GPT-4o 분석 완료 (추정값)');
+      return normalize(d.result);
+    }
+    throw new Error(d.error || `서버 오류 (${r.status})`);
+  } catch(e) {
+    if (e.name === 'AbortError') throw new Error('시간 초과. 네트워크를 확인하세요.');
+    throw new Error(e.message || '분석 실패. 다시 시도해주세요.');
+  }
 }
 
 function normalize(r) {
   if (r.isCoffee === false) { toast('커피 원두 사진을 촬영해주세요'); return null; }
   return {
-    percent:      Math.min(100, Math.max(0, Number(r.percent) || 50)),
-    particleSize: Number(r.particleSize) || 400,
-    uniformity:   Number(r.uniformity)   || 60,
-    levelKor:     r.levelKor || r.level  || '중간',
-    bestBrew:     r.bestBrew             || '매커포트',
-    advice:       r.advice               || '분석 완료.',
-    mokaFit:      r.mokaFit              || '—',
+    percent:        Math.min(100, Math.max(0, Number(r.percent) || 50)),
+    particleSize:   Number(r.particleSize) || 400,
+    uniformity:     Number(r.uniformity)   || 60,
+    levelKor:       r.levelKor || r.level  || '중간',
+    bestBrew:       r.bestBrew             || '매커포트',
+    advice:         r.advice               || '분석 완료.',
+    mokaFit:        r.mokaFit              || '—',
+    particleCount:  r.particleCount        || null,
+    finesRatio:     r.finesRatio           ?? null,
+    histogram:      r.histogram            || null,
+    qualityWarnings: r.qualityWarnings     || [],
+    calibrated:     r.calibrated           || false,
+    method:         r.method               || 'ai',
   };
 }
 
@@ -711,7 +742,18 @@ function showResult(r) {
   // 결과 저장용
   window._lastGrindResult = r;
 
-  // 품질 경고 표시 (OpenCV 서버 결과)
+  // 분석 방식 표시
+  const methodEl = document.getElementById('resMethod');
+  if (r.method === 'coin_calibrated') {
+    methodEl.textContent = currentLang === 'en' ? '🔵 OpenCV · Coin calibrated' : '🔵 OpenCV 실측 · 동전 기준';
+    methodEl.style.color = 'var(--blue)';
+  } else if (r.method === 'estimated') {
+    methodEl.textContent = currentLang === 'en' ? '🟠 OpenCV · Estimated' : '🟠 OpenCV 실측 · 추정';
+    methodEl.style.color = 'var(--orange)';
+  } else {
+    methodEl.textContent = currentLang === 'en' ? '⚪ GPT-4o · AI estimate' : '⚪ GPT-4o · AI 추정';
+    methodEl.style.color = 'var(--label3)';
+  }
   if (r.qualityWarnings && r.qualityWarnings.length > 0) {
     r.qualityWarnings.forEach(w => toast('⚠️ ' + w));
   }

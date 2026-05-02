@@ -1,6 +1,6 @@
 // MAEKEO LAB Service Worker
 // 버전 번호를 올리면 사용자에게 업데이트 알림이 표시됩니다
-const VERSION = 'v1.0.0';
+const VERSION = 'v1.0.4';
 const CACHE_NAME = `maekeo-lab-${VERSION}`;
 
 const ASSETS = [
