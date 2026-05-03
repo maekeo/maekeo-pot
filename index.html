@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.0.6</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.0.7</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -576,6 +576,7 @@ const CV_SERVER = 'https://maekeo-grind-server.onrender.com';
 async function callAPI(base64) {
 
   // 1) OpenCV 서버 우선 시도 (실측값 — 정밀)
+  let opencvFailed = false;
   try {
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), 60000);
@@ -586,23 +587,42 @@ async function callAPI(base64) {
       body: JSON.stringify({ image: base64 })
     });
     clearTimeout(tid);
+
     if (r.ok) {
       const d = await r.json();
       if (d.result) {
-        console.log('✅ OpenCV 서버 분석 완료:', d.result.method);
-        return normalize(d.result);
+        const result = d.result;
+
+        // 입자 감지 개수 체크 — 5개 미만이면 신뢰할 수 없음
+        if (result.particleCount && result.particleCount < 5) {
+          console.warn('OpenCV 입자 감지 부족:', result.particleCount, '개 → GPT-4o 전환');
+          toast('입자 감지 부족 — AI 분석으로 전환합니다');
+          opencvFailed = true;
+        }
+        // 신뢰도 낮으면 GPT-4o 전환
+        else if (result.confidence === 'low') {
+          console.warn('OpenCV 신뢰도 낮음 → GPT-4o 전환');
+          opencvFailed = true;
+        }
+        else {
+          console.log('✅ OpenCV 서버 분석 완료:', result.method, result.particleCount, '개');
+          return normalize(result);
+        }
       }
     } else {
-      const errText = await r.text().catch(() => '');
-      toast(`🔴 OpenCV 오류: ${r.status} ${errText.slice(0,50)}`);
-      console.warn('OpenCV 서버 오류:', r.status, errText);
+      console.warn('OpenCV 서버 오류:', r.status);
+      opencvFailed = true;
     }
   } catch(e) {
-    toast(`🔴 OpenCV 연결 실패: ${e.name} ${e.message.slice(0,40)}`);
     console.warn('OpenCV 서버 연결 실패:', e.name, e.message);
+    opencvFailed = true;
   }
 
-  // 2) Netlify Function fallback (GPT-4o AI 추정)
+  // 2) GPT-4o fallback (OpenCV 실패 또는 신뢰도 낮을 때)
+  if (opencvFailed) {
+    console.log('GPT-4o 분석 시작...');
+  }
+
   try {
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), 30000);
@@ -615,7 +635,8 @@ async function callAPI(base64) {
     clearTimeout(tid);
     const d = await r.json();
     if (r.ok && d.result) {
-      console.log('✅ GPT-4o 분석 완료 (추정값)');
+      console.log('✅ GPT-4o 분석 완료');
+      d.result.method = 'ai';
       return normalize(d.result);
     }
     throw new Error(d.error || `서버 오류 (${r.status})`);
@@ -1050,7 +1071,7 @@ function resetTimer() {
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 5000);
+  setTimeout(() => t.classList.remove('show'), 2800);
 }
 
 // ═══ 기록 저장 ═══
