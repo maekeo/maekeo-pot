@@ -6,6 +6,6 @@ exports.handler = async () => {
       'Cache-Control': 'no-cache, no-store, must-revalidate',
       'Access-Control-Allow-Origin': '*',
     },
-    body: JSON.stringify({ version: 'v1.1.1' }),
+    body: JSON.stringify({ version: 'v1.1.2' }),
   };
 };
