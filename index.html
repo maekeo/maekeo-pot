@@ -1251,10 +1251,14 @@ const CURRENT_VERSION = 'v1.0.9';
 
 async function checkVersion() {
   try {
-    const r = await fetch('/version.json?t=' + Date.now(), { cache: 'no-store' });
+    const r = await fetch('/version.json', {
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+    });
     if (!r.ok) return;
     const data = await r.json();
     const latest = data.version;
+    console.log('버전 체크:', CURRENT_VERSION, '→ 최신:', latest);
     if (latest && latest !== CURRENT_VERSION) {
       showUpdateBanner(null, latest);
     }

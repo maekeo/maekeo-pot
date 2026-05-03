@@ -31,6 +31,14 @@ self.addEventListener('activate', (e) => {
 
 // 네트워크 우선 — 항상 최신 버전 제공
 self.addEventListener('fetch', (e) => {
+  // version.json은 항상 네트워크에서 가져옴 (캐시 사용 안 함)
+  if (e.request.url.includes('version.json')) {
+    e.respondWith(
+      fetch(e.request, { cache: 'no-store' }).catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
   // API 요청은 캐시 없이 통과
   if (e.request.url.includes('/api/') ||
       e.request.url.includes('netlify/functions') ||
@@ -42,15 +50,11 @@ self.addEventListener('fetch', (e) => {
   e.respondWith(
     fetch(e.request)
       .then(res => {
-        // 성공 시 캐시 업데이트
         const clone = res.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
         return res;
       })
-      .catch(() => {
-        // 오프라인 시 캐시 사용
-        return caches.match(e.request);
-      })
+      .catch(() => caches.match(e.request))
   );
 });
 
