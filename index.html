@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.0.8</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.0.9</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -1246,6 +1246,23 @@ function dismissInstall() {
 // 이미 설치된 경우 안내 안 함
 if (!isInstalled()) checkIOSInstall();
 
+// ═══ 버전 체크 ═══
+const CURRENT_VERSION = 'v1.0.9';
+
+async function checkVersion() {
+  try {
+    const r = await fetch('/version.json?t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) return;
+    const data = await r.json();
+    const latest = data.version;
+    if (latest && latest !== CURRENT_VERSION) {
+      showUpdateBanner(null, latest);
+    }
+  } catch(e) {
+    console.warn('버전 체크 실패:', e.message);
+  }
+}
+
 // ═══ SERVICE WORKER & 업데이트 ═══
 let _newWorker = null;
 
@@ -1271,9 +1288,14 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-function showUpdateBanner(worker) {
+function showUpdateBanner(worker, latestVersion) {
   _newWorker = worker;
-  document.getElementById('updateBanner').classList.add('show');
+  const banner = document.getElementById('updateBanner');
+  const msg = latestVersion
+    ? `새 버전이 있습니다 ${latestVersion} 🎉`
+    : '새 버전이 있습니다 🎉';
+  banner.querySelector('span').textContent = msg;
+  banner.classList.add('show');
 }
 
 function dismissUpdate() {
@@ -1284,7 +1306,8 @@ function applyUpdate() {
   if (_newWorker) {
     _newWorker.postMessage({ action: 'skipWaiting' });
   } else {
-    window.location.reload();
+    // version.json 체크로 감지된 경우 강제 새로고침
+    window.location.reload(true);
   }
 }
 
@@ -1537,6 +1560,8 @@ function applyLang() {
 
 initTimer();
 applyLang();
+// 앱 시작 시 버전 체크
+setTimeout(checkVersion, 2000);
 </script>
 </body>
 </html>
