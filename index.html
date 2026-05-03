@@ -1246,19 +1246,35 @@ function dismissInstall() {
 // 이미 설치된 경우 안내 안 함
 if (!isInstalled()) checkIOSInstall();
 
-// ═══ 버전 체크 ═══
+// ═══ 버전 체크 (Service Worker 메시지 기반) ═══
 const CURRENT_VERSION = 'v1.1.1';
 
-async function checkVersion() {
+function checkVersion() {
+  if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ action: 'GET_VERSION' });
+  }
+}
+
+// Service Worker 메시지 수신
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'SW_VERSION') {
+      const swVersion = e.data.version;
+      console.log('SW 버전:', swVersion, '/ 앱 버전:', CURRENT_VERSION);
+      if (swVersion && swVersion !== CURRENT_VERSION) {
+        showUpdateBanner(null, swVersion);
+      }
+    }
+  });
+}
+
+async function checkVersionFromServer() {
   try {
-    const r = await fetch('/.netlify/functions/version', {
-      cache: 'no-store',
-      headers: { 'Cache-Control': 'no-cache' }
-    });
+    const r = await fetch('/.netlify/functions/version', { cache: 'no-store' });
     if (!r.ok) return;
     const data = await r.json();
     const latest = data.version;
-    console.log('버전 체크:', CURRENT_VERSION, '→ 최신:', latest);
+    console.log('서버 버전:', latest, '/ 앱 버전:', CURRENT_VERSION);
     if (latest && latest !== CURRENT_VERSION) {
       showUpdateBanner(null, latest);
     }
@@ -1564,13 +1580,21 @@ function applyLang() {
 
 initTimer();
 applyLang();
-// 앱 시작 시 버전 체크 + 30초마다 반복
-setTimeout(checkVersion, 2000);
-setInterval(checkVersion, 30000);
+// 앱 시작 시 버전 체크
+setTimeout(() => {
+  checkVersion();           // SW 메시지로 체크
+  checkVersionFromServer(); // 서버에서도 체크
+}, 2000);
 
-// 앱이 백그라운드에서 포그라운드로 돌아올 때도 체크
+// 30초마다 서버 버전 체크
+setInterval(checkVersionFromServer, 30000);
+
+// 포그라운드 복귀 시 체크
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') checkVersion();
+  if (document.visibilityState === 'visible') {
+    checkVersion();
+    checkVersionFromServer();
+  }
 });
 </script>
 </body>
