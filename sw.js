@@ -1,55 +1,35 @@
 // MAEKEO LAB Service Worker
-const VERSION = 'v1.1.1';
-const CACHE_NAME = `maekeo-lab-${VERSION}`;
+// 캐시 없이 항상 최신 버전 제공
+const VERSION = 'v1.1.2';
 
-const ASSETS = ['/', '/index.html'];
-
-self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
-  self.skipWaiting();
-});
+self.addEventListener('install', () => self.skipWaiting());
 
 self.addEventListener('activate', (e) => {
+  // 모든 캐시 삭제
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    )
+      Promise.all(keys.map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
-  notifyClients();
 });
 
+// 모든 요청을 캐시 없이 네트워크에서 가져옴
 self.addEventListener('fetch', (e) => {
+  // API 요청은 그냥 통과
   if (
     e.request.url.includes('netlify/functions') ||
     e.request.url.includes('openai.com') ||
     e.request.url.includes('onrender.com')
   ) return;
 
+  // 나머지는 항상 네트워크 우선 (캐시 저장 안 함)
   e.respondWith(
-    fetch(e.request)
-      .then(res => {
-        const clone = res.clone();
-        caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
-        return res;
-      })
-      .catch(() => caches.match(e.request))
+    fetch(e.request, { cache: 'no-store' }).catch(() => new Response('오프라인 상태입니다', { status: 503 }))
   );
 });
-
-function notifyClients() {
-  self.clients.matchAll({ includeUncontrolled: true }).then(clients => {
-    clients.forEach(client => {
-      client.postMessage({ type: 'SW_VERSION', version: VERSION });
-    });
-  });
-}
 
 self.addEventListener('message', (e) => {
   if (e.data && e.data.action === 'GET_VERSION') {
     e.source.postMessage({ type: 'SW_VERSION', version: VERSION });
-  }
-  if (e.data && e.data.action === 'skipWaiting') {
-    self.skipWaiting();
   }
 });

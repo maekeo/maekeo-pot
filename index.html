@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.1.1</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.1.2</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -1246,27 +1246,8 @@ function dismissInstall() {
 // 이미 설치된 경우 안내 안 함
 if (!isInstalled()) checkIOSInstall();
 
-// ═══ 버전 체크 (Service Worker 메시지 기반) ═══
-const CURRENT_VERSION = 'v1.1.1';
-
-function checkVersion() {
-  if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-    navigator.serviceWorker.controller.postMessage({ action: 'GET_VERSION' });
-  }
-}
-
-// Service Worker 메시지 수신
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.addEventListener('message', (e) => {
-    if (e.data && e.data.type === 'SW_VERSION') {
-      const swVersion = e.data.version;
-      console.log('SW 버전:', swVersion, '/ 앱 버전:', CURRENT_VERSION);
-      if (swVersion && swVersion !== CURRENT_VERSION) {
-        showUpdateBanner(null, swVersion);
-      }
-    }
-  });
-}
+// ═══ 버전 체크 ═══
+const CURRENT_VERSION = 'v1.1.2';
 
 async function checkVersionFromServer() {
   try {
@@ -1274,7 +1255,7 @@ async function checkVersionFromServer() {
     if (!r.ok) return;
     const data = await r.json();
     const latest = data.version;
-    console.log('서버 버전:', latest, '/ 앱 버전:', CURRENT_VERSION);
+    console.log('버전 체크:', CURRENT_VERSION, '→ 최신:', latest);
     if (latest && latest !== CURRENT_VERSION) {
       showUpdateBanner(null, latest);
     }
@@ -1580,22 +1561,8 @@ function applyLang() {
 
 initTimer();
 applyLang();
-// 앱 시작 시 버전 체크
-setTimeout(() => {
-  checkVersion();           // SW 메시지로 체크
-  checkVersionFromServer(); // 서버에서도 체크
-}, 2000);
-
-// 30초마다 서버 버전 체크
-setInterval(checkVersionFromServer, 30000);
-
-// 포그라운드 복귀 시 체크
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') {
-    checkVersion();
-    checkVersionFromServer();
-  }
-});
+// 앱 열릴 때마다 버전 체크
+setTimeout(checkVersionFromServer, 1500);
 </script>
 </body>
 </html>
