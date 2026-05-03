@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.0.9</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.1.1</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -1247,13 +1247,13 @@ function dismissInstall() {
 if (!isInstalled()) checkIOSInstall();
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.0.9';
+const CURRENT_VERSION = 'v1.1.1';
 
 async function checkVersion() {
   try {
-    const r = await fetch('/version.json', {
+    const r = await fetch('/.netlify/functions/version', {
       cache: 'no-store',
-      headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+      headers: { 'Cache-Control': 'no-cache' }
     });
     if (!r.ok) return;
     const data = await r.json();
@@ -1564,8 +1564,14 @@ function applyLang() {
 
 initTimer();
 applyLang();
-// 앱 시작 시 버전 체크
+// 앱 시작 시 버전 체크 + 30초마다 반복
 setTimeout(checkVersion, 2000);
+setInterval(checkVersion, 30000);
+
+// 앱이 백그라운드에서 포그라운드로 돌아올 때도 체크
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') checkVersion();
+});
 </script>
 </body>
 </html>
