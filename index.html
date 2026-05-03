@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.0.7</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.0.8</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -1029,7 +1029,7 @@ function toggleTimer() {
     const first = accElapsed === 0;
     startedAt = Date.now(); isRunning = true;
     document.getElementById('startBtn').textContent = '일시정지';
-    if (first) { playStartSound(); toast(t('voiceStart')); }
+    if (first) { playStartSound(); toast(t('voiceStart')); speak(t('voiceStartMsg')); }
     timerRAF = requestAnimationFrame(rafLoop);
     timerInterval = setInterval(checkAlarms, 500);
   }
@@ -1350,6 +1350,7 @@ const I18N = {
     voice6min: '6분을 초과했습니다. 추출 시간이 너무 길어졌습니다. 과추출 주의하세요.',
     voice7min: '7분이 경과했습니다. 타이머를 종료합니다.',
     voiceStart: '추출 시작',
+    voiceStartMsg: '가열을 시작합니다.',
     voiceOptimal: '매커포트에 최적입니다.',
     voiceFine: '분쇄도가 조금 곱습니다. 그라인더를 굵게 조정하세요.',
     voiceCoarse: '분쇄도가 조금 굵습니다. 그라인더를 곱게 조정하세요.',
@@ -1410,6 +1411,7 @@ const I18N = {
     voice6min: 'Over 6 minutes. Risk of over-extraction. Watch your brew.',
     voice7min: '7 minutes reached. Timer stopped.',
     voiceStart: 'Extraction started.',
+    voiceStartMsg: 'Starting heat.',
     voiceOptimal: 'Perfect grind for Maekerpot.',
     voiceFine: 'Grind is slightly too fine. Adjust coarser.',
     voiceCoarse: 'Grind is slightly too coarse. Adjust finer.',
