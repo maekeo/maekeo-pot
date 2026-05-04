@@ -69,8 +69,28 @@ JSON만 반환 (다른 텍스트 절대 없음):
     if (!text) return { statusCode: 500, headers, body: JSON.stringify({ error: '응답 없음' }) };
 
     let result;
-    try { result = JSON.parse(text.replace(/```json|```/g, '').trim()); }
-    catch { const m = text.match(/\{[\s\S]*\}/); if (!m) return { statusCode: 500, headers, body: JSON.stringify({ error: '파싱 실패' }) }; result = JSON.parse(m[0]); }
+    try {
+      // 1차: 직접 파싱
+      const cleaned = text.replace(/```json|```/g, '').trim();
+      result = JSON.parse(cleaned);
+    } catch {
+      try {
+        // 2차: JSON 블록 추출
+        const m = text.match(/\{[\s\S]*\}/);
+        if (!m) throw new Error('JSON 없음');
+        result = JSON.parse(m[0]);
+      } catch {
+        // 3차: 줄바꿈 제거 후 재시도
+        try {
+          const oneLine = text.replace(/[\r\n]/g, ' ').replace(/```json|```/g, '').trim();
+          const m2 = oneLine.match(/\{[\s\S]*\}/);
+          if (!m2) return { statusCode: 500, headers, body: JSON.stringify({ error: '파싱 실패', raw: text.slice(0, 200) }) };
+          result = JSON.parse(m2[0]);
+        } catch(e) {
+          return { statusCode: 500, headers, body: JSON.stringify({ error: '파싱 실패', raw: text.slice(0, 200) }) };
+        }
+      }
+    }
 
     return { statusCode: 200, headers, body: JSON.stringify({ result }) };
 
