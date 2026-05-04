@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.1.6</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.1.7</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -641,7 +641,7 @@ async function callAPI(base64) {
   try {
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), 30000);
-    const r = await fetch('/functions/analyze-grind', {
+    const r = await fetch('/api/analyze-grind', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       signal: ctrl.signal,
@@ -1262,11 +1262,11 @@ function dismissInstall() {
 if (!isInstalled()) checkIOSInstall();
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.1.6';
+const CURRENT_VERSION = 'v1.1.7';
 
 async function checkVersionFromServer() {
   try {
-    const r = await fetch('/functions/version', { cache: 'no-store' });
+    const r = await fetch('/api/version', { cache: 'no-store' });
     if (!r.ok) return;
     const data = await r.json();
     const latest = data.version;

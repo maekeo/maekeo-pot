@@ -1,10 +1,5 @@
 {
   "version": 1,
-  "include": ["/functions/*"],
-  "exclude": [
-    "/index.html",
-    "/sw.js",
-    "/manifest.json",
-    "/version.json"
-  ]
+  "include": ["/api/*"],
+  "exclude": []
 }
