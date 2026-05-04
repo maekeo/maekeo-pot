@@ -1,6 +1,6 @@
 // MAEKEO LAB Service Worker
 // 캐시 없이 항상 최신 버전 제공
-const VERSION = 'v1.2.2';
+const VERSION = 'v1.2.3';
 
 self.addEventListener('install', () => self.skipWaiting());
 
