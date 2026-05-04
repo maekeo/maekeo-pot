@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.1.3</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.1.4</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -503,14 +503,31 @@ function handleFile(e) {
   const file = e.target.files[0];
   if (!file) return;
   e.target.value = '';
+
+  // 파일 크기 체크 (10MB 초과 시 경고)
+  if (file.size > 10 * 1024 * 1024) {
+    toast('파일이 너무 큽니다. 10MB 이하로 촬영해주세요.');
+    return;
+  }
+
   const reader = new FileReader();
+  reader.onerror = () => toast('이미지를 읽을 수 없습니다. 다시 시도해주세요.');
   reader.onload = ev => {
-    currentBase64 = ev.target.result.split(',')[1];
-    document.getElementById('previewImg').src = ev.target.result;
-    document.getElementById('previewImg').style.display = 'block';
-    document.getElementById('camPh').style.display = 'none';
-    document.getElementById('analyzeRow').style.display = 'flex';
-    document.getElementById('resultPanel').classList.remove('show');
+    try {
+      const result = ev.target.result;
+      if (!result || !result.includes('base64,')) {
+        toast('이미지 형식이 올바르지 않습니다.');
+        return;
+      }
+      currentBase64 = result.split(',')[1];
+      document.getElementById('previewImg').src = result;
+      document.getElementById('previewImg').style.display = 'block';
+      document.getElementById('camPh').style.display = 'none';
+      document.getElementById('analyzeRow').style.display = 'flex';
+      document.getElementById('resultPanel').classList.remove('show');
+    } catch(err) {
+      toast('이미지 처리 오류: ' + err.message);
+    }
   };
   reader.readAsDataURL(file);
 }
@@ -558,15 +575,9 @@ async function doAnalysis() {
   } catch(e) {
     document.getElementById('loadingPanel').classList.remove('show');
     document.getElementById('scanOverlay').classList.remove('show');
-    console.error(e);
-    if (e.message === 'INVALID_KEY') {
-      localStorage.removeItem('maekeo_api_key');
-      toast('API 키가 올바르지 않습니다. 다시 입력해주세요.');
-      showModal();
-    } else {
-      toast(e.message || '분석 실패. 다시 시도해주세요.');
-      document.getElementById('analyzeRow').style.display = 'flex';
-    }
+    console.error('분석 오류:', e);
+    toast('오류: ' + (e.message || '분석 실패. 다시 시도해주세요.'));
+    document.getElementById('analyzeRow').style.display = 'flex';
   }
 }
 
@@ -1247,7 +1258,7 @@ function dismissInstall() {
 if (!isInstalled()) checkIOSInstall();
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.1.3';
+const CURRENT_VERSION = 'v1.1.4';
 
 async function checkVersionFromServer() {
   try {
