@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.2.3</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.2.4</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -614,8 +614,9 @@ async function callAPI(base64) {
 
   // 1) OpenCV 서버 우선 시도
   try {
+    toast('🔄 분석 서버 연결 중... (최대 90초)');
     const ctrl = new AbortController();
-    const tid = setTimeout(() => ctrl.abort(), 60000);
+    const tid = setTimeout(() => ctrl.abort(), 90000);
     const r = await fetch('https://maekeo-grind-server.onrender.com/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -623,16 +624,21 @@ async function callAPI(base64) {
       body: JSON.stringify({ image: base64 })
     });
     clearTimeout(tid);
+    console.log('OpenCV 응답:', r.status);
     if (r.ok) {
       const d = await r.json();
+      console.log('OpenCV 결과:', d);
       if (d.result && (!d.result.particleCount || d.result.particleCount >= 5)) {
         console.log('✅ OpenCV 분석 완료');
         return normalize(d.result);
       }
+    } else {
+      const errText = await r.text().catch(() => '');
+      console.warn('OpenCV 오류:', r.status, errText.slice(0, 100));
+      window._opencvError = `${r.status}: ${errText.slice(0, 30)}`;
     }
   } catch(e) {
-    console.warn('OpenCV 실패:', e.message);
-    // 결과 화면에 OpenCV 오류 표시 (나중에 제거)
+    console.warn('OpenCV 실패:', e.name, e.message);
     window._opencvError = e.message;
   }
 
@@ -1294,7 +1300,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.2.3';
+const CURRENT_VERSION = 'v1.2.4';
 
 async function checkVersionFromServer() {
   try {
