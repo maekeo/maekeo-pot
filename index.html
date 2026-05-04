@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.1.7</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.1.8</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -476,6 +476,20 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   </div>
 </div>
 
+<!-- API 키 모달 -->
+<div class="modal-bg" id="apiKeyModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">OpenAI API 키 설정</div>
+    <div class="modal-desc">분석 기능을 사용하려면 API 키가 필요합니다.<br><a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a>에서 발급하세요.<br>키는 이 기기에만 저장됩니다.</div>
+    <input class="modal-input" id="apiKeyInput" type="password" placeholder="sk-..." autocomplete="off" autocapitalize="off" spellcheck="false">
+    <div class="modal-btns">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeApiKeyModal()">취소</button>
+      <button class="btn btn-primary" style="flex:2" onclick="saveApiKey()">저장 후 분석</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -542,6 +556,8 @@ function handleFile(e) {
 
 function startAnalysis() {
   if (!currentBase64) { toast('사진을 먼저 선택해주세요'); return; }
+  const apiKey = localStorage.getItem('maekeo_openai_key');
+  if (!apiKey) { showApiKeyModal(); return; }
   document.getElementById('analyzeRow').style.display = 'none';
   doAnalysis();
 }
@@ -584,81 +600,99 @@ async function doAnalysis() {
     document.getElementById('loadingPanel').classList.remove('show');
     document.getElementById('scanOverlay').classList.remove('show');
     console.error('분석 오류:', e);
-    toast('오류: ' + (e.message || '분석 실패. 다시 시도해주세요.'));
-    document.getElementById('analyzeRow').style.display = 'flex';
+    if (e.message === 'INVALID_KEY') {
+      localStorage.removeItem('maekeo_openai_key');
+      toast('API 키가 올바르지 않습니다. 다시 입력해주세요.');
+      showApiKeyModal();
+    } else {
+      toast('오류: ' + (e.message || '분석 실패. 다시 시도해주세요.'));
+      document.getElementById('analyzeRow').style.display = 'flex';
+    }
   }
 }
 
-// Render OpenCV 서버 주소 (자동 우선 사용)
-const CV_SERVER = 'https://maekeo-grind-server.onrender.com';
-
+// OpenAI API 직접 호출
 async function callAPI(base64) {
 
-  // 1) OpenCV 서버 우선 시도 (실측값 — 정밀)
-  let opencvFailed = false;
+  // 1) OpenCV 서버 우선 시도
   try {
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), 60000);
-    const r = await fetch(CV_SERVER + '/analyze', {
+    const r = await fetch('https://maekeo-grind-server.onrender.com/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       signal: ctrl.signal,
       body: JSON.stringify({ image: base64 })
     });
     clearTimeout(tid);
-
     if (r.ok) {
       const d = await r.json();
-      if (d.result) {
-        const result = d.result;
-
-        // 입자 감지 개수 체크 — 5개 미만이면 신뢰할 수 없음
-        if (result.particleCount && result.particleCount < 5) {
-          console.warn('OpenCV 입자 감지 부족:', result.particleCount, '개 → GPT-4o 전환');
-          toast('입자 감지 부족 — AI 분석으로 전환합니다');
-          opencvFailed = true;
-        }
-        // 신뢰도 낮으면 GPT-4o 전환
-        else if (result.confidence === 'low') {
-          console.warn('OpenCV 신뢰도 낮음 → GPT-4o 전환');
-          opencvFailed = true;
-        }
-        else {
-          console.log('✅ OpenCV 서버 분석 완료:', result.method, result.particleCount, '개');
-          return normalize(result);
-        }
+      if (d.result && (!d.result.particleCount || d.result.particleCount >= 5)) {
+        console.log('✅ OpenCV 분석 완료');
+        return normalize(d.result);
       }
-    } else {
-      console.warn('OpenCV 서버 오류:', r.status);
-      opencvFailed = true;
     }
   } catch(e) {
-    console.warn('OpenCV 서버 연결 실패:', e.name, e.message);
-    opencvFailed = true;
+    console.warn('OpenCV 실패:', e.message);
   }
 
-  // 2) Netlify/Cloudflare Function fallback (GPT-4o AI 추정)
+  // 2) OpenAI GPT-4o 직접 호출
+  const apiKey = localStorage.getItem('maekeo_openai_key');
+  if (!apiKey) throw new Error('API 키가 없습니다. 설정에서 입력해주세요.');
+
+  const ctrl = new AbortController();
+  const tid = setTimeout(() => ctrl.abort(), 45000);
+
+  let r;
   try {
-    const ctrl = new AbortController();
-    const tid = setTimeout(() => ctrl.abort(), 30000);
-    const r = await fetch('/api/analyze-grind', {
+    r = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
       signal: ctrl.signal,
-      body: JSON.stringify({ image: base64 })
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        max_tokens: 800,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${base64}`, detail: 'high' } },
+            { type: 'text', text: `당신은 커피 분쇄도 전문 분석 AI입니다.
+흰색 바탕 위에 분쇄된 커피 원두 사진입니다.
+커피 원두가 아니면 isCoffee:false로 반환하세요.
+매커포트 최적: 300~500μm.
+사진에 100원(24mm) 또는 500원(26.5mm) 동전이 있다면 기준점으로 역산하세요.
+JSON만 반환:
+{"level":"극세분/세분/중간/굵게/아주굵게","levelKor":"한글명","percent":숫자,"particleSize":숫자,"uniformity":숫자,"mokaFit":"최적/약간 고움/많이 고움/약간 굵음/많이 굵음","bestBrew":"추출방식","advice":"2문장","confidence":"high/mid/low","isCoffee":true}` }
+          ]
+        }]
+      })
     });
-    clearTimeout(tid);
-    const d = await r.json();
-    if (r.ok && d.result) {
-      console.log('✅ Function 분석 완료');
-      d.result.method = 'ai';
-      return normalize(d.result);
-    }
-    throw new Error(d.error || `Function 오류 (${r.status})`);
   } catch(e) {
+    clearTimeout(tid);
     if (e.name === 'AbortError') throw new Error('시간 초과. 네트워크를 확인하세요.');
-    throw new Error('Function 오류: ' + e.message);
+    throw new Error('네트워크 오류: ' + e.message);
   }
+  clearTimeout(tid);
+
+  if (!r.ok) {
+    if (r.status === 401) throw new Error('INVALID_KEY');
+    if (r.status === 429) throw new Error('API 한도 초과. 잠시 후 다시 시도하세요.');
+    throw new Error(`API 오류 (${r.status})`);
+  }
+
+  const d = await r.json();
+  const text = d.choices?.[0]?.message?.content || '';
+  if (!text) throw new Error('응답이 비어있습니다.');
+
+  let parsed;
+  try { parsed = JSON.parse(text.replace(/```json|```/g,'').trim()); }
+  catch { const m = text.match(/\{[\s\S]*\}/); if (!m) throw new Error('응답 파싱 실패'); parsed = JSON.parse(m[0]); }
+
+  parsed.method = 'ai';
+  return normalize(parsed);
 }
 
 function normalize(r) {
@@ -1261,8 +1295,37 @@ function dismissInstall() {
 // 이미 설치된 경우 안내 안 함
 if (!isInstalled()) checkIOSInstall();
 
+// ═══ API 키 모달 ═══
+function showApiKeyModal() {
+  const saved = localStorage.getItem('maekeo_openai_key') || '';
+  document.getElementById('apiKeyInput').value = saved ? '••••••••' : '';
+  document.getElementById('apiKeyModal').classList.add('show');
+  setTimeout(() => document.getElementById('apiKeyInput').focus(), 350);
+}
+function closeApiKeyModal() {
+  document.getElementById('apiKeyModal').classList.remove('show');
+}
+function saveApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key || key === '••••••••') {
+    if (localStorage.getItem('maekeo_openai_key')) {
+      closeApiKeyModal();
+      document.getElementById('analyzeRow').style.display = 'none';
+      doAnalysis();
+      return;
+    }
+    toast('API 키를 입력해주세요'); return;
+  }
+  if (!key.startsWith('sk-')) { toast('올바른 형식이 아닙니다 (sk-... 로 시작)'); return; }
+  localStorage.setItem('maekeo_openai_key', key);
+  closeApiKeyModal();
+  toast('저장 완료. 분석을 시작합니다.');
+  document.getElementById('analyzeRow').style.display = 'none';
+  setTimeout(doAnalysis, 500);
+}
+
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.1.7';
+const CURRENT_VERSION = 'v1.1.8';
 
 async function checkVersionFromServer() {
   try {
