@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.1.5</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.1.6</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -504,30 +504,38 @@ function handleFile(e) {
   if (!file) return;
   e.target.value = '';
 
-  // 파일 크기 체크 (10MB 초과 시 경고)
   if (file.size > 10 * 1024 * 1024) {
     toast('파일이 너무 큽니다. 10MB 이하로 촬영해주세요.');
     return;
   }
 
   const reader = new FileReader();
-  reader.onerror = () => toast('이미지를 읽을 수 없습니다. 다시 시도해주세요.');
+  reader.onerror = () => toast('이미지를 읽을 수 없습니다.');
   reader.onload = ev => {
-    try {
-      const result = ev.target.result;
-      if (!result || !result.includes('base64,')) {
-        toast('이미지 형식이 올바르지 않습니다.');
-        return;
+    const img = new Image();
+    img.onload = () => {
+      // Canvas로 리사이즈 + JPEG 압축
+      const canvas = document.createElement('canvas');
+      const MAX = 1200;
+      let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+        else { w = Math.round(w * MAX / h); h = MAX; }
       }
-      currentBase64 = result.split(',')[1];
-      document.getElementById('previewImg').src = result;
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      const compressed = canvas.toDataURL('image/jpeg', 0.85);
+      currentBase64 = compressed.split(',')[1];
+      document.getElementById('previewImg').src = compressed;
       document.getElementById('previewImg').style.display = 'block';
       document.getElementById('camPh').style.display = 'none';
       document.getElementById('analyzeRow').style.display = 'flex';
       document.getElementById('resultPanel').classList.remove('show');
-    } catch(err) {
-      toast('이미지 처리 오류: ' + err.message);
-    }
+    };
+    img.onerror = () => toast('이미지 로드 실패. 다시 시도해주세요.');
+    img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
 }
@@ -1254,7 +1262,7 @@ function dismissInstall() {
 if (!isInstalled()) checkIOSInstall();
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.1.5';
+const CURRENT_VERSION = 'v1.1.6';
 
 async function checkVersionFromServer() {
   try {
