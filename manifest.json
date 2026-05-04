@@ -1,11 +1,11 @@
 {
   "name": "MAEKEO LAB",
-  "short_name": "매커랩",
-  "description": "매커포트 분쇄도 분석 및 타이머",
+  "short_name": "MAEKEO LAB",
+  "description": "Maekerpot grind analyzer & timer",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F2F2F7",
-  "theme_color": "#007AFF",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "orientation": "portrait",
   "icons": [
     {
@@ -17,6 +17,12 @@
       "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
