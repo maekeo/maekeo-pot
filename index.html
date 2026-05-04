@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.1.4</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.1.5</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -629,11 +629,7 @@ async function callAPI(base64) {
     opencvFailed = true;
   }
 
-  // 2) GPT-4o fallback (OpenCV 실패 또는 신뢰도 낮을 때)
-  if (opencvFailed) {
-    console.log('GPT-4o 분석 시작...');
-  }
-
+  // 2) Netlify/Cloudflare Function fallback (GPT-4o AI 추정)
   try {
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), 30000);
@@ -646,14 +642,14 @@ async function callAPI(base64) {
     clearTimeout(tid);
     const d = await r.json();
     if (r.ok && d.result) {
-      console.log('✅ GPT-4o 분석 완료');
+      console.log('✅ Function 분석 완료');
       d.result.method = 'ai';
       return normalize(d.result);
     }
-    throw new Error(d.error || `서버 오류 (${r.status})`);
+    throw new Error(d.error || `Function 오류 (${r.status})`);
   } catch(e) {
     if (e.name === 'AbortError') throw new Error('시간 초과. 네트워크를 확인하세요.');
-    throw new Error(e.message || '분석 실패. 다시 시도해주세요.');
+    throw new Error('Function 오류: ' + e.message);
   }
 }
 
@@ -1258,7 +1254,7 @@ function dismissInstall() {
 if (!isInstalled()) checkIOSInstall();
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.1.4';
+const CURRENT_VERSION = 'v1.1.5';
 
 async function checkVersionFromServer() {
   try {
