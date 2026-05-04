@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.1.8</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.1.9</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -556,8 +556,6 @@ function handleFile(e) {
 
 function startAnalysis() {
   if (!currentBase64) { toast('사진을 먼저 선택해주세요'); return; }
-  const apiKey = localStorage.getItem('maekeo_openai_key');
-  if (!apiKey) { showApiKeyModal(); return; }
   document.getElementById('analyzeRow').style.display = 'none';
   doAnalysis();
 }
@@ -611,7 +609,7 @@ async function doAnalysis() {
   }
 }
 
-// OpenAI API 직접 호출
+// OpenAI API — Netlify Function 경유 (API 키 서버에서 관리)
 async function callAPI(base64) {
 
   // 1) OpenCV 서버 우선 시도
@@ -636,63 +634,28 @@ async function callAPI(base64) {
     console.warn('OpenCV 실패:', e.message);
   }
 
-  // 2) OpenAI GPT-4o 직접 호출
-  const apiKey = localStorage.getItem('maekeo_openai_key');
-  if (!apiKey) throw new Error('API 키가 없습니다. 설정에서 입력해주세요.');
-
-  const ctrl = new AbortController();
-  const tid = setTimeout(() => ctrl.abort(), 45000);
-
-  let r;
+  // 2) Netlify Function (GPT-4o)
   try {
-    r = await fetch('https://api.openai.com/v1/chat/completions', {
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => ctrl.abort(), 30000);
+    const r = await fetch('/.netlify/functions/analyze-grind', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
+      headers: { 'Content-Type': 'application/json' },
       signal: ctrl.signal,
-      body: JSON.stringify({
-        model: 'gpt-4o',
-        max_tokens: 800,
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${base64}`, detail: 'high' } },
-            { type: 'text', text: `당신은 커피 분쇄도 전문 분석 AI입니다.
-흰색 바탕 위에 분쇄된 커피 원두 사진입니다.
-커피 원두가 아니면 isCoffee:false로 반환하세요.
-매커포트 최적: 300~500μm.
-사진에 100원(24mm) 또는 500원(26.5mm) 동전이 있다면 기준점으로 역산하세요.
-JSON만 반환:
-{"level":"극세분/세분/중간/굵게/아주굵게","levelKor":"한글명","percent":숫자,"particleSize":숫자,"uniformity":숫자,"mokaFit":"최적/약간 고움/많이 고움/약간 굵음/많이 굵음","bestBrew":"추출방식","advice":"2문장","confidence":"high/mid/low","isCoffee":true}` }
-          ]
-        }]
-      })
+      body: JSON.stringify({ image: base64 })
     });
-  } catch(e) {
     clearTimeout(tid);
+    const d = await r.json();
+    if (r.ok && d.result) {
+      console.log('✅ Netlify Function 분석 완료');
+      d.result.method = 'ai';
+      return normalize(d.result);
+    }
+    throw new Error(d.error || `서버 오류 (${r.status})`);
+  } catch(e) {
     if (e.name === 'AbortError') throw new Error('시간 초과. 네트워크를 확인하세요.');
-    throw new Error('네트워크 오류: ' + e.message);
+    throw new Error(e.message || '분석 실패. 다시 시도해주세요.');
   }
-  clearTimeout(tid);
-
-  if (!r.ok) {
-    if (r.status === 401) throw new Error('INVALID_KEY');
-    if (r.status === 429) throw new Error('API 한도 초과. 잠시 후 다시 시도하세요.');
-    throw new Error(`API 오류 (${r.status})`);
-  }
-
-  const d = await r.json();
-  const text = d.choices?.[0]?.message?.content || '';
-  if (!text) throw new Error('응답이 비어있습니다.');
-
-  let parsed;
-  try { parsed = JSON.parse(text.replace(/```json|```/g,'').trim()); }
-  catch { const m = text.match(/\{[\s\S]*\}/); if (!m) throw new Error('응답 파싱 실패'); parsed = JSON.parse(m[0]); }
-
-  parsed.method = 'ai';
-  return normalize(parsed);
 }
 
 function normalize(r) {
@@ -1325,7 +1288,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.1.8';
+const CURRENT_VERSION = 'v1.1.9';
 
 async function checkVersionFromServer() {
   try {
