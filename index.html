@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.2.6</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.2.7</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -629,7 +629,7 @@ async function callAPI(base64) {
     }
 
     // 입자 수 부족
-    if (d.result.particleCount && d.result.particleCount < 5) {
+    if (d.result.particleCount && d.result.particleCount < 2) {
       throw new Error(`입자가 ${d.result.particleCount}개만 감지됐습니다. 흰 종이 위에 원두를 더 넓게 펼쳐 다시 촬영해주세요.`);
     }
 
@@ -1271,7 +1271,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.2.6';
+const CURRENT_VERSION = 'v1.2.7';
 
 async function checkVersionFromServer() {
   try {
