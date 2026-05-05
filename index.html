@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.2.8</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.2.9</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -613,43 +613,70 @@ async function doAnalysis() {
   }
 }
 
-// OpenCV 서버 전용 분석
+// OpenCV 서버 전용 분석 (UploadFile 방식)
 async function callAPI(base64) {
   try {
     toast('🔄 분석 서버 연결 중...');
+
+    // base64 → Blob → FormData (전송 크기 33% 절약)
+    const byteStr = atob(base64);
+    const ab = new ArrayBuffer(byteStr.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteStr.length; i++) ia[i] = byteStr.charCodeAt(i);
+    const blob = new Blob([ab], { type: 'image/jpeg' });
+
+    const formData = new FormData();
+    formData.append('file', blob, 'grind.jpg');
+
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), 90000);
     const r = await fetch('https://maekeo-grind-server.onrender.com/analyze', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       signal: ctrl.signal,
-      body: JSON.stringify({ image: base64 })
+      body: formData
     });
     clearTimeout(tid);
 
     const d = await r.json();
+    console.log('서버 응답:', d.status, d.data?.summary);
 
-    // 입자 감지 실패
-    if (d.error) {
-      throw new Error(d.error);
+    if (d.status === 'error') {
+      throw new Error(d.message || '분석 실패');
     }
 
-    if (!d.result) {
+    if (!d.data) {
       throw new Error('분석 결과가 없습니다. 다시 시도해주세요.');
     }
 
-    // 입자 수 부족
-    if (d.result.particleCount && d.result.particleCount < 2) {
-      throw new Error(`입자가 ${d.result.particleCount}개만 감지됐습니다. 흰 종이 위에 원두를 더 넓게 펼쳐 다시 촬영해주세요.`);
-    }
-
-    console.log('✅ OpenCV 분석 완료:', d.result.method, d.result.particleCount, '개');
-    return normalize(d.result);
+    return normalizeV2(d.data);
 
   } catch(e) {
     if (e.name === 'AbortError') throw new Error('서버 응답 시간 초과. 다시 시도해주세요.');
     throw new Error(e.message || '분석 실패. 다시 시도해주세요.');
   }
+}
+
+function normalizeV2(data) {
+  const s = data.summary;
+  const c = data.classification;
+  const m = data.meta || {};
+  const h = data.distribution_chart;
+  const v = data.visual_result || {};
+  return {
+    percent:       Math.min(100, Math.max(0, Number(c.percent) || 50)),
+    particleSize:  Number(s.average_micron)   || 400,
+    uniformity:    Number(s.uniformity_score) || 60,
+    levelKor:      c.levelKor  || '중간',
+    bestBrew:      c.bestBrew  || '매커포트',
+    advice:        c.advice    || '',
+    mokaFit:       c.mokaFit   || '—',
+    particleCount: s.particle_count    || null,
+    finesRatio:    s.fines_percentage  ?? null,
+    histogram:     h || null,
+    overlayImage:  v.overlay_image_b64 || null,
+    calibrated:    m.calibrated || false,
+    method:        m.method     || 'estimated',
+  };
 }
 
 function normalize(r) {
@@ -665,6 +692,7 @@ function normalize(r) {
     particleCount:  r.particleCount        || null,
     finesRatio:     r.finesRatio           ?? null,
     histogram:      r.histogram            || null,
+    overlayImage:   r.overlayImage         || null,
     qualityWarnings: r.qualityWarnings     || [],
     calibrated:     r.calibrated           || false,
     method:         r.method               || 'ai',
@@ -1312,7 +1340,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.2.8';
+const CURRENT_VERSION = 'v1.2.9';
 
 async function checkVersionFromServer() {
   try {
