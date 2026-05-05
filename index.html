@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.2.5</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.2.6</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -598,23 +598,15 @@ async function doAnalysis() {
     document.getElementById('loadingPanel').classList.remove('show');
     document.getElementById('scanOverlay').classList.remove('show');
     console.error('분석 오류:', e);
-    if (e.message === 'INVALID_KEY') {
-      localStorage.removeItem('maekeo_openai_key');
-      toast('API 키가 올바르지 않습니다. 다시 입력해주세요.');
-      showApiKeyModal();
-    } else {
-      toast('오류: ' + (e.message || '분석 실패. 다시 시도해주세요.'));
-      document.getElementById('analyzeRow').style.display = 'flex';
-    }
+    toast(e.message || '분석 실패. 다시 시도해주세요.');
+    document.getElementById('analyzeRow').style.display = 'flex';
   }
 }
 
-// OpenAI API — Netlify Function 경유 (API 키 서버에서 관리)
+// OpenCV 서버 전용 분석
 async function callAPI(base64) {
-
-  // 1) OpenCV 서버 우선 시도
   try {
-    toast('🔄 분석 서버 연결 중... (최대 90초)');
+    toast('🔄 분석 서버 연결 중...');
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), 90000);
     const r = await fetch('https://maekeo-grind-server.onrender.com/analyze', {
@@ -624,44 +616,28 @@ async function callAPI(base64) {
       body: JSON.stringify({ image: base64 })
     });
     clearTimeout(tid);
-    console.log('OpenCV 응답:', r.status);
-    if (r.ok) {
-      const d = await r.json();
-      console.log('OpenCV 결과:', d);
-      if (d.result && (!d.result.particleCount || d.result.particleCount >= 5)) {
-        console.log('✅ OpenCV 분석 완료');
-        return normalize(d.result);
-      }
-    } else {
-      const errText = await r.text().catch(() => '');
-      console.warn('OpenCV 오류:', r.status, errText.slice(0, 100));
-      window._opencvError = `${r.status}: ${errText.slice(0, 30)}`;
-    }
-  } catch(e) {
-    console.warn('OpenCV 실패:', e.name, e.message);
-    window._opencvError = e.message;
-  }
 
-  // 2) Netlify Function (GPT-4o)
-  try {
-    const ctrl = new AbortController();
-    const tid = setTimeout(() => ctrl.abort(), 30000);
-    const r = await fetch('/.netlify/functions/analyze-grind', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      signal: ctrl.signal,
-      body: JSON.stringify({ image: base64 })
-    });
-    clearTimeout(tid);
     const d = await r.json();
-    if (r.ok && d.result) {
-      console.log('✅ Netlify Function 분석 완료');
-      d.result.method = 'ai';
-      return normalize(d.result);
+
+    // 입자 감지 실패
+    if (d.error) {
+      throw new Error(d.error);
     }
-    throw new Error(d.error || `서버 오류 (${r.status})`);
+
+    if (!d.result) {
+      throw new Error('분석 결과가 없습니다. 다시 시도해주세요.');
+    }
+
+    // 입자 수 부족
+    if (d.result.particleCount && d.result.particleCount < 5) {
+      throw new Error(`입자가 ${d.result.particleCount}개만 감지됐습니다. 흰 종이 위에 원두를 더 넓게 펼쳐 다시 촬영해주세요.`);
+    }
+
+    console.log('✅ OpenCV 분석 완료:', d.result.method, d.result.particleCount, '개');
+    return normalize(d.result);
+
   } catch(e) {
-    if (e.name === 'AbortError') throw new Error('시간 초과. 네트워크를 확인하세요.');
+    if (e.name === 'AbortError') throw new Error('서버 응답 시간 초과. 다시 시도해주세요.');
     throw new Error(e.message || '분석 실패. 다시 시도해주세요.');
   }
 }
@@ -792,18 +768,13 @@ function showResult(r) {
 
   // 분석 방식 표시
   const methodEl = document.getElementById('resMethod');
-  if (r.method === 'coin_calibrated') {
+  if (r.calibrated) {
     methodEl.textContent = currentLang === 'en' ? '🔵 OpenCV · Coin calibrated' : '🔵 OpenCV 실측 · 동전 기준';
     methodEl.style.color = 'var(--blue)';
-  } else if (r.method === 'estimated') {
+  } else {
     methodEl.textContent = currentLang === 'en' ? '🟠 OpenCV · Estimated' : '🟠 OpenCV 실측 · 추정';
     methodEl.style.color = 'var(--orange)';
-  } else {
-    const errMsg = window._opencvError ? ` (${window._opencvError.slice(0,30)})` : '';
-    methodEl.textContent = (currentLang === 'en' ? '⚪ GPT-4o · AI estimate' : '⚪ GPT-4o · AI 추정') + errMsg;
-    methodEl.style.color = 'var(--label3)';
   }
-  window._opencvError = null;
   if (r.qualityWarnings && r.qualityWarnings.length > 0) {
     r.qualityWarnings.forEach(w => toast('⚠️ ' + w));
   }
@@ -1300,7 +1271,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.2.5';
+const CURRENT_VERSION = 'v1.2.6';
 
 async function checkVersionFromServer() {
   try {
