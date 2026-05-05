@@ -246,7 +246,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.2.7</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.2.8</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
@@ -305,6 +305,16 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 
   <!-- 결과 -->
   <div class="result" id="resultPanel">
+    <!-- 오버레이 이미지 -->
+    <div class="group" id="overlayGroup" style="display:none">
+      <div class="group-hd">입자 분석 이미지</div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <img id="overlayImg" src="" style="width:100%;display:block;border-radius:12px" alt="분석 이미지">
+        <div style="padding:8px 12px;font-size:11px;color:var(--label3)">
+          🟢 일반 입자 &nbsp; 🟠 미분 &nbsp; 🟡 분석 영역
+        </div>
+      </div>
+    </div>
     <div class="group">
       <div class="group-hd">분쇄 굵기</div>
       <div class="card">
@@ -716,8 +726,37 @@ function showResult(r) {
     document.getElementById('resFinesCell').style.display = 'none';
   }
 
-  // 입자 분포 히스토그램
-  if (r.histogram && r.histogram.length > 0) {
+  // 오버레이 이미지
+  if (r.overlayImage) {
+    document.getElementById('overlayGroup').style.display = 'block';
+    document.getElementById('overlayImg').src = `data:image/jpeg;base64,${r.overlayImage}`;
+  } else {
+    document.getElementById('overlayGroup').style.display = 'none';
+  }
+
+  // 입자 분포 히스토그램 (% 기반)
+  if (r.histogram && r.histogram.labels) {
+    const wrap = document.getElementById('histogramWrap');
+    const bars = document.getElementById('histogramBars');
+    wrap.style.display = 'block';
+    const values = r.histogram.values;
+    const labels = r.histogram.labels;
+    const maxVal = Math.max(...values, 1);
+    const optimalRanges = ['300-400', '400-500'];
+    const dangerRanges  = ['<100'];
+    bars.innerHTML = labels.map((label, i) => {
+      const heightPct = Math.round((values[i] / maxVal) * 100);
+      const cls = values[i] === 0 ? 'empty'
+        : optimalRanges.includes(label) ? 'optimal'
+        : dangerRanges.includes(label)  ? 'danger'
+        : 'warn';
+      return `<div class="histogram-bar-wrap">
+        <div class="histogram-bar ${cls}" style="height:${Math.max(heightPct, 2)}%"></div>
+        <div class="histogram-range">${label}</div>
+      </div>`;
+    }).join('');
+  } else if (r.histogram && Array.isArray(r.histogram)) {
+    // 기존 배열 형식 호환
     const wrap = document.getElementById('histogramWrap');
     const bars = document.getElementById('histogramBars');
     wrap.style.display = 'block';
@@ -807,6 +846,8 @@ function resetAnalysis() {
   document.getElementById('resFinesCell').style.display = 'none';
   document.getElementById('histogramWrap').style.display = 'none';
   document.getElementById('histogramBars').innerHTML = '';
+  document.getElementById('overlayGroup').style.display = 'none';
+  document.getElementById('overlayImg').src = '';
   document.getElementById('camFileInput').value = '';
   document.getElementById('fileInput').value = '';
 }
@@ -1271,7 +1312,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.2.7';
+const CURRENT_VERSION = 'v1.2.8';
 
 async function checkVersionFromServer() {
   try {
