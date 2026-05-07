@@ -208,10 +208,17 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 .install-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;color:var(--label);line-height:1.5}
 .install-step:last-child{margin-bottom:0}
 .install-step-num{background:var(--blue);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
-/* 업데이트 배너 */
-.update-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:500;background:var(--blue);color:#fff;padding:max(env(safe-area-inset-top),12px) 16px 12px;flex-direction:row;align-items:center;justify-content:space-between;gap:12px;font-size:14px;font-weight:500}
-.update-banner.show{display:flex}
-.update-btn{background:rgba(255,255,255,.25);border:none;border-radius:8px;color:#fff;font-family:inherit;font-size:13px;font-weight:600;padding:6px 14px;cursor:pointer;white-space:nowrap}
+/* 업데이트 모달 */
+.update-modal-bg{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px}
+.update-modal-bg.show{display:flex}
+.update-modal{background:var(--bg2);border-radius:20px;padding:28px 24px 24px;width:100%;max-width:340px;text-align:center;animation:sheetUp .3s cubic-bezier(.25,.46,.45,.94)}
+.update-modal-emoji{font-size:44px;margin-bottom:12px}
+.update-modal-title{font-size:20px;font-weight:700;color:var(--label);margin-bottom:8px}
+.update-modal-version{font-size:14px;color:var(--blue);font-weight:600;margin-bottom:8px}
+.update-modal-desc{font-size:14px;color:var(--label2);line-height:1.6;margin-bottom:24px}
+.update-modal-btns{display:flex;gap:10px}
+.update-modal-later{flex:1;padding:12px;border:none;border-radius:12px;background:var(--fill);color:var(--label2);font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.update-modal-now{flex:2;padding:12px;border:none;border-radius:12px;background:var(--blue);color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body>
@@ -230,12 +237,17 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </div>
   </div>
 </div>
-<!-- 업데이트 배너 -->
-<div class="update-banner" id="updateBanner">
-  <span>새 버전이 있습니다 🎉</span>
-  <div style="display:flex;gap:8px">
-    <button class="update-btn" onclick="dismissUpdate()">나중에</button>
-    <button class="update-btn" onclick="applyUpdate()" style="background:rgba(255,255,255,.4)">업데이트</button>
+<!-- 업데이트 모달 -->
+<div class="update-modal-bg" id="updateModal">
+  <div class="update-modal">
+    <div class="update-modal-emoji">🎉</div>
+    <div class="update-modal-title">새 버전이 출시됐습니다</div>
+    <div class="update-modal-version" id="updateModalVersion">MAEKEO LAB</div>
+    <div class="update-modal-desc">업데이트 후 새로운 기능을<br>바로 사용할 수 있습니다.</div>
+    <div class="update-modal-btns">
+      <button class="update-modal-later" onclick="dismissUpdate()">나중에</button>
+      <button class="update-modal-now" onclick="applyUpdate()">지금 업데이트</button>
+    </div>
   </div>
 </div>
 
@@ -246,7 +258,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.3.1</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.3.2</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a href="https://www.youtube.com/@maeilcoffee/posts" target="_blank" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;text-decoration:none">📢 공지</a>
@@ -1371,7 +1383,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.3.1';
+const CURRENT_VERSION = 'v1.3.2';
 
 async function checkVersionFromServer() {
   try {
@@ -1415,23 +1427,19 @@ if ('serviceWorker' in navigator) {
 
 function showUpdateBanner(worker, latestVersion) {
   _newWorker = worker;
-  const banner = document.getElementById('updateBanner');
-  const msg = latestVersion
-    ? `새 버전이 있습니다 ${latestVersion} 🎉`
-    : '새 버전이 있습니다 🎉';
-  banner.querySelector('span').textContent = msg;
-  banner.classList.add('show');
+  const versionEl = document.getElementById('updateModalVersion');
+  if (versionEl) versionEl.textContent = latestVersion ? `MAEKEO LAB ${latestVersion}` : 'MAEKEO LAB';
+  document.getElementById('updateModal').classList.add('show');
 }
 
 function dismissUpdate() {
-  document.getElementById('updateBanner').classList.remove('show');
+  document.getElementById('updateModal').classList.remove('show');
 }
 
 function applyUpdate() {
   if (_newWorker) {
     _newWorker.postMessage({ action: 'skipWaiting' });
   } else {
-    // version.json 체크로 감지된 경우 강제 새로고침
     window.location.reload(true);
   }
 }
@@ -1658,11 +1666,6 @@ function applyLang() {
 
   // Timeline
   renderStages();
-
-  // Update banner
-  document.querySelector('#updateBanner span').textContent = t('updateNew');
-  document.querySelectorAll('.update-btn')[0].textContent = t('updateLater');
-  document.querySelectorAll('.update-btn')[1].textContent = t('updateNow');
 
   // Install overlay
   document.querySelector('.install-title').textContent = t('installTitle');
