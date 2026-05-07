@@ -246,10 +246,10 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.2.9</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.3.1</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
-      <button onclick="cycleLang()" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer" id="langBtn">한</button>
+      <a href="https://www.youtube.com/@maeilcoffee/posts" target="_blank" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;text-decoration:none">📢 공지</a>
       <a class="nav-link" href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="padding:8px 14px;font-size:13px" id="navShop">소모품</a>
       <a class="nav-link" href="https://www.maekeo.kr/" target="_blank" style="padding:8px 14px;font-size:13px" id="navProduct">매커포트</a>
     </div>
@@ -857,6 +857,24 @@ function showResult(r) {
   if (r.qualityWarnings && r.qualityWarnings.length > 0) {
     r.qualityWarnings.forEach(w => toast('⚠️ ' + w));
   }
+  // Insights 표시
+  if (r.insightTitle) {
+    const iconMap  = { perfect: '✅', warning: '⚠️', alert: '🔴' };
+    const colorMap = { perfect: 'var(--green)', warning: 'var(--orange)', alert: 'var(--red)' };
+    document.getElementById('insightCard').style.display = 'block';
+    document.getElementById('insightIcon').textContent = iconMap[r.insightStatus] || '✅';
+    document.getElementById('insightTitle').style.color = colorMap[r.insightStatus] || 'var(--green)';
+    document.getElementById('insightTitle').textContent = r.insightTitle;
+    document.getElementById('insightActions').innerHTML = (r.insightActions||[]).map((a, i) =>
+      `<div style="display:flex;gap:8px;padding:4px 0;font-size:13px;color:var(--label2);line-height:1.5">
+        <span style="color:var(--blue);font-weight:600;flex-shrink:0">${i+1}.</span>
+        <span>${a}</span>
+      </div>`
+    ).join('');
+  } else {
+    document.getElementById('insightCard').style.display = 'none';
+  }
+
   const completeMsg = currentLang === 'en' ? 'Analysis complete.' : '분석이 완료되었습니다.';
   setTimeout(() => speak(completeMsg), 600);
 }
@@ -888,6 +906,7 @@ function resetAnalysis() {
   document.getElementById('histogramBars').innerHTML = '';
   document.getElementById('overlayGroup').style.display = 'none';
   document.getElementById('overlayImg').src = '';
+  document.getElementById('insightCard').style.display = 'none';
   document.getElementById('camFileInput').value = '';
   document.getElementById('fileInput').value = '';
 }
@@ -1352,7 +1371,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.2.9';
+const CURRENT_VERSION = 'v1.3.1';
 
 async function checkVersionFromServer() {
   try {
