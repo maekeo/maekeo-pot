@@ -258,7 +258,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.3.3</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.3.4</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a href="https://www.youtube.com/@maeilcoffee/posts" target="_blank" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;text-decoration:none">📢 공지</a>
@@ -1195,7 +1195,77 @@ function toast(msg) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-// ═══ 기록 저장 ═══
+// ═══ 추출 시간대 패턴 인식 ═══
+function checkBrewTimePattern() {
+  try {
+    const records = JSON.parse(localStorage.getItem('maekeo_records') || '[]');
+    if (records.length < 2) return;
+
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMin  = now.getMinutes();
+    const currentTotal = currentHour * 60 + currentMin;
+
+    // 기록에서 타이머 기록만 필터링
+    const timerRecords = records.filter(r => r.type === 'timer' && r.date);
+
+    if (timerRecords.length < 2) return;
+
+    // 같은 시간대(±30분) 기록 찾기
+    const sameTimeRecords = timerRecords.filter(r => {
+      const parts = r.date.split(' ');
+      if (parts.length < 2) return false;
+      const timeParts = parts[1].split(':');
+      if (timeParts.length < 2) return false;
+      const recHour = parseInt(timeParts[0]);
+      const recMin  = parseInt(timeParts[1]);
+      const recTotal = recHour * 60 + recMin;
+      return Math.abs(recTotal - currentTotal) <= 30;
+    });
+
+    if (sameTimeRecords.length < 2) return;
+
+    // 마지막 추출 시간 가져오기
+    const lastTimer = timerRecords[0];
+    const lastTime  = lastTimer.extractTime || '';
+
+    // 평균 추출 시간 계산
+    const extractTimes = timerRecords
+      .filter(r => r.extractTime)
+      .map(r => {
+        const parts = r.extractTime.split(':');
+        return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+      });
+
+    const avgSecs = extractTimes.length > 0
+      ? Math.round(extractTimes.reduce((a, b) => a + b, 0) / extractTimes.length)
+      : null;
+
+    const avgStr = avgSecs
+      ? `${Math.floor(avgSecs/60)}분 ${avgSecs%60}초`
+      : null;
+
+    // 시간대 텍스트
+    const h = currentHour;
+    const timeLabel = h < 6  ? '새벽' :
+                      h < 12 ? '오전' :
+                      h < 18 ? '오후' : '저녁';
+
+    // 음성 안내
+    const msg = avgStr
+      ? `${timeLabel} ${h}시, 평소 이 시간대에 추출을 시작하셨네요. 평균 추출 시간은 ${avgStr}입니다. 오늘도 맛있는 커피 추출을 시작해볼까요?`
+      : `${timeLabel} ${h}시, 평소 이 시간대에 추출을 시작하셨네요. 오늘도 맛있는 커피 추출을 시작해볼까요?`;
+
+    // 토스트 + 음성 (3초 후 — 앱 로딩 완료 후)
+    setTimeout(() => {
+      toast(`☕ ${timeLabel} ${h}시 추출 시간입니다`);
+      setTimeout(() => speak(msg), 500);
+    }, 3000);
+
+  } catch(e) {
+    console.warn('시간대 패턴 분석 오류:', e.message);
+  }
+}
 let _saveType = 'grind';
 
 function showSaveModal(type) {
@@ -1397,7 +1467,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.3.3';
+const CURRENT_VERSION = 'v1.3.4';
 
 async function checkVersionFromServer() {
   try {
@@ -1708,6 +1778,8 @@ initTimer();
 applyLang();
 // 앱 열릴 때마다 버전 체크
 setTimeout(checkVersionFromServer, 1500);
+// 추출 시간대 패턴 체크
+checkBrewTimePattern();
 </script>
 </body>
 </html>
