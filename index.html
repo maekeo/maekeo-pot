@@ -258,7 +258,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.3.6</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.3.7</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a href="https://www.youtube.com/@maeilcoffee/posts" target="_blank" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;text-decoration:none">📢 공지</a>
@@ -1308,6 +1308,13 @@ function flameExtractionDetected() {
   showFlameResult(elapsed);
 }
 
+function fmtVoice(secs) {
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  if (s === 0) return `${m}분`;
+  return `${m}분 ${s}초`;
+}
+
 function showFlameResult(elapsed) {
   document.getElementById('flameExtractionBtnWrap').style.display = 'none';
   document.getElementById('flameTimerWrap').style.display = 'none';
@@ -1321,19 +1328,19 @@ function showFlameResult(elapsed) {
   if (elapsed < 120) {
     emoji = '🔴'; title = '불이 너무 강합니다';
     desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>불을 많이 줄여서 다시 테스트해보세요.`;
-    voice = `${fmt(elapsed)}에 추출이 시작됐습니다. 불이 너무 강합니다. 불을 많이 줄여서 다시 테스트해보세요.`;
+    voice = `${fmtVoice(elapsed)}에 추출이 시작됐습니다. 불이 너무 강합니다. 불을 많이 줄여서 다시 테스트해보세요.`;
   } else if (elapsed < 180) {
     emoji = '⚠️'; title = '불이 약간 강합니다';
     desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>불을 조금 줄여서 다시 테스트해보세요.`;
-    voice = `${fmt(elapsed)}에 추출이 시작됐습니다. 불이 약간 강합니다. 조금 줄여서 다시 테스트해보세요.`;
+    voice = `${fmtVoice(elapsed)}에 추출이 시작됐습니다. 불이 약간 강합니다. 조금 줄여서 다시 테스트해보세요.`;
   } else if (elapsed <= 240) {
     emoji = '✅'; title = '완벽한 불 세기입니다!';
     desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>이 불 세기를 유지하세요.`;
-    voice = `${fmt(elapsed)}에 추출이 시작됐습니다. 완벽한 불 세기입니다. 이 세기를 유지하세요.`;
+    voice = `${fmtVoice(elapsed)}에 추출이 시작됐습니다. 완벽한 불 세기입니다. 이 세기를 유지하세요.`;
   } else if (elapsed <= 300) {
     emoji = '⚠️'; title = '불이 약간 약합니다';
     desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>불을 조금 높여서 다시 테스트해보세요.`;
-    voice = `${fmt(elapsed)}에 추출이 시작됐습니다. 불이 약간 약합니다. 조금 높여서 다시 테스트해보세요.`;
+    voice = `${fmtVoice(elapsed)}에 추출이 시작됐습니다. 불이 약간 약합니다. 조금 높여서 다시 테스트해보세요.`;
   } else {
     emoji = '🔴'; title = '불이 너무 약합니다';
     desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>불을 많이 높여서 다시 테스트해보세요.`;
@@ -1625,7 +1632,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.3.6';
+const CURRENT_VERSION = 'v1.3.7';
 
 async function checkVersionFromServer() {
   try {
