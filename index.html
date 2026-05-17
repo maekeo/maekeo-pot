@@ -258,7 +258,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.3.4</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.3.6</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a href="https://www.youtube.com/@maeilcoffee/posts" target="_blank" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;text-decoration:none">📢 공지</a>
@@ -444,6 +444,44 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()" style="flex:2">시작</button>
         <button class="btn btn-secondary" onclick="resetTimer()">초기화</button>
         <button class="btn btn-secondary" id="stopBtn" onclick="stopExtraction()" style="display:none;color:var(--red)">추출 종료</button>
+      </div>
+      <div style="padding:0 16px 16px">
+        <button onclick="startFlameTest()" style="width:100%;padding:12px;border:1.5px dashed var(--orange);background:transparent;border-radius:12px;color:var(--orange);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">
+          🔥 불 세기 테스트
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔥 불 세기 테스트 모달 -->
+  <div class="modal-bg" id="flameModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">🔥 불 세기 테스트</div>
+      <div class="modal-desc" id="flameModalDesc" style="line-height:1.7">
+        원두 없이 <b>뜨거운 물 150~170g</b>만 채우세요.<br>
+        물이 추출되기 시작하는 시간을 확인합니다.<br>
+        <b>3분~4분 이내</b>에 추출이 시작되면 적정 불 세기입니다.
+      </div>
+      <!-- 타이머 표시 -->
+      <div id="flameTimerWrap" style="display:none;text-align:center;padding:16px 0">
+        <div style="font-size:52px;font-weight:700;letter-spacing:-2px;color:var(--label)" id="flameDisplay">0:00</div>
+        <div style="font-size:14px;color:var(--label2);margin-top:4px" id="flameStatus">가열 중...</div>
+      </div>
+      <!-- 결과 표시 -->
+      <div id="flameResult" style="display:none;text-align:center;padding:16px 0">
+        <div style="font-size:44px;margin-bottom:8px" id="flameResultEmoji">✅</div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:8px" id="flameResultTitle"></div>
+        <div style="font-size:14px;color:var(--label2);line-height:1.6" id="flameResultDesc"></div>
+      </div>
+      <div class="modal-btns" id="flameModalBtns">
+        <button class="btn btn-secondary" style="flex:1" onclick="closeFlameModal()">취소</button>
+        <button class="btn btn-primary" style="flex:2" id="flameStartBtn" onclick="flameTestStart()">시작</button>
+      </div>
+      <div id="flameExtractionBtnWrap" style="display:none;padding:0 0 4px">
+        <button onclick="flameExtractionDetected()" style="width:100%;padding:16px;border:none;border-radius:12px;background:var(--orange);color:#fff;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer">
+          💧 지금 추출 시작됨
+        </button>
       </div>
     </div>
   </div>
@@ -1195,6 +1233,126 @@ function toast(msg) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
+// ═══ 🔥 불 세기 테스트 ═══
+let flameRAF = null;
+let flameStart = null;
+let flameRunning = false;
+
+function startFlameTest() {
+  document.getElementById('flameModal').classList.add('show');
+  document.getElementById('flameTimerWrap').style.display = 'none';
+  document.getElementById('flameResult').style.display = 'none';
+  document.getElementById('flameExtractionBtnWrap').style.display = 'none';
+  document.getElementById('flameModalBtns').style.display = 'flex';
+  document.getElementById('flameStartBtn').textContent = '시작';
+  document.getElementById('flameModalDesc').style.display = 'block';
+  document.getElementById('flameDisplay').textContent = '0:00';
+  document.getElementById('flameStatus').textContent = '가열 중...';
+  flameRunning = false;
+  flameStart = null;
+  if (flameRAF) cancelAnimationFrame(flameRAF);
+}
+
+function flameTestStart() {
+  ensureAudio();
+  flameStart = Date.now();
+  flameRunning = true;
+
+  document.getElementById('flameModalDesc').style.display = 'none';
+  document.getElementById('flameTimerWrap').style.display = 'block';
+  document.getElementById('flameExtractionBtnWrap').style.display = 'block';
+  document.getElementById('flameModalBtns').style.display = 'none';
+
+  speak('가열을 시작합니다. 물이 추출되기 시작하는 시간을 확인하세요.');
+
+  let announced1 = false, announced2 = false, announced3 = false, announced5 = false;
+
+  function tick() {
+    if (!flameRunning) return;
+    const elapsed = Math.floor((Date.now() - flameStart) / 1000);
+    document.getElementById('flameDisplay').textContent = fmt(elapsed);
+
+    if (elapsed >= 60 && !announced1) {
+      announced1 = true;
+      document.getElementById('flameStatus').textContent = '1분 경과. 아직 정상입니다.';
+      speak('1분 경과. 아직 물이 나오지 않아야 정상입니다.');
+    }
+    if (elapsed >= 120 && !announced2) {
+      announced2 = true;
+      document.getElementById('flameStatus').textContent = '2분 경과. 조금 더 기다려주세요.';
+      speak('2분 경과. 조금 더 기다려주세요.');
+    }
+    if (elapsed >= 180 && !announced3) {
+      announced3 = true;
+      document.getElementById('flameStatus').textContent = '3분~4분 사이에 추출이 시작되면 적정입니다.';
+      speak('지금부터 물이 나오기 시작하면 적정 불 세기입니다.');
+    }
+    if (elapsed >= 300 && !announced5) {
+      announced5 = true;
+      document.getElementById('flameStatus').textContent = '5분 초과. 불이 너무 약합니다.';
+      speak('5분이 지났습니다. 불이 너무 약합니다. 불을 많이 높여서 다시 테스트해보세요.');
+      flameRunning = false;
+      showFlameResult(elapsed);
+      return;
+    }
+    flameRAF = requestAnimationFrame(tick);
+  }
+  flameRAF = requestAnimationFrame(tick);
+}
+
+function flameExtractionDetected() {
+  if (!flameRunning || !flameStart) return;
+  flameRunning = false;
+  cancelAnimationFrame(flameRAF);
+  const elapsed = Math.floor((Date.now() - flameStart) / 1000);
+  showFlameResult(elapsed);
+}
+
+function showFlameResult(elapsed) {
+  document.getElementById('flameExtractionBtnWrap').style.display = 'none';
+  document.getElementById('flameTimerWrap').style.display = 'none';
+  document.getElementById('flameResult').style.display = 'block';
+  document.getElementById('flameModalBtns').style.display = 'flex';
+  document.getElementById('flameStartBtn').textContent = '다시 테스트';
+  document.getElementById('flameStartBtn').onclick = flameTestStart;
+
+  let emoji, title, desc, voice;
+
+  if (elapsed < 120) {
+    emoji = '🔴'; title = '불이 너무 강합니다';
+    desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>불을 많이 줄여서 다시 테스트해보세요.`;
+    voice = `${fmt(elapsed)}에 추출이 시작됐습니다. 불이 너무 강합니다. 불을 많이 줄여서 다시 테스트해보세요.`;
+  } else if (elapsed < 180) {
+    emoji = '⚠️'; title = '불이 약간 강합니다';
+    desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>불을 조금 줄여서 다시 테스트해보세요.`;
+    voice = `${fmt(elapsed)}에 추출이 시작됐습니다. 불이 약간 강합니다. 조금 줄여서 다시 테스트해보세요.`;
+  } else if (elapsed <= 240) {
+    emoji = '✅'; title = '완벽한 불 세기입니다!';
+    desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>이 불 세기를 유지하세요.`;
+    voice = `${fmt(elapsed)}에 추출이 시작됐습니다. 완벽한 불 세기입니다. 이 세기를 유지하세요.`;
+  } else if (elapsed <= 300) {
+    emoji = '⚠️'; title = '불이 약간 약합니다';
+    desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>불을 조금 높여서 다시 테스트해보세요.`;
+    voice = `${fmt(elapsed)}에 추출이 시작됐습니다. 불이 약간 약합니다. 조금 높여서 다시 테스트해보세요.`;
+  } else {
+    emoji = '🔴'; title = '불이 너무 약합니다';
+    desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>불을 많이 높여서 다시 테스트해보세요.`;
+    voice = `불이 너무 약합니다. 불을 많이 높여서 다시 테스트해보세요.`;
+  }
+
+  document.getElementById('flameResultEmoji').textContent = emoji;
+  document.getElementById('flameResultTitle').textContent = title;
+  document.getElementById('flameResultDesc').innerHTML = desc;
+  setTimeout(() => speak(voice), 300);
+}
+
+function closeFlameModal() {
+  flameRunning = false;
+  if (flameRAF) cancelAnimationFrame(flameRAF);
+  document.getElementById('flameModal').classList.remove('show');
+  document.getElementById('flameStartBtn').onclick = flameTestStart;
+}
+
 // ═══ 추출 시간대 패턴 인식 ═══
 function checkBrewTimePattern() {
   try {
@@ -1467,7 +1625,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.3.4';
+const CURRENT_VERSION = 'v1.3.6';
 
 async function checkVersionFromServer() {
   try {
@@ -1512,8 +1670,10 @@ if ('serviceWorker' in navigator) {
 function showUpdateBanner(worker, latestVersion) {
   _newWorker = worker;
   const versionEl = document.getElementById('updateModalVersion');
+  const modalEl = document.getElementById('updateModal');
+  if (!modalEl) return;
   if (versionEl) versionEl.textContent = latestVersion ? `MAEKEO LAB ${latestVersion}` : 'MAEKEO LAB';
-  document.getElementById('updateModal').classList.add('show');
+  modalEl.classList.add('show');
 }
 
 function dismissUpdate() {
@@ -1680,7 +1840,7 @@ function cycleLang() {
 
 function applyLang() {
   const l = currentLang;
-  document.getElementById('langBtn').textContent = LANG_LABELS[l];
+  // document.getElementById('langBtn') 제거됨 (공지 버튼으로 교체)
 
   // Nav
   document.getElementById('seg0').textContent = t('seg0');
