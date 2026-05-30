@@ -258,7 +258,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.3.7</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.3.8</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a href="https://www.youtube.com/@maeilcoffee/posts" target="_blank" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;text-decoration:none">📢 공지</a>
@@ -1063,7 +1063,6 @@ function updateTimerUI() {
 function rafLoop() { updateTimerUI(); timerRAF = requestAnimationFrame(rafLoop); }
 
 let min1Fired = false, min2Fired = false, min4Fired = false, min5Fired = false;
-let preinfusionStartFired = false, preinfusionEndFired = false;
 
 function checkAlarms() {
   const elapsed = getElapsed();
@@ -1074,18 +1073,7 @@ function checkAlarms() {
   if (elapsed >= 120 && !min2Fired) {
     min2Fired = true; speak(t('voice2min'));
   }
-  if (elapsed >= 120 && !preinfusionStartFired) {
-    preinfusionStartFired = true;
-    playBeep('warn');
-    toast('🔥 프리인퓨전 시작 — 불을 끄세요');
-    setTimeout(() => speak(t('voicePreinfusionStart')), 100);
-  }
-  if (elapsed >= 140 && !preinfusionEndFired) {
-    preinfusionEndFired = true;
-    playBeep('warn');
-    toast('🔥 프리인퓨전 종료 — 불을 켜세요');
-    setTimeout(() => speak(t('voicePreinfusionEnd')), 100);
-  }
+
   if (elapsed >= WARN_AT && !warnFired) {
     warnFired = true; playBeep('warn'); flash('warn');
     document.getElementById('alertWarn').classList.add('show');
@@ -1217,7 +1205,6 @@ function resetTimer() {
   isRunning=false; startedAt=null; accElapsed=0;
   warnFired=false; dangerFired=false;
   min1Fired=false; min2Fired=false; min4Fired=false; min5Fired=false;
-  preinfusionStartFired=false; preinfusionEndFired=false;
   document.getElementById('startBtn').textContent = '시작';
   document.getElementById('stopBtn').style.display = 'none';
   document.getElementById('alertWarn').classList.remove('show');
@@ -1632,7 +1619,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.3.7';
+const CURRENT_VERSION = 'v1.3.8';
 
 async function checkVersionFromServer() {
   try {
@@ -1751,8 +1738,6 @@ const I18N = {
     // 음성
     voice1min: '1분이 지났습니다.',
     voice2min: '2분이 지났습니다.',
-    voicePreinfusionStart: '프리인퓨전 시작. 불을 끄세요.',
-    voicePreinfusionEnd: '프리인퓨전 종료. 불을 켜세요.',
     voice3min: '3분 경과. 불을 중약불로 줄이세요. 압력을 안정화하세요.',
     voice4min: '4분. 가장 이상적인 추출 시간대입니다.',
     voice5min: '5분. 적정 추출 시간대입니다.',
@@ -1814,8 +1799,6 @@ const I18N = {
     installDismiss: 'Not today', installOk: 'OK',
     voice1min: '1 minute passed.',
     voice2min: '2 minutes passed.',
-    voicePreinfusionStart: 'Pre-infusion start. Turn off the heat.',
-    voicePreinfusionEnd: 'Pre-infusion complete. Turn the heat back on.',
     voice3min: '3 minutes. Reduce to medium-low heat and stabilize pressure.',
     voice4min: '4 minutes. This is the ideal extraction window.',
     voice5min: '5 minutes. Good extraction time.',
