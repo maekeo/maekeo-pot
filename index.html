@@ -258,12 +258,12 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.3.8</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.4.0</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a href="https://www.youtube.com/@maeilcoffee/posts" target="_blank" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;text-decoration:none">📢 공지</a>
       <a class="nav-link" href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="padding:8px 14px;font-size:13px" id="navShop">소모품</a>
-      <a class="nav-link" href="https://www.maekeo.kr/" target="_blank" style="padding:8px 14px;font-size:13px" id="navProduct">매커포트</a>
+      <a class="nav-link" href="https://www.maekeo.kr/" target="_blank" style="padding:8px 14px;font-size:13px" id="navProduct">매커포트예약</a>
     </div>
   </div>
   <div class="seg-wrap">
@@ -1252,7 +1252,7 @@ function flameTestStart() {
 
   speak('가열을 시작합니다. 물이 추출되기 시작하는 시간을 확인하세요.');
 
-  let announced1 = false, announced2 = false, announced3 = false, announced5 = false;
+  let announced1 = false, announced2 = false, announced3 = false, announced4 = false, announced5 = false;
 
   function tick() {
     if (!flameRunning) return;
@@ -1274,9 +1274,14 @@ function flameTestStart() {
       document.getElementById('flameStatus').textContent = '3분~4분 사이에 추출이 시작되면 적정입니다.';
       speak('지금부터 물이 나오기 시작하면 적정 불 세기입니다.');
     }
+    if (elapsed >= 240 && !announced4) {
+      announced4 = true;
+      document.getElementById('flameStatus').textContent = '4분 초과. 불을 높이거나 압력캡을 개방하세요.';
+      speak('4분이 지났습니다. 불을 강하게 높이거나 압력캡을 180도 개방해서 추출을 유도해보세요.');
+    }
     if (elapsed >= 300 && !announced5) {
       announced5 = true;
-      document.getElementById('flameStatus').textContent = '5분 초과. 불이 너무 약합니다.';
+      document.getElementById('flameStatus').textContent = '5분 초과. 테스트를 종료합니다.';
       speak('5분이 지났습니다. 불이 너무 약합니다. 불을 많이 높여서 다시 테스트해보세요.');
       flameRunning = false;
       showFlameResult(elapsed);
@@ -1326,12 +1331,12 @@ function showFlameResult(elapsed) {
     voice = `${fmtVoice(elapsed)}에 추출이 시작됐습니다. 완벽한 불 세기입니다. 이 세기를 유지하세요.`;
   } else if (elapsed <= 300) {
     emoji = '⚠️'; title = '불이 약간 약합니다';
-    desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>불을 조금 높여서 다시 테스트해보세요.`;
-    voice = `${fmtVoice(elapsed)}에 추출이 시작됐습니다. 불이 약간 약합니다. 조금 높여서 다시 테스트해보세요.`;
+    desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>불을 조금 높이거나 압력캡을 180도 개방해서<br>추출을 유도해보세요.`;
+    voice = `${fmtVoice(elapsed)}에 추출이 시작됐습니다. 불이 약간 약합니다. 불을 조금 높이거나 압력캡을 180도 개방해서 추출을 유도해보세요.`;
   } else {
     emoji = '🔴'; title = '불이 너무 약합니다';
-    desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>불을 많이 높여서 다시 테스트해보세요.`;
-    voice = `불이 너무 약합니다. 불을 많이 높여서 다시 테스트해보세요.`;
+    desc = `추출이 시작되지 않았습니다.<br>불을 많이 높이거나 압력캡을 180도 개방해서<br>추출을 유도해보세요.`;
+    voice = `불이 너무 약합니다. 불을 많이 높이거나 압력캡을 180도 개방해서 추출을 유도해보세요.`;
   }
 
   document.getElementById('flameResultEmoji').textContent = emoji;
@@ -1619,7 +1624,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.3.8';
+const CURRENT_VERSION = 'v1.4.0';
 
 async function checkVersionFromServer() {
   try {
@@ -1690,7 +1695,7 @@ const LANG_VOICE = { ko: 'ko-KR', en: 'en-US' };
 const I18N = {
   ko: {
     seg0: '분쇄분석AI', seg1: '타이머', seg2: '기록',
-    navShop: '소모품', navProduct: '매커포트',
+    navShop: '소모품', navProduct: '매커포트예약',
     camTitle: '원두 사진 촬영 안내',
     camSub: '흰색 바탕 위에 분쇄된 원두를 넓게 펼쳐 촬영하세요\n100원 동전을 함께 놓으면 더 정확합니다',
     camTip: '렌즈를 최대한 가깝게 대고\n터치해 초점을 맞춘 후 촬영하세요',
@@ -1752,7 +1757,7 @@ const I18N = {
   },
   en: {
     seg0: 'Grind AI', seg1: 'Timer', seg2: 'History',
-    navShop: 'Supplies', navProduct: 'Maekerpot',
+    navShop: 'Supplies', navProduct: 'Maekerpot Reserve',
     camTitle: 'Photo Guide',
     camSub: 'Place ground coffee on white paper and take a photo.\nAdding a coin improves accuracy.',
     camTip: 'Get as close as possible\nand tap to focus before shooting.',
