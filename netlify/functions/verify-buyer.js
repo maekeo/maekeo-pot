@@ -46,15 +46,21 @@ exports.handler = async (event) => {
     const csv = await fetchCSV(SHEET_CSV_URL);
     const lines = csv.split('\n').slice(1); // 헤더 제거
 
+    console.log('CSV 총 라인:', lines.length);
+    console.log('첫 3줄 샘플:', lines.slice(0, 3));
+
     const input = query.trim().replace(/\s/g, '');
+    console.log('입력값:', input);
 
     const found = lines.some(line => {
       const cols = line.split(',');
       if (cols.length < 2) return false;
-      const name  = (cols[0] || '').trim().replace(/\s/g, '');
-      const phone = (cols[1] || '').trim().replace(/[-\s]/g, '');
+      const name  = (cols[0] || '').trim().replace(/\s/g, '').replace(/\r/g, '');
+      const phone = (cols[1] || '').trim().replace(/[-\s\r]/g, '');
       const inputPhone = input.replace(/[-\s]/g, '');
-      return name === input || phone === inputPhone;
+      const match = name === input || phone === inputPhone;
+      if (match) console.log('매칭됨:', name, phone);
+      return match;
     });
 
     if (found) {
