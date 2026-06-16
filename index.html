@@ -258,12 +258,11 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.4.0</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.4.1</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
-      <a href="https://www.youtube.com/@maeilcoffee/posts" target="_blank" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;text-decoration:none">📢 공지</a>
-      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="padding:8px 14px;font-size:13px" id="navShop">소모품</a>
       <a class="nav-link" href="https://www.maekeo.kr/" target="_blank" style="padding:8px 14px;font-size:13px" id="navProduct">매커포트예약</a>
+      <button onclick="openBuyerModal()" style="border:none;background:var(--blue);color:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer">1차~4차 구매자</button>
     </div>
   </div>
   <div class="seg-wrap">
@@ -553,6 +552,47 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeApiKeyModal()">취소</button>
       <button class="btn btn-primary" style="flex:2" onclick="saveApiKey()">저장 후 분석</button>
+    </div>
+  </div>
+</div>
+
+<!-- 구매자 인증 모달 1 — 입력 -->
+<div class="modal-bg" id="buyerModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">1차~4차 프리오더 참여자 전용</div>
+    <div class="modal-desc" style="line-height:1.7">
+      해당 페이지는 <b>1차~4차 프리오더 참여자</b>에게 제공되는 정보 페이지입니다.<br><br>
+      아래 입력란에 <b>주문자 이름 또는 전화번호</b>를 입력하고 확인을 눌러주세요.
+    </div>
+    <input id="buyerInput" type="text" placeholder="이름 또는 전화번호 (예: 010-1234-5678)"
+      style="width:100%;box-sizing:border-box;padding:14px 16px;border:1.5px solid var(--sep);border-radius:12px;background:var(--fill);color:var(--label);font-family:inherit;font-size:16px;margin-bottom:4px;outline:none"
+      onkeydown="if(event.key==='Enter')verifyBuyer()">
+    <div id="buyerError" style="font-size:13px;color:var(--red);min-height:20px;padding:4px 4px 8px"></div>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeBuyerModal()">취소</button>
+      <button class="btn btn-primary" style="flex:2" id="buyerConfirmBtn" onclick="verifyBuyer()">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- 구매자 인증 모달 2 — 성공 -->
+<div class="modal-bg" id="buyerSuccessModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:8px 0 4px">
+      <div style="font-size:48px;margin-bottom:12px">🎁</div>
+      <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:16px">특별 할인 이벤트</div>
+    </div>
+    <div class="card" style="background:var(--fill);border-radius:16px;padding:20px;margin-bottom:20px;line-height:1.8">
+      <div style="font-size:15px;color:var(--label)">
+        해당 상품(바스켓)은 참여자분들에게 제공하는 <b>특별 할인 이벤트</b>입니다.<br><br>
+        📦 발송은 <b>8월 초</b> 예정입니다.
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeBuyerSuccessModal()">닫기</button>
+      <button class="btn btn-primary" style="flex:2" onclick="goToPurchasePage()">구매 페이지로 이동 →</button>
     </div>
   </div>
 </div>
@@ -1352,6 +1392,66 @@ function closeFlameModal() {
   document.getElementById('flameStartBtn').onclick = flameTestStart;
 }
 
+// ═══ 1차~4차 구매자 인증 ═══
+function openBuyerModal() {
+  document.getElementById('buyerInput').value = '';
+  document.getElementById('buyerError').textContent = '';
+  document.getElementById('buyerConfirmBtn').textContent = '확인';
+  document.getElementById('buyerConfirmBtn').disabled = false;
+  document.getElementById('buyerModal').classList.add('show');
+  setTimeout(() => document.getElementById('buyerInput').focus(), 350);
+}
+
+function closeBuyerModal() {
+  document.getElementById('buyerModal').classList.remove('show');
+}
+
+function closeBuyerSuccessModal() {
+  document.getElementById('buyerSuccessModal').classList.remove('show');
+}
+
+function goToPurchasePage() {
+  window.open('https://maekeo.com/surl/O/97', '_blank');
+  closeBuyerSuccessModal();
+}
+
+async function verifyBuyer() {
+  const query = document.getElementById('buyerInput').value.trim();
+  const errEl = document.getElementById('buyerError');
+  const btn   = document.getElementById('buyerConfirmBtn');
+
+  if (!query || query.length < 2) {
+    errEl.textContent = '이름 또는 전화번호를 입력해주세요.';
+    return;
+  }
+
+  btn.textContent = '확인 중...';
+  btn.disabled = true;
+  errEl.textContent = '';
+
+  try {
+    const r = await fetch('/.netlify/functions/verify-buyer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query })
+    });
+    const d = await r.json();
+
+    if (d.verified) {
+      closeBuyerModal();
+      document.getElementById('buyerSuccessModal').classList.add('show');
+    } else {
+      errEl.textContent = d.message || '등록된 정보를 찾을 수 없습니다.';
+      btn.textContent = '확인';
+      btn.disabled = false;
+    }
+  } catch(e) {
+    errEl.textContent = '네트워크 오류. 다시 시도해주세요.';
+    btn.textContent = '확인';
+    btn.disabled = false;
+  }
+}
+
 // ═══ 추출 시간대 패턴 인식 ═══
 function checkBrewTimePattern() {
   try {
@@ -1624,7 +1724,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.4.0';
+const CURRENT_VERSION = 'v1.4.1';
 
 async function checkVersionFromServer() {
   try {
