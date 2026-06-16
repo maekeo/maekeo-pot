@@ -1,7 +1,7 @@
 const https = require('https');
 
 // Google Sheets CSV 공개 URL (웹에 게시된 CSV)
-const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/11PFaQ0cLD3xNHz60GlsLDpvqVAvFptOAbA6HsPQGDAg/export?format=csv&gid=0';
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTZ4_rNrYmirrRifIhHzUJHjRdeayYJSexLuDZm0evT3Gkm6BH8CEPWigylzfXmcfM1J_sgAgwjGhzz/pub?output=csv';
 const PURCHASE_URL = 'https://maekeo.com/surl/O/97';
 
 function fetchCSV(url) {
