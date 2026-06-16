@@ -258,7 +258,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.4.4</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.4.5</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a class="nav-link" href="https://www.maekeo.kr/" target="_blank" style="padding:8px 14px;font-size:13px" id="navProduct">매커포트예약</a>
@@ -578,13 +578,21 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 
 <!-- 구매자 인증 모달 2 — 성공 -->
 <div class="modal-bg" id="buyerSuccessModal">
-  <div class="modal-sheet" style="padding:0;overflow:hidden">
-    <div style="padding:16px 16px 0;display:flex;justify-content:flex-end">
-      <button onclick="closeBuyerSuccessModal()" style="border:none;background:var(--fill);color:var(--label2);font-family:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:20px;cursor:pointer">닫기</button>
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:8px 0 4px">
+      <div style="font-size:48px;margin-bottom:12px">🎁</div>
+      <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:16px">특별 할인 이벤트</div>
     </div>
-    <img src="/basket-event.png" alt="매커포트 전용 바스켓 20% 특별 할인" style="width:100%;display:block">
-    <div style="padding:16px">
-      <button onclick="goToPurchasePage()" style="width:100%;padding:16px;border:none;border-radius:12px;background:var(--blue);color:#fff;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer">구매 페이지로 이동 →</button>
+    <div class="card" style="background:var(--fill);border-radius:16px;padding:20px;margin-bottom:20px;line-height:1.8">
+      <div style="font-size:15px;color:var(--label)">
+        해당 상품(바스켓)은 참여자분들에게 제공하는 <b>특별 할인 이벤트</b>입니다.<br><br>
+        📦 발송은 <b>8월 초</b> 예정입니다.
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeBuyerSuccessModal()">닫기</button>
+      <button class="btn btn-primary" style="flex:2" onclick="goToPurchasePage()">구매 페이지로 이동 →</button>
     </div>
   </div>
 </div>
@@ -1716,7 +1724,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.4.4';
+const CURRENT_VERSION = 'v1.4.5';
 
 async function checkVersionFromServer() {
   try {
