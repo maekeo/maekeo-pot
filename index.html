@@ -258,11 +258,12 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.4.9</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.5.0</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
+      <a href="https://www.youtube.com/@maeilcoffee/posts" target="_blank" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;text-decoration:none">📢 공지</a>
+      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="padding:8px 14px;font-size:13px" id="navShop">소모품</a>
       <a class="nav-link" href="https://www.maekeo.kr/" target="_blank" style="padding:8px 14px;font-size:13px" id="navProduct">매커포트예약</a>
-      <button onclick="openBuyerModal()" style="border:none;background:var(--blue);color:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer">1차~4차 구매자</button>
     </div>
   </div>
   <div class="seg-wrap">
@@ -1725,7 +1726,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.4.9';
+const CURRENT_VERSION = 'v1.5.0';
 
 async function checkVersionFromServer() {
   try {
