@@ -258,10 +258,11 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.4.7</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.4.8</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a class="nav-link" href="https://www.maekeo.kr/" target="_blank" style="padding:8px 14px;font-size:13px" id="navProduct">매커포트예약</a>
+      <button onclick="openBuyerModal()" style="border:none;background:var(--blue);color:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer">1차~4차 구매자</button>
     </div>
   </div>
   <div class="seg-wrap">
@@ -1723,7 +1724,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.4.7';
+const CURRENT_VERSION = 'v1.4.8';
 
 async function checkVersionFromServer() {
   try {
