@@ -1,4 +1,4 @@
-const PURCHASE_URL = 'https://maekeo.com/surl/O/97';
+const PURCHASE_URL = 'https://maekeo.com/surl/P/97';
 
 // 1차~4차 프리오더 구매자 명단 (이름, 전화번호)
 const BUYERS = [
