@@ -258,7 +258,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.5.0</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.6.5</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a href="https://www.youtube.com/@maeilcoffee/posts" target="_blank" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;text-decoration:none">📢 공지</a>
@@ -266,7 +266,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <a class="nav-link" href="https://www.maekeo.kr/" target="_blank" style="padding:8px 14px;font-size:13px" id="navProduct">매커포트예약</a>
     </div>
   </div>
-  <div class="seg-wrap">
+  <div class="seg-wrap" id="segWrap">
     <div class="segmented">
       <button class="seg-btn active" onclick="switchTab('grind',this)" id="seg0">분쇄분석AI</button>
       <button class="seg-btn" onclick="switchTab('timer',this)" id="seg1">타이머</button>
@@ -514,6 +514,293 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   </div>
 </div>
 
+<!-- ═══ 문제해결 ═══ -->
+<div class="section" id="fixSection">
+  <div class="gap"></div>
+  <div class="group">
+    <div class="group-hd">자주 발생하는 문제</div>
+
+    <!-- 체결부 누수 -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">💧</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">체결부에서 커피가 새요</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
+            <span>보일러통과 컨테이너를 최대한 조여주세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span>
+            <span>압력캡 안에 있는 압력추 방향이 정상인지 확인해주세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span>
+            <span>원두 분쇄도가 너무 곱거나 너무 굵으면 누수가 발생할 수 있습니다. <b>고운 설탕 입자</b> 정도의 굵기를 기준으로 사용해주세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:4px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">4.</span>
+            <span>위 방법으로도 해결되지 않으면 아래 메일로 문의해주세요.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 추출 시간 5분 초과 -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">⏱️</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">추출 시간이 5분을 넘겨요</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
+            사용하시는 화구의 불 세기마다 차이가 있을 수 있습니다.<br>
+            <b style="color:var(--label)">4분대가 가장 권장하는 추출 시간</b>입니다.
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
+            <span>우선 뜨거운 물만 넣고 <b>4분대에 추출이 시작되는 불 세기</b>를 찾아보세요. (하단 🔥 불 세기 테스트 활용)</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span>
+            <span>인덕션이나 소형 가스불의 경우 압력캡을 180도~360도 개방해서 추출 시간을 4분대에 맞춰보세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span>
+            <span>너무 강한 템핑은 피해주세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:4px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">4.</span>
+            <span>너무 곱거나 너무 굵은 분쇄도도 영향을 줄 수 있습니다. <b>고운 설탕 입자</b> 정도의 굵기를 기준으로 사용해주세요.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 컵 돌아감 -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">🔧</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">컵이 돌아가요</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
+            사용자의 체결 강도에 따라 간혹 컵이 돌아갈 수 있습니다.<br>
+            이 경우 체결이 정상적으로 되지 않아 <b style="color:var(--label)">체결부 누수</b>가 생길 수 있고, 추출이 정상적으로 이루어지지 않습니다.
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
+            <span>컵을 최대한 시계 방향으로 조여주세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span>
+            <span>컵 내부에 있는 육각 나사 2개 중 1개를 먼저 조여주세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span>
+            <span>나머지 육각 나사를 조여주세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:4px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">4.</span>
+            <span>나사 정렬 정도는 신경쓰지 않으셔도 됩니다.</span>
+          </div>
+          <a href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none">
+            🛒 매커포트 수리키트 구매하기
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 안전밸브 압력 누수 -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">⚙️</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">안전밸브에서 압력이 새요</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
+            <span>안전밸브에서 압력이 새는 경우 육각 나사를 조금 더 조여주세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span>
+            <span>육각 나사를 조여도 압력이 계속 새는 경우는 <b>실링 손상</b>으로 발생할 수 있습니다.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:4px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span>
+            <span>실링은 <b>자가 교체가 가능</b>합니다.</span>
+          </div>
+          <a href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none">
+            🛒 실링 소모품 구매하기
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 실리콘 압력밸브 이탈 -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">🔘</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">하단 실리콘 압력밸브가 이탈돼요</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
+            참고로 실리콘 압력밸브 입구가 작은 틈으로 개방되어 있는 것은 <b style="color:var(--label)">의도된 설계</b>입니다.
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
+            <span>초기 사용 시 실리콘 압력밸브가 자리 잡기 전이라 이탈이 생길 수 있습니다.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span>
+            <span>실리콘 압력밸브를 장착할 때 나사를 돌리듯이 돌리면서 넣으면 빠지지 않고 잘 장착됩니다.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span>
+            <span>커피 추출 후 매번 압력밸브를 빼서 세척하실 필요는 없습니다.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:4px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">4.</span>
+            <span>실리콘 압력밸브를 분실하신 경우 소모품에서 구매 가능합니다.</span>
+          </div>
+          <a href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none">
+            🛒 실리콘 압력밸브 구매하기
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 추출 시 압력이 세게 나오는 현상 -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">💨</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">추출될 때 압력이 세게 나와요</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
+            매커포트는 <b style="color:var(--label)">7bar의 높은 압력</b>으로 추출되는 모카포트입니다.<br>
+            일반적인 모카포트는 1~3bar의 낮은 압력으로 추출되기 때문에 상대적으로 추출 압력이 높게 느껴질 수 있습니다.
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
+            <span>웹에서 제공되는 <b>타이머</b> 사용을 권장합니다.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span>
+            <span>원두 분쇄도를 점검해보세요. 웹에서 제공되는 <b>분쇄도 측정</b> 기능을 사용해보세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span>
+            <span>강한 템핑보다는 디스트리뷰터만 사용하거나 약한 템핑으로 마무리하세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:4px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">4.</span>
+            <span>압력캡을 약간 개방해서 추출해보세요.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 크레마가 잘 안 나옴 -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">☕</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">크레마 추출이 잘 안 돼요</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
+            오래된 원두나 분쇄 원두의 경우 개봉 후 <b style="color:var(--label)">2주일 이상</b> 지나면 크레마 추출이 잘 안될 수 있습니다.
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
+            <span>원두 분쇄도를 확인해보세요. 웹에서 제공하는 <b>분쇄도 측정</b> 기능을 사용해보세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span>
+            <span>원두 도징량은 <b>20~23g</b> 사용을 권장합니다.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:4px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span>
+            <span>강한 템핑보다는 약한 템핑 또는 디스트리뷰터만 사용해보세요.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2컵 추출량 맞추기 어려움 -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">🧊</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">2컵 추출량(60ml 이상) 맞추기 어려워요</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div>
+            매커포트는 일반 모카포트에 비해 압력이 높기 때문에 <b style="color:var(--label)">추출 후반부로 갈수록 압력이 높아지는 구조</b>입니다.<br><br>
+            기계적인 제어가 어렵기 때문에 2컵량에 해당하는 커피 추출을 천천히 마무리할 수 없습니다. 이 부분을 해결하기 위해 <b style="color:var(--label)">아이스컷 추출법</b>을 권장해드리고 있습니다.<br><br>
+            해당 추출법은 아래 영상에서 확인하실 수 있습니다.
+          </div>
+          <a href="https://youtu.be/OOEnyGT81hM" target="_blank" style="display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none">
+            ▶️ 아이스컷 추출법 영상 보기
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 압력캡 사용법 -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">🎛️</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">압력캡은 어떻게 사용하나요?</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div>
+            매커포트의 <b style="color:var(--label)">압력캡</b>은 사용자가 추출 압력을 직접 조절할 수 있는 기능으로, 일반 모카포트에서는 제공되지 않는 매커포트만의 차별화된 기능입니다.<br><br>
+            압력캡을 최대 <b style="color:var(--label)">360도까지 개방</b>하면 사용자의 추출 시간을 단축하고 커피 향미를 극대화할 수 있습니다.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 </div><!-- /app -->
 
 <!-- Tab Bar -->
@@ -526,6 +813,9 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   </button>
   <button class="tab-item" id="tab-history" onclick="switchTab('history',null,this)">
     <span class="tab-pip">REC</span><span class="tab-lbl">기록</span>
+  </button>
+  <button class="tab-item" id="tab-fix" onclick="switchTab('fix',null,this)">
+    <span class="tab-pip">Q&A</span><span class="tab-lbl">문제해결</span>
   </button>
 </div>
 
@@ -605,17 +895,18 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 // ═══ TAB ═══
 function switchTab(tab, segBtn, tabBtn) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  const sectionMap = { grind: 'grindSection', timer: 'timerSection', history: 'historySection' };
+  const sectionMap = { grind: 'grindSection', timer: 'timerSection', history: 'historySection', fix: 'fixSection' };
   document.getElementById(sectionMap[tab]).classList.add('active');
   document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
   if (segBtn) segBtn.classList.add('active');
-  else {
+  else if (tab !== 'fix') {
     const idx = { grind: 0, timer: 1, history: 2 }[tab];
     document.querySelectorAll('.seg-btn')[idx].classList.add('active');
   }
   document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
   if (tabBtn) tabBtn.classList.add('active');
   else document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('segWrap').style.display = (tab === 'fix') ? 'none' : 'block';
   if (tab === 'history') renderHistory();
 }
 
@@ -1454,6 +1745,15 @@ async function verifyBuyer() {
   }
 }
 
+// ═══ 문제해결 아코디언 ═══
+function toggleFixCard(btn) {
+  const content = btn.nextElementSibling;
+  const chevron = btn.querySelector('.fix-chevron');
+  const isOpen = content.style.display === 'block';
+  content.style.display = isOpen ? 'none' : 'block';
+  chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
 // ═══ 추출 시간대 패턴 인식 ═══
 function checkBrewTimePattern() {
   try {
@@ -1726,7 +2026,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.5.0';
+const CURRENT_VERSION = 'v1.6.5';
 
 async function checkVersionFromServer() {
   try {
