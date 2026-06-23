@@ -258,7 +258,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.6.5</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.6.6</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a href="https://www.youtube.com/@maeilcoffee/posts" target="_blank" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;text-decoration:none">📢 공지</a>
@@ -517,6 +517,106 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 <!-- ═══ 문제해결 ═══ -->
 <div class="section" id="fixSection">
   <div class="gap"></div>
+
+  <!-- 처음 사용하시나요? -->
+  <div class="group">
+    <div class="group-hd">처음 사용하시나요?</div>
+
+    <!-- STEP 1 -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">🔥</span>
+          <span>
+            <div style="font-size:11px;color:var(--blue);font-weight:700;margin-bottom:2px">STEP 1</div>
+            <div style="font-size:15px;font-weight:600;color:var(--label)">내 화구에 맞는 불 세기 찾기</div>
+          </span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
+            원두 없이 <b style="color:var(--label)">뜨거운 물 170ml</b>만 넣고 진행합니다.<br>첫 사용 시 1회만 진행하면 됩니다.
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
+            <span>뜨거운 물 <b>170ml</b>를 보일러통에 채워주세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span>
+            <span>체결을 최대한 조여주세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span>
+            <span><b>강불</b>로 시작한 후 추출물이 나오는 시간을 확인하세요.</span>
+          </div>
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:13px">
+            <div style="margin-bottom:6px;font-weight:600;color:var(--label)">📊 추출 시작 시간 기준</div>
+            <div style="margin-bottom:4px">✅ <b>4분대</b> → 적정 불 세기입니다</div>
+            <div style="margin-bottom:4px">⚠️ <b>3분대</b> → 불을 조금 줄이세요</div>
+            <div>⚠️ <b>5분 이상</b> → 불을 높이세요</div>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:4px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">4.</span>
+            <span>인덕션이나 소형 가스불은 <b>압력캡을 180도 개방</b>해서 추출해보세요. 3분대에 시작되면 캡을 조금씩 닫아 4분대에 맞게 조정하세요.</span>
+          </div>
+          <button onclick="switchTab('timer',null,document.getElementById('tab-timer'));document.getElementById('flameModal').classList.add('show')" style="width:100%;margin-top:12px;padding:12px;border:none;border-radius:10px;background:var(--orange);color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">
+            🔥 불 세기 테스트 바로가기
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">☕</span>
+          <span>
+            <div style="font-size:11px;color:var(--blue);font-weight:700;margin-bottom:2px">STEP 2</div>
+            <div style="font-size:15px;font-weight:600;color:var(--label)">본 추출하기</div>
+          </span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
+            <span>뜨거운 물 <b>170ml</b>를 보일러통에 채워주세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span>
+            <span>원두 <b>20~24g</b>을 고운 설탕 기준으로 분쇄해 바스켓에 담아주세요. 분쇄도 측정은 앱의 분쇄분석AI를 이용해보세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span>
+            <span>체결을 최대한 조여주세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">4.</span>
+            <span>STEP 1에서 찾은 <b>불 세기</b>로 가열을 시작하세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">5.</span>
+            <span>추출이 시작되면 <b>바로 불을 끄고</b> 잔열로 마무리하세요.</span>
+          </div>
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:13px">
+            <div style="margin-bottom:6px;font-weight:600;color:var(--label)">📏 추출량 기준</div>
+            <div style="margin-bottom:4px">• <b>40ml</b> (1컵 눈금) → 일반 추출</div>
+            <div>• <b>80ml</b> (2컵 눈금) → 아이스컷 추출법 권장</div>
+          </div>
+          <a href="https://youtu.be/OOEnyGT81hM" target="_blank" style="display:block;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none">
+            ▶️ 아이스컷 추출법 영상 보기
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 자주 발생하는 문제 -->
   <div class="group">
     <div class="group-hd">자주 발생하는 문제</div>
 
@@ -798,8 +898,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       </div>
     </div>
 
-  </div>
-</div>
+  </div><!-- /자주 발생하는 문제 group -->
+</div><!-- /fixSection -->
 
 </div><!-- /app -->
 
@@ -2026,7 +2126,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.6.5';
+const CURRENT_VERSION = 'v1.6.6';
 
 async function checkVersionFromServer() {
   try {
