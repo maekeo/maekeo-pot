@@ -258,7 +258,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.6.8</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.6.9</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a href="https://www.youtube.com/@maeilcoffee/posts" target="_blank" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;text-decoration:none">📢 공지</a>
@@ -1476,6 +1476,7 @@ function setCupMode(n) {
     }
   }
   toast(n === 1 ? '☕ 1컵 모드 — 3분대 추출 권장' : '☕☕ 2컵 모드 — 4분대 추출 권장');
+  renderStages();
   updateTimerUI();
 }
 applyCupTimings();
@@ -1491,10 +1492,14 @@ function getElapsed() {
 function initTimer() { renderStages(); updateTimerUI(); }
 
 function renderStages() {
+  const warnStr = fmt(WARN_AT);
+  const dangerStr = fmt(DANGER_AT);
+  const optStr = cupMode === 1 ? '3분대' : '4분대';
+  const cupStr = cupMode === 1 ? '1컵' : '2컵';
   document.getElementById('stageList').innerHTML = `
-    <div class="tl-row upcoming" id="sRow0"><div class="tl-dot" id="tDot0"></div><div class="tl-info"><div class="tl-name">${t('tl0name')}</div><div class="tl-time">${t('tl0time')}</div></div><div class="tl-badge" id="sBadge0">${t('timerStart')}</div></div>
-    <div class="tl-row upcoming" id="sRow1"><div class="tl-dot" id="tDot1"></div><div class="tl-info"><div class="tl-name">${t('tl1name')}</div><div class="tl-time">${t('tl1time')}</div></div><div class="tl-badge" id="sBadge1">${t('timerStart')}</div></div>
-    <div class="tl-row upcoming" id="sRow2"><div class="tl-dot" id="tDot2"></div><div class="tl-info"><div class="tl-name">${t('tl2name')}</div><div class="tl-time">${t('tl2time')}</div></div><div class="tl-badge" id="sBadge2">${t('timerStart')}</div></div>
+    <div class="tl-row upcoming" id="sRow0"><div class="tl-dot" id="tDot0"></div><div class="tl-info"><div class="tl-name">${t('tl0name')}</div><div class="tl-time">0:00 — ${warnStr} · 압력 생성 대기</div></div><div class="tl-badge" id="sBadge0">${t('timerStart')}</div></div>
+    <div class="tl-row upcoming" id="sRow1"><div class="tl-dot" id="tDot1"></div><div class="tl-info"><div class="tl-name">${t('tl1name')}</div><div class="tl-time">${warnStr} 알람 · 압력 안정화 (${cupStr} ${optStr} 추출 권장)</div></div><div class="tl-badge" id="sBadge1">${t('timerStart')}</div></div>
+    <div class="tl-row upcoming" id="sRow2"><div class="tl-dot" id="tDot2"></div><div class="tl-info"><div class="tl-name">${t('tl2name')}</div><div class="tl-time">${dangerStr} 알람 · 과추출 주의</div></div><div class="tl-badge" id="sBadge2">${t('timerStart')}</div></div>
     <div class="tl-row upcoming" id="sRow3"><div class="tl-dot" id="tDot3"></div><div class="tl-info"><div class="tl-name">${t('tl3name')}</div><div class="tl-time">${t('tl3time')}</div></div><div class="tl-badge" id="sBadge3">${t('timerStart')}</div></div>
   `;
 }
@@ -1504,7 +1509,7 @@ function fmt(s) { return `${Math.floor(Math.abs(s)/60)}:${String(Math.abs(s)%60)
 function updateTimerUI() {
   const elapsed = getElapsed();
   let nm, dc;
-  if      (elapsed===0)       { nm=t('timerStageName0'); dc=t('timerStageDesc0'); }
+  if      (elapsed===0)       { nm=t('timerStageName0'); dc=(cupMode===1?'☕ 1컵 — 3분대 추출 권장':'☕☕ 2컵 — 4분대 추출 권장'); }
   else if (elapsed<WARN_AT)   { nm=t('tl0name'); dc=`${t('tl0time')} — ${fmt(WARN_AT-elapsed)}`; }
   else if (elapsed<DANGER_AT) { nm=t('tl1name'); dc=`${fmt(elapsed)} ${t('elapsedLbl')}`; }
   else                        { nm=t('tl2name'); dc=`${fmt(elapsed)} ${t('elapsedLbl')}`; }
@@ -2181,7 +2186,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.6.8';
+const CURRENT_VERSION = 'v1.6.9';
 
 async function checkVersionFromServer() {
   try {
