@@ -258,7 +258,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.6.9</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.7.0</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a href="https://www.youtube.com/@maeilcoffee/posts" target="_blank" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;text-decoration:none">📢 공지</a>
@@ -438,7 +438,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         </div>
         <div class="stage-name" id="stageName">시작 준비</div>
         <div class="stage-desc" id="stageDesc">버튼을 눌러 추출을 시작하세요</div>
-        <div style="margin-top:8px;font-size:12px;font-weight:600;color:var(--green);letter-spacing:-0.1px">권장 추출 시간 4 ~ 5분</div>
+        <div style="margin-top:8px;font-size:12px;font-weight:600;color:var(--green);letter-spacing:-0.1px" id="timerRecommendText">권장 추출 시간 3분대 (1컵)</div>
         <div class="prog-dots">
           <div class="prog-dot" id="dot0"></div>
           <div class="prog-dot" id="dot1"></div>
@@ -1475,6 +1475,8 @@ function setCupMode(n) {
       b1.style.background = 'transparent'; b1.style.color = 'var(--label2)'; b1.style.borderColor = 'var(--sep)';
     }
   }
+  const recEl = document.getElementById('timerRecommendText');
+  if (recEl) recEl.textContent = n === 1 ? '권장 추출 시간 3분대 (1컵)' : '권장 추출 시간 4분대 (2컵)';
   toast(n === 1 ? '☕ 1컵 모드 — 3분대 추출 권장' : '☕☕ 2컵 모드 — 4분대 추출 권장');
   renderStages();
   updateTimerUI();
@@ -2186,7 +2188,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.6.9';
+const CURRENT_VERSION = 'v1.7.0';
 
 async function checkVersionFromServer() {
   try {
@@ -2448,9 +2450,9 @@ function applyLang() {
   if (timerVals[1]) timerVals[1].textContent = t('dosingVal');
   if (timerVals[2]) timerVals[2].textContent = t('waterVal');
 
-  // Timer recommend text
-  const recommend = document.querySelector('.timer-hero [style*="green"]');
-  if (recommend) recommend.textContent = t('timerRecommend');
+  // Timer recommend text (컵수 기준)
+  const recommend = document.getElementById('timerRecommendText');
+  if (recommend) recommend.textContent = cupMode === 1 ? '권장 추출 시간 3분대 (1컵)' : '권장 추출 시간 4분대 (2컵)';
 
   // Screen warn
   const warnStrong = document.querySelector('.screen-warn-text strong');
