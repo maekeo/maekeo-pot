@@ -258,7 +258,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.6.6</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.6.8</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a href="https://www.youtube.com/@maeilcoffee/posts" target="_blank" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;text-decoration:none">📢 공지</a>
@@ -414,6 +414,11 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <!-- 타이머 카드 -->
   <div class="group" style="margin-top:6px">
     <div class="timer-card">
+      <!-- 컵수 선택 -->
+      <div style="display:flex;gap:8px;padding:16px 16px 0">
+        <button id="cup1Btn" onclick="setCupMode(1)" style="flex:1;padding:10px;border:1.5px solid var(--blue);border-radius:12px;background:var(--blue);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">☕ 1컵 <span style="font-weight:400;font-size:12px">3분대</span></button>
+        <button id="cup2Btn" onclick="setCupMode(2)" style="flex:1;padding:10px;border:1.5px solid var(--sep);border-radius:12px;background:transparent;color:var(--label2);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">☕☕ 2컵 <span style="font-weight:400;font-size:12px">4분대</span></button>
+      </div>
       <div class="timer-hero">
         <div class="ring-wrap">
           <svg class="timer-svg" viewBox="0 0 196 196">
@@ -459,9 +464,11 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div class="modal-handle"></div>
       <div class="modal-title">🔥 불 세기 테스트</div>
       <div class="modal-desc" id="flameModalDesc" style="line-height:1.7">
-        원두 없이 <b>뜨거운 물 150~170g</b>만 채우세요.<br>
+        원두 없이 뜨거운 물만 채우세요.<br>
+        <b>1컵: 110~130ml · 2컵: 150~170ml</b><br>
         물이 추출되기 시작하는 시간을 확인합니다.<br>
-        <b>3분~4분 이내</b>에 추출이 시작되면 적정 불 세기입니다.
+        <b>1컵은 3분대, 2컵은 4분대</b>에 추출이 시작되면 적정 불 세기입니다.<br>
+        <span style="font-size:12px;color:var(--label3)">※ 타이머 탭에서 선택한 컵수 기준으로 판정합니다.</span>
       </div>
       <!-- 타이머 표시 -->
       <div id="flameTimerWrap" style="display:none;text-align:center;padding:16px 0">
@@ -497,7 +504,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="card">
       <div class="row"><span class="row-label">총 경과 시간</span><span class="row-value" id="elapsedDisplay" style="font-variant-numeric:tabular-nums">0:00</span></div>
       <div class="row"><span class="row-label">권장 도징량</span><span class="row-value">20g ~ 23g</span></div>
-      <div class="row"><span class="row-label">물 사용량</span><span class="row-value">뜨거운 물 150 ~ 170 ml</span></div>
+      <div class="row"><span class="row-label">물 사용량</span><span class="row-value">1컵 110~130ml · 2컵 150~170ml</span></div>
+      <div class="row"><span class="row-label">권장 추출 시간</span><span class="row-value">1컵 3분대 · 2컵 4분대</span></div>
     </div>
   </div>
 </div>
@@ -537,11 +545,12 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div class="fix-content" style="display:none;padding:0 16px 18px">
         <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
-            원두 없이 <b style="color:var(--label)">뜨거운 물 170ml</b>만 넣고 진행합니다.<br>첫 사용 시 1회만 진행하면 됩니다.
+            원두 없이 <b style="color:var(--label)">뜨거운 물</b>만 넣고 진행합니다.<br>
+            <b style="color:var(--label)">1컵: 110~130ml · 2컵: 150~170ml</b><br>첫 사용 시 1회만 진행하면 됩니다.
           </div>
           <div style="display:flex;gap:10px;margin-bottom:12px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
-            <span>뜨거운 물 <b>170ml</b>를 보일러통에 채워주세요.</span>
+            <span>뜨거운 물을 컵수에 맞게 보일러통에 채워주세요. (1컵 110~130ml / 2컵 150~170ml)</span>
           </div>
           <div style="display:flex;gap:10px;margin-bottom:12px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span>
@@ -553,13 +562,13 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           </div>
           <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:13px">
             <div style="margin-bottom:6px;font-weight:600;color:var(--label)">📊 추출 시작 시간 기준</div>
-            <div style="margin-bottom:4px">✅ <b>4분대</b> → 적정 불 세기입니다</div>
-            <div style="margin-bottom:4px">⚠️ <b>3분대</b> → 불을 조금 줄이세요</div>
-            <div>⚠️ <b>5분 이상</b> → 불을 높이세요</div>
+            <div style="margin-bottom:4px">✅ <b>1컵: 3분대</b> / <b>2컵: 4분대</b> → 적정 불 세기입니다</div>
+            <div style="margin-bottom:4px">⚠️ 기준보다 빠름 → 불을 조금 줄이세요</div>
+            <div>⚠️ 기준보다 느림 → 불을 높이거나 압력캡을 개방하세요</div>
           </div>
           <div style="display:flex;gap:10px;margin-bottom:4px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">4.</span>
-            <span>인덕션이나 소형 가스불은 <b>압력캡을 180도 개방</b>해서 추출해보세요. 3분대에 시작되면 캡을 조금씩 닫아 4분대에 맞게 조정하세요.</span>
+            <span>인덕션이나 소형 가스불은 <b>압력캡을 180도 개방</b>해서 추출해보세요. 기준보다 빨리 시작되면 캡을 조금씩 닫아 컵수 기준 시간에 맞게 조정하세요.</span>
           </div>
           <button onclick="switchTab('timer',null,document.getElementById('tab-timer'));document.getElementById('flameModal').classList.add('show')" style="width:100%;margin-top:12px;padding:12px;border:none;border-radius:10px;background:var(--orange);color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">
             🔥 불 세기 테스트 바로가기
@@ -582,9 +591,14 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       </button>
       <div class="fix-content" style="display:none;padding:0 16px 18px">
         <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
+            <div style="margin-bottom:6px;font-weight:600;color:var(--label)">💧 컵수별 물 사용량 & 추출 기준</div>
+            <div style="margin-bottom:4px">• <b>1컵</b>: 물 110~130ml → 추출량 40ml · <b>3분대 추출 권장</b></div>
+            <div>• <b>2컵</b>: 물 150~170ml → 추출량 80ml · <b>4분대 추출 권장</b> (아이스컷 추천)</div>
+          </div>
           <div style="display:flex;gap:10px;margin-bottom:12px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
-            <span>뜨거운 물 <b>170ml</b>를 보일러통에 채워주세요.</span>
+            <span>뜨거운 물을 컵수에 맞게 보일러통에 채워주세요.</span>
           </div>
           <div style="display:flex;gap:10px;margin-bottom:12px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span>
@@ -601,11 +615,6 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <div style="display:flex;gap:10px;margin-bottom:12px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">5.</span>
             <span>추출이 시작되면 <b>바로 불을 끄고</b> 잔열로 마무리하세요.</span>
-          </div>
-          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:13px">
-            <div style="margin-bottom:6px;font-weight:600;color:var(--label)">📏 추출량 기준</div>
-            <div style="margin-bottom:4px">• <b>40ml</b> (1컵 눈금) → 일반 추출</div>
-            <div>• <b>80ml</b> (2컵 눈금) → 아이스컷 추출법 권장</div>
           </div>
           <a href="https://youtu.be/OOEnyGT81hM" target="_blank" style="display:block;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none">
             ▶️ 아이스컷 추출법 영상 보기
@@ -664,15 +673,15 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
             사용하시는 화구의 불 세기마다 차이가 있을 수 있습니다.<br>
-            <b style="color:var(--label)">4분대가 가장 권장하는 추출 시간</b>입니다.
+            <b style="color:var(--label)">1컵은 3분대, 2컵은 4분대</b>가 가장 권장하는 추출 시간입니다.
           </div>
           <div style="display:flex;gap:10px;margin-bottom:12px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
-            <span>우선 뜨거운 물만 넣고 <b>4분대에 추출이 시작되는 불 세기</b>를 찾아보세요. (하단 🔥 불 세기 테스트 활용)</span>
+            <span>우선 뜨거운 물만 넣고 <b>컵수 기준 시간(1컵 3분대 / 2컵 4분대)에 추출이 시작되는 불 세기</b>를 찾아보세요. (타이머 탭 🔥 불 세기 테스트 활용)</span>
           </div>
           <div style="display:flex;gap:10px;margin-bottom:12px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span>
-            <span>인덕션이나 소형 가스불의 경우 압력캡을 180도~360도 개방해서 추출 시간을 4분대에 맞춰보세요.</span>
+            <span>인덕션이나 소형 가스불의 경우 압력캡을 180도~360도 개방해서 추출 시간을 컵수 기준(1컵 3분대 / 2컵 4분대)에 맞춰보세요.</span>
           </div>
           <div style="display:flex;gap:10px;margin-bottom:12px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span>
@@ -1434,7 +1443,43 @@ function saveAndAnalyze() {
 }
 
 // ═══ TIMER ═══
-const RING_C = 534, WARN_AT = 180, DANGER_AT = 360, STOP_AT = 420;
+const RING_C = 534;
+// 컵수 모드: 1컵 = 3분대 권장, 2컵 = 4분대 권장
+let cupMode = parseInt(localStorage.getItem('maekeo_cup_mode') || '1');
+let WARN_AT = 180, DANGER_AT = 300, STOP_AT = 420;
+
+function applyCupTimings() {
+  if (cupMode === 1) {
+    WARN_AT = 180;   // 3분 — 불 줄이기
+    DANGER_AT = 300; // 5분 — 과추출 주의 (1컵은 3~4분 최적)
+    STOP_AT = 420;
+  } else {
+    WARN_AT = 240;   // 4분 — 불 줄이기
+    DANGER_AT = 360; // 6분 — 과추출 주의 (2컵은 4~5분 최적)
+    STOP_AT = 420;
+  }
+}
+
+function setCupMode(n) {
+  cupMode = n;
+  localStorage.setItem('maekeo_cup_mode', String(n));
+  applyCupTimings();
+  const b1 = document.getElementById('cup1Btn');
+  const b2 = document.getElementById('cup2Btn');
+  if (b1 && b2) {
+    if (n === 1) {
+      b1.style.background = 'var(--blue)'; b1.style.color = '#fff'; b1.style.borderColor = 'var(--blue)';
+      b2.style.background = 'transparent'; b2.style.color = 'var(--label2)'; b2.style.borderColor = 'var(--sep)';
+    } else {
+      b2.style.background = 'var(--blue)'; b2.style.color = '#fff'; b2.style.borderColor = 'var(--blue)';
+      b1.style.background = 'transparent'; b1.style.color = 'var(--label2)'; b1.style.borderColor = 'var(--sep)';
+    }
+  }
+  toast(n === 1 ? '☕ 1컵 모드 — 3분대 추출 권장' : '☕☕ 2컵 모드 — 4분대 추출 권장');
+  updateTimerUI();
+}
+applyCupTimings();
+
 let startedAt = null, accElapsed = 0, timerRAF = null, timerInterval = null;
 let isRunning = false, warnFired = false, dangerFired = false;
 
@@ -1686,6 +1731,11 @@ function flameTestStart() {
   speak('가열을 시작합니다. 물이 추출되기 시작하는 시간을 확인하세요.');
 
   let announced1 = false, announced2 = false, announced3 = false, announced4 = false, announced5 = false;
+  // 컵수별 기준: 1컵 최적 3:00~4:00, 2컵 최적 4:00~5:00
+  const optMin = cupMode === 1 ? 180 : 240;
+  const optMax = cupMode === 1 ? 240 : 300;
+  const endAt  = optMax + 60;
+  const cupLabel = cupMode === 1 ? '1컵' : '2컵';
 
   function tick() {
     if (!flameRunning) return;
@@ -1697,25 +1747,25 @@ function flameTestStart() {
       document.getElementById('flameStatus').textContent = '1분 경과. 아직 정상입니다.';
       speak('1분 경과. 아직 물이 나오지 않아야 정상입니다.');
     }
-    if (elapsed >= 120 && !announced2) {
+    if (elapsed >= optMin - 60 && !announced2) {
       announced2 = true;
-      document.getElementById('flameStatus').textContent = '2분 경과. 조금 더 기다려주세요.';
-      speak('2분 경과. 조금 더 기다려주세요.');
+      document.getElementById('flameStatus').textContent = `${fmt(optMin-60)} 경과. 조금 더 기다려주세요.`;
+      speak('조금 더 기다려주세요.');
     }
-    if (elapsed >= 180 && !announced3) {
+    if (elapsed >= optMin && !announced3) {
       announced3 = true;
-      document.getElementById('flameStatus').textContent = '3분~4분 사이에 추출이 시작되면 적정입니다.';
+      document.getElementById('flameStatus').textContent = `${cupLabel} 기준 ${fmt(optMin)}~${fmt(optMax)} 사이 추출 시작이 적정입니다.`;
       speak('지금부터 물이 나오기 시작하면 적정 불 세기입니다.');
     }
-    if (elapsed >= 240 && !announced4) {
+    if (elapsed >= optMax && !announced4) {
       announced4 = true;
-      document.getElementById('flameStatus').textContent = '4분 초과. 불을 높이거나 압력캡을 개방하세요.';
-      speak('4분이 지났습니다. 불을 강하게 높이거나 압력캡을 180도 개방해서 추출을 유도해보세요.');
+      document.getElementById('flameStatus').textContent = '적정 시간 초과. 불을 높이거나 압력캡을 개방하세요.';
+      speak('적정 시간이 지났습니다. 불을 강하게 높이거나 압력캡을 180도 개방해서 추출을 유도해보세요.');
     }
-    if (elapsed >= 300 && !announced5) {
+    if (elapsed >= endAt && !announced5) {
       announced5 = true;
-      document.getElementById('flameStatus').textContent = '5분 초과. 테스트를 종료합니다.';
-      speak('5분이 지났습니다. 불이 너무 약합니다. 불을 많이 높여서 다시 테스트해보세요.');
+      document.getElementById('flameStatus').textContent = '테스트를 종료합니다.';
+      speak('불이 너무 약합니다. 불을 많이 높여서 다시 테스트해보세요.');
       flameRunning = false;
       showFlameResult(elapsed);
       return;
@@ -1750,25 +1800,30 @@ function showFlameResult(elapsed) {
 
   let emoji, title, desc, voice;
 
-  if (elapsed < 120) {
+  // 컵수별 최적 구간: 1컵 3:00~4:00, 2컵 4:00~5:00
+  const optMin = cupMode === 1 ? 180 : 240;
+  const optMax = cupMode === 1 ? 240 : 300;
+  const cupLabel = cupMode === 1 ? '1컵' : '2컵';
+
+  if (elapsed < optMin - 60) {
     emoji = '🔴'; title = '불이 너무 강합니다';
-    desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>불을 많이 줄여서 다시 테스트해보세요.`;
+    desc = `${fmt(elapsed)}에 추출이 시작됐습니다. (${cupLabel} 기준)<br>불을 많이 줄여서 다시 테스트해보세요.`;
     voice = `${fmtVoice(elapsed)}에 추출이 시작됐습니다. 불이 너무 강합니다. 불을 많이 줄여서 다시 테스트해보세요.`;
-  } else if (elapsed < 180) {
+  } else if (elapsed < optMin) {
     emoji = '⚠️'; title = '불이 약간 강합니다';
-    desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>불을 조금 줄여서 다시 테스트해보세요.`;
+    desc = `${fmt(elapsed)}에 추출이 시작됐습니다. (${cupLabel} 기준)<br>불을 조금 줄여서 다시 테스트해보세요.`;
     voice = `${fmtVoice(elapsed)}에 추출이 시작됐습니다. 불이 약간 강합니다. 조금 줄여서 다시 테스트해보세요.`;
-  } else if (elapsed <= 240) {
+  } else if (elapsed <= optMax) {
     emoji = '✅'; title = '완벽한 불 세기입니다!';
-    desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>이 불 세기를 유지하세요.`;
+    desc = `${fmt(elapsed)}에 추출이 시작됐습니다. (${cupLabel} 기준)<br>이 불 세기를 유지하세요.`;
     voice = `${fmtVoice(elapsed)}에 추출이 시작됐습니다. 완벽한 불 세기입니다. 이 세기를 유지하세요.`;
-  } else if (elapsed <= 300) {
+  } else if (elapsed <= optMax + 60) {
     emoji = '⚠️'; title = '불이 약간 약합니다';
-    desc = `${fmt(elapsed)}에 추출이 시작됐습니다.<br>불을 조금 높이거나 압력캡을 180도 개방해서<br>추출을 유도해보세요.`;
+    desc = `${fmt(elapsed)}에 추출이 시작됐습니다. (${cupLabel} 기준)<br>불을 조금 높이거나 압력캡을 180도 개방해서<br>추출을 유도해보세요.`;
     voice = `${fmtVoice(elapsed)}에 추출이 시작됐습니다. 불이 약간 약합니다. 불을 조금 높이거나 압력캡을 180도 개방해서 추출을 유도해보세요.`;
   } else {
     emoji = '🔴'; title = '불이 너무 약합니다';
-    desc = `추출이 시작되지 않았습니다.<br>불을 많이 높이거나 압력캡을 180도 개방해서<br>추출을 유도해보세요.`;
+    desc = `추출이 너무 늦게 시작됐습니다. (${cupLabel} 기준)<br>불을 많이 높이거나 압력캡을 180도 개방해서<br>추출을 유도해보세요.`;
     voice = `불이 너무 약합니다. 불을 많이 높이거나 압력캡을 180도 개방해서 추출을 유도해보세요.`;
   }
 
@@ -2126,7 +2181,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.6.6';
+const CURRENT_VERSION = 'v1.6.8';
 
 async function checkVersionFromServer() {
   try {
@@ -2226,7 +2281,7 @@ const I18N = {
     dangerTitle: '추출 시간 초과 — 과추출 주의',
     dangerBody: '6분을 넘었습니다. 고압 추출이 길어지면 크레마가 무너지고 쓴맛이 강해집니다.',
     elapsedLbl: '총 경과 시간', dosingLbl: '권장 도징량', dosingVal: '20g ~ 23g',
-    waterLbl: '물 사용량', waterVal: '뜨거운 물 150 ~ 170 ml',
+    waterLbl: '물 사용량', waterVal: '1컵 110~130ml · 2컵 150~170ml',
     tl0name: '중불 가열', tl0time: '0:00 — 3:00 · 압력 생성 대기',
     tl1name: '불 줄이기', tl1time: '3:00 알람 · 압력 안정화',
     tl2name: '추출 시간 초과', tl2time: '6:00 알람 · 과추출 주의',
@@ -2288,7 +2343,7 @@ const I18N = {
     dangerTitle: 'Over-Extraction Warning',
     dangerBody: 'Exceeded 6 minutes. Long extraction destroys crema and causes bitterness.',
     elapsedLbl: 'Elapsed Time', dosingLbl: 'Recommended Dose', dosingVal: '20g ~ 23g',
-    waterLbl: 'Water Amount', waterVal: 'Hot water 150 ~ 170 ml',
+    waterLbl: 'Water Amount', waterVal: '1 cup 110~130ml · 2 cups 150~170ml',
     tl0name: 'Medium Heat', tl0time: '0:00 — 3:00 · Building pressure',
     tl1name: 'Reduce Heat', tl1time: '3:00 alarm · Stabilize pressure',
     tl2name: 'Overtime', tl2time: '6:00 alarm · Over-extraction risk',
@@ -2433,6 +2488,8 @@ function applyLang() {
 
 initTimer();
 applyLang();
+// 저장된 컵 모드 UI 반영
+if (cupMode === 2) setCupMode(2);
 // 앱 열릴 때마다 버전 체크
 setTimeout(checkVersionFromServer, 1500);
 // 추출 시간대 패턴 체크
