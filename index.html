@@ -258,12 +258,11 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.7.1</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.7.6</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
-      <a href="https://www.youtube.com/@maeilcoffee/posts" target="_blank" style="border:none;background:var(--fill);color:var(--blue);font-family:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;text-decoration:none">📢 공지</a>
-      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="padding:8px 14px;font-size:13px" id="navShop">소모품</a>
-      <a class="nav-link" href="https://www.maekeo.kr/" target="_blank" style="padding:8px 14px;font-size:13px" id="navProduct">매커포트예약</a>
+      <a class="nav-link" href="https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000042" target="_blank" style="padding:8px 14px;font-size:13px" id="navProduct">매커포트예약</a>
+      <button onclick="openBuyerModal()" class="nav-link" style="padding:8px 14px;font-size:13px;border:none;background:var(--fill);font-family:inherit;cursor:pointer" id="navProduct1cup">1컵매커포트예약</button>
     </div>
   </div>
   <div class="seg-wrap" id="segWrap">
@@ -966,10 +965,10 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 <div class="modal-bg" id="buyerModal">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">1차~4차 프리오더 참여자 전용</div>
+    <div class="modal-title">매커포트 사용자를 위한 특별 한정판 예약</div>
     <div class="modal-desc" style="line-height:1.7">
-      해당 페이지는 <b>1차~4차 프리오더 참여자</b>에게 제공되는 정보 페이지입니다.<br><br>
-      아래 입력란에 <b>주문자 이름 또는 전화번호</b>를 입력하고 확인을 눌러주세요.
+      해당 페이지는 <b>매커포트 사용자분들</b>을 위해 특별히 제작되는 <b>1컵 매커포트</b> 예약 페이지입니다.<br><br>
+      기존 참여자분들의 정보(<b>주문자 이름 또는 전화번호</b>)를 입력하고 확인을 눌러주세요.
     </div>
     <input id="buyerInput" type="text" placeholder="이름 또는 전화번호 (예: 010-1234-5678)"
       style="width:100%;box-sizing:border-box;padding:14px 16px;border:1.5px solid var(--sep);border-radius:12px;background:var(--fill);color:var(--label);font-family:inherit;font-size:16px;margin-bottom:4px;outline:none"
@@ -987,19 +986,18 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="modal-sheet">
     <div class="modal-handle"></div>
     <div style="text-align:center;padding:8px 0 4px">
-      <div style="font-size:48px;margin-bottom:12px">🎁</div>
-      <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:16px">특별 할인 이벤트</div>
+      <div style="font-size:48px;margin-bottom:12px">☕</div>
+      <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:16px">1컵 매커포트 특별 한정판</div>
     </div>
     <div class="card" style="background:var(--fill);border-radius:16px;padding:20px;margin-bottom:20px;line-height:1.8">
       <div style="font-size:15px;color:var(--label)">
-        해당 이벤트는 <b>초기 매커포트 참여자분들</b>에게 제공되는 특별 할인 이벤트입니다.<br><br>
-        해당 상품(바스켓)은 참여자분들에게 제공하는 <b>20% 특별 할인</b> 혜택이며,<br>
-        📦 발송은 <b>8월 초</b> 예정입니다.
+        매커포트 사용자분들을 위해 특별히 제작되는 <b>1컵 매커포트</b> 예약 페이지입니다.<br><br>
+        📦 1차 예약 발송은 <b>12월 ~ 27년 2월</b> 발송 예정입니다.
       </div>
     </div>
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeBuyerSuccessModal()">닫기</button>
-      <button class="btn btn-primary" style="flex:2" onclick="goToPurchasePage()">구매 페이지로 이동 →</button>
+      <button class="btn btn-primary" style="flex:2" onclick="goToPurchasePage()">예약 페이지로 이동 →</button>
     </div>
   </div>
 </div>
@@ -1872,7 +1870,7 @@ function closeBuyerSuccessModal() {
 }
 
 function goToPurchasePage() {
-  window.open('https://maekeo.com/surl/P/97', '_blank');
+  window.open('https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000043', '_blank');
   closeBuyerSuccessModal();
 }
 
@@ -1896,7 +1894,10 @@ async function verifyBuyer() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query })
     });
-    const d = await r.json();
+    const text = await r.text();
+    let d;
+    try { d = JSON.parse(text); }
+    catch { throw new Error(`응답 파싱 실패 (${r.status}): ${text.slice(0, 60)}`); }
 
     if (d.verified) {
       closeBuyerModal();
@@ -1907,7 +1908,7 @@ async function verifyBuyer() {
       btn.disabled = false;
     }
   } catch(e) {
-    errEl.textContent = '네트워크 오류. 다시 시도해주세요.';
+    errEl.textContent = '오류: ' + (e.message || '네트워크 오류');
     btn.textContent = '확인';
     btn.disabled = false;
   }
@@ -2194,7 +2195,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.7.1';
+const CURRENT_VERSION = 'v1.7.6';
 
 async function checkVersionFromServer() {
   try {
@@ -2411,8 +2412,10 @@ function applyLang() {
   document.getElementById('seg0').textContent = t('seg0');
   document.getElementById('seg1').textContent = t('seg1');
   document.getElementById('seg2').textContent = t('seg2');
-  document.getElementById('navShop').textContent = t('navShop');
-  document.getElementById('navProduct').textContent = t('navProduct');
+  const navShopEl = document.getElementById('navShop');
+  if (navShopEl) navShopEl.textContent = t('navShop');
+  const navProductEl = document.getElementById('navProduct');
+  if (navProductEl) navProductEl.textContent = '매커포트예약';
 
   // Tab bar
   document.querySelectorAll('.tab-lbl')[0].textContent = t('seg0');
