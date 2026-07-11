@@ -258,7 +258,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.7.6</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.7.8</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a class="nav-link" href="https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000042" target="_blank" style="padding:8px 14px;font-size:13px" id="navProduct">매커포트예약</a>
@@ -970,6 +970,11 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       해당 페이지는 <b>매커포트 사용자분들</b>을 위해 특별히 제작되는 <b>1컵 매커포트</b> 예약 페이지입니다.<br><br>
       기존 참여자분들의 정보(<b>주문자 이름 또는 전화번호</b>)를 입력하고 확인을 눌러주세요.
     </div>
+    <div style="background:var(--fill);border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:var(--label2);line-height:1.7">
+      매커포트 사용자이신데 정보가 확인되지 않는 경우<br>
+      아래 이메일로 <b>주문자 성함과 전화번호</b>를 보내주세요.<br>
+      <a href="mailto:maeilcoffees@gmail.com?subject=1컵매커포트 예약 정보 확인 요청" style="color:var(--blue);font-weight:600;text-decoration:none">✉️ maeilcoffees@gmail.com</a>
+    </div>
     <input id="buyerInput" type="text" placeholder="이름 또는 전화번호 (예: 010-1234-5678)"
       style="width:100%;box-sizing:border-box;padding:14px 16px;border:1.5px solid var(--sep);border-radius:12px;background:var(--fill);color:var(--label);font-family:inherit;font-size:16px;margin-bottom:4px;outline:none"
       onkeydown="if(event.key==='Enter')verifyBuyer()">
@@ -992,7 +997,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="card" style="background:var(--fill);border-radius:16px;padding:20px;margin-bottom:20px;line-height:1.8">
       <div style="font-size:15px;color:var(--label)">
         매커포트 사용자분들을 위해 특별히 제작되는 <b>1컵 매커포트</b> 예약 페이지입니다.<br><br>
-        📦 1차 예약 발송은 <b>12월 ~ 27년 2월</b> 발송 예정입니다.
+        📦 1차 예약 발송은 <b>12월 ~ 27년 2월</b> 발송 예정입니다.<br><br>
+        <span style="font-size:13px;color:var(--label2)">초기 프리오더 참여자는 <b>회원가입 또는 비회원 주문</b> 모두 가능합니다.</span>
       </div>
     </div>
     <div class="modal-btns">
@@ -2195,7 +2201,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.7.6';
+const CURRENT_VERSION = 'v1.7.8';
 
 async function checkVersionFromServer() {
   try {
