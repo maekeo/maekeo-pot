@@ -258,7 +258,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.7.8</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.7.9</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a class="nav-link" href="https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000042" target="_blank" style="padding:8px 14px;font-size:13px" id="navProduct">매커포트예약</a>
@@ -969,6 +969,9 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-desc" style="line-height:1.7">
       해당 페이지는 <b>매커포트 사용자분들</b>을 위해 특별히 제작되는 <b>1컵 매커포트</b> 예약 페이지입니다.<br><br>
       기존 참여자분들의 정보(<b>주문자 이름 또는 전화번호</b>)를 입력하고 확인을 눌러주세요.
+    </div>
+    <div style="background:var(--orange-bg, rgba(255,149,0,.1));border-radius:12px;padding:12px 14px;margin-bottom:10px;font-size:13px;color:var(--label2);line-height:1.7">
+      ⚠️ 현재 <b>기존 2컵 예약자분들</b>은 매커포트를 받아보신 이후에 접속하실 수 있습니다.
     </div>
     <div style="background:var(--fill);border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:var(--label2);line-height:1.7">
       매커포트 사용자이신데 정보가 확인되지 않는 경우<br>
@@ -2201,7 +2204,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.7.8';
+const CURRENT_VERSION = 'v1.7.9';
 
 async function checkVersionFromServer() {
   try {
