@@ -249,8 +249,15 @@ exports.handler = async (event) => {
     const input = query.trim().replace(/\s/g, '');
     const inputPhone = input.replace(/[-]/g, '');
 
+    console.log('입력값:', JSON.stringify(input));
+    console.log('전화번호 변환:', JSON.stringify(inputPhone));
+    console.log('BUYERS 첫 3개:', JSON.stringify(BUYERS.slice(0, 3)));
+
     const found = BUYERS.some(([name, phone]) => {
-      return name === input || phone === inputPhone;
+      const nameMatch = name === input;
+      const phoneMatch = phone === inputPhone;
+      if (nameMatch || phoneMatch) console.log('매칭됨:', name, phone);
+      return nameMatch || phoneMatch;
     });
 
     if (found) {
