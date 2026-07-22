@@ -258,7 +258,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.8.2</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.8.3</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a class="nav-link" href="https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000042" target="_blank" style="padding:8px 14px;font-size:13px" id="navProduct">매커포트예약</a>
@@ -919,6 +919,28 @@ body.flash-danger{animation:flashDanger .35s ease 6}
             매커포트의 <b style="color:var(--label)">압력캡</b>은 사용자가 추출 압력을 직접 조절할 수 있는 기능으로, 일반 모카포트에서는 제공되지 않는 매커포트만의 차별화된 기능입니다.<br><br>
             압력캡을 최대 <b style="color:var(--label)">360도까지 개방</b>하면 사용자의 추출 시간을 단축하고 커피 향미를 극대화할 수 있습니다.
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 스트레이너 사용법 -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">🧇</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">스트레이너 사용법</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div>
+            스트레이너는 커피 추출 시 미분과 이물질을 걸러주는 부품입니다.<br>
+            올바른 사용법은 아래 영상에서 확인하세요.
+          </div>
+          <a href="https://youtu.be/jWCpN_adH0c" target="_blank" style="display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none">
+            ▶️ 스트레이너 사용법 영상 보기
+          </a>
         </div>
       </div>
     </div>
@@ -2197,7 +2219,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.8.2';
+const CURRENT_VERSION = 'v1.8.3';
 
 async function checkVersionFromServer() {
   try {
