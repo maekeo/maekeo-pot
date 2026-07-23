@@ -256,14 +256,20 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 <!-- NAV -->
 <div class="nav">
   <div class="nav-inner">
+    <!-- 1줄: 로고 + 원두/소모품 링크 -->
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.8.3</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.8.9</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
-      <a class="nav-link" href="https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000042" target="_blank" style="padding:8px 14px;font-size:13px" id="navProduct">매커포트예약</a>
-      <button onclick="openBuyerModal()" class="nav-link" style="padding:8px 14px;font-size:13px;border:none;background:var(--fill);font-family:inherit;cursor:pointer" id="navProduct1cup">1컵매커포트예약</button>
+      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/776e7d77ad034cd8807d9f1e29b52ead?cp=1" target="_blank" style="font-size:12px;padding:6px 10px">🫘 매커 원두 구매</a>
+      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="font-size:12px;padding:6px 10px">🔩 소모품</a>
     </div>
+  </div>
+  <!-- 2줄: 예약 버튼 -->
+  <div style="display:flex;gap:6px;padding:4px 16px 8px">
+    <a class="nav-link" href="https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000042" target="_blank" style="flex:1;text-align:center;font-size:12px;padding:7px 10px" id="navProduct">2컵매커포트예약</a>
+    <button onclick="openBuyerModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer" id="navProduct1cup">1컵매커포트예약</button>
   </div>
   <div class="seg-wrap" id="segWrap">
     <div class="segmented">
@@ -538,6 +544,16 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         <div style="font-size:14px;font-weight:700;color:var(--blue)">매커포트 소모품 구매하기</div>
       </div>
       <span style="font-size:18px;color:var(--blue)">›</span>
+    </a>
+
+    <!-- 공식 영상 링크 -->
+    <a href="https://youtu.be/cIMaZ8pCPZU" target="_blank"
+      style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--red);border-radius:14px;padding:14px 16px;text-decoration:none;margin-bottom:4px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px">📺</span>
+        <div style="font-size:14px;font-weight:700;color:var(--red)">매커포트 공식 사용 영상</div>
+      </div>
+      <span style="font-size:18px;color:var(--red)">›</span>
     </a>
 
     <!-- STEP 1 -->
@@ -946,6 +962,21 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </div>
 
   </div><!-- /자주 발생하는 문제 group -->
+
+  <!-- A/S 문의 -->
+  <div class="group">
+    <a href="mailto:maeilcoffees@gmail.com?subject=매커포트 A/S 문의" style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:14px 16px;text-decoration:none">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px">✉️</span>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--label)">A/S 문의</div>
+          <div style="font-size:12px;color:var(--label3);margin-top:2px">maeilcoffees@gmail.com</div>
+        </div>
+      </div>
+      <span style="font-size:18px;color:var(--label3)">›</span>
+    </a>
+  </div>
+
 </div><!-- /fixSection -->
 
 </div><!-- /app -->
@@ -2219,7 +2250,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.8.3';
+const CURRENT_VERSION = 'v1.8.9';
 
 async function checkVersionFromServer() {
   try {
@@ -2439,7 +2470,7 @@ function applyLang() {
   const navShopEl = document.getElementById('navShop');
   if (navShopEl) navShopEl.textContent = t('navShop');
   const navProductEl = document.getElementById('navProduct');
-  if (navProductEl) navProductEl.textContent = '매커포트예약';
+  if (navProductEl) navProductEl.textContent = '2컵매커포트예약';
 
   // Tab bar
   document.querySelectorAll('.tab-lbl')[0].textContent = t('seg0');
