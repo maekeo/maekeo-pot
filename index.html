@@ -257,13 +257,16 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 <div class="nav">
   <div class="nav-inner">
     <!-- 1줄: 로고 + 원두/소모품 링크 -->
-    <div style="display:flex;flex-direction:column;gap:1px">
-      <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.8.9</span>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <span class="nav-title">MAEKEO LAB</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.9.4</span>
+      </div>
+      <button onclick="cycleLang()" id="langBtn" style="border:1px solid var(--sep);background:var(--fill);color:var(--label2);font-family:inherit;font-size:11px;font-weight:700;padding:4px 8px;border-radius:12px;cursor:pointer">한</button>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
-      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/776e7d77ad034cd8807d9f1e29b52ead?cp=1" target="_blank" style="font-size:12px;padding:6px 10px">🫘 매커 원두 구매</a>
-      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="font-size:12px;padding:6px 10px">🔩 소모품</a>
+      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/776e7d77ad034cd8807d9f1e29b52ead?cp=1" target="_blank" style="font-size:12px;padding:6px 10px" id="navBean">🫘 매커 원두 구매</a>
+      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="font-size:12px;padding:6px 10px" id="navSupply">🔩 소모품</a>
     </div>
   </div>
   <!-- 2줄: 예약 버튼 -->
@@ -457,7 +460,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         <button class="btn btn-secondary" id="stopBtn" onclick="stopExtraction()" style="display:none;color:var(--red)">추출 종료</button>
       </div>
       <div style="padding:0 16px 16px">
-        <button onclick="startFlameTest()" style="width:100%;padding:12px;border:1.5px dashed var(--orange);background:transparent;border-radius:12px;color:var(--orange);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">
+        <button onclick="startFlameTest()" style="width:100%;padding:12px;border:1.5px dashed var(--orange);background:transparent;border-radius:12px;color:var(--orange);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer" id="flameBtn">
           🔥 불 세기 테스트
         </button>
       </div>
@@ -468,7 +471,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="modal-bg" id="flameModal">
     <div class="modal-sheet">
       <div class="modal-handle"></div>
-      <div class="modal-title">🔥 불 세기 테스트</div>
+      <div class="modal-title" id="flameTitle">🔥 불 세기 테스트</div>
       <div class="modal-desc" id="flameModalDesc" style="line-height:1.7">
         원두 없이 뜨거운 물만 채우세요.<br>
         <b>1컵: 110~130ml · 2컵: 150~170ml</b><br>
@@ -511,7 +514,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div class="row"><span class="row-label">총 경과 시간</span><span class="row-value" id="elapsedDisplay" style="font-variant-numeric:tabular-nums">0:00</span></div>
       <div class="row"><span class="row-label">권장 도징량</span><span class="row-value">20g ~ 23g</span></div>
       <div class="row"><span class="row-label">물 사용량</span><span class="row-value">1컵 110~130ml · 2컵 150~170ml</span></div>
-      <div class="row"><span class="row-label">권장 추출 시간</span><span class="row-value">1컵 3분대 · 2컵 4분대</span></div>
+      <div class="row"><span class="row-label" id="recTimeLbl">권장 추출 시간</span><span class="row-value" id="recTimeVal">1컵 3분대 · 2컵 4분대</span></div>
     </div>
   </div>
 </div>
@@ -534,14 +537,14 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 
   <!-- 처음 사용하시나요? -->
   <div class="group">
-    <div class="group-hd">처음 사용하시나요?</div>
+    <div class="group-hd" id="qaBeginnerHd">처음 사용하시나요?</div>
 
     <!-- 소모품 링크 -->
     <a href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank"
       style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--blue);border-radius:14px;padding:14px 16px;text-decoration:none;margin-bottom:4px">
       <div style="display:flex;align-items:center;gap:10px">
         <span style="font-size:22px">🛒</span>
-        <div style="font-size:14px;font-weight:700;color:var(--blue)">매커포트 소모품 구매하기</div>
+        <div style="font-size:14px;font-weight:700;color:var(--blue)" id="qaSupplyLink">매커포트 소모품 구매하기</div>
       </div>
       <span style="font-size:18px;color:var(--blue)">›</span>
     </a>
@@ -551,7 +554,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--red);border-radius:14px;padding:14px 16px;text-decoration:none;margin-bottom:4px">
       <div style="display:flex;align-items:center;gap:10px">
         <span style="font-size:22px">📺</span>
-        <div style="font-size:14px;font-weight:700;color:var(--red)">매커포트 공식 사용 영상</div>
+        <div style="font-size:14px;font-weight:700;color:var(--red)" id="qaVideoLink">매커포트 공식 사용 영상</div>
       </div>
       <span style="font-size:18px;color:var(--red)">›</span>
     </a>
@@ -563,13 +566,13 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <span style="font-size:20px">🔥</span>
           <span>
             <div style="font-size:11px;color:var(--blue);font-weight:700;margin-bottom:2px">STEP 1</div>
-            <div style="font-size:15px;font-weight:600;color:var(--label)">내 화구에 맞는 불 세기 찾기</div>
+            <div style="font-size:15px;font-weight:600;color:var(--label)" id="step1Title">내 화구에 맞는 불 세기 찾기</div>
           </span>
         </span>
         <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
       </button>
       <div class="fix-content" style="display:none;padding:0 16px 18px">
-        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+        <div id="step1body" style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
             원두 없이 <b style="color:var(--label)">뜨거운 물</b>만 넣고 진행합니다.<br>
             <b style="color:var(--label)">1컵: 110~130ml · 2컵: 150~170ml</b><br>첫 사용 시 1회만 진행하면 됩니다.
@@ -610,13 +613,13 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <span style="font-size:20px">☕</span>
           <span>
             <div style="font-size:11px;color:var(--blue);font-weight:700;margin-bottom:2px">STEP 2</div>
-            <div style="font-size:15px;font-weight:600;color:var(--label)">본 추출하기</div>
+            <div style="font-size:15px;font-weight:600;color:var(--label)" id="step2Title">본 추출하기</div>
           </span>
         </span>
         <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
       </button>
       <div class="fix-content" style="display:none;padding:0 16px 18px">
-        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+        <div id="step2body" style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
             <div style="margin-bottom:6px;font-weight:600;color:var(--label)">💧 컵수별 물 사용량 & 추출 기준</div>
             <div style="margin-bottom:4px">• <b>1컵</b>: 물 110~130ml → 추출량 40ml · <b>3분대 추출 권장</b></div>
@@ -653,19 +656,19 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 
   <!-- 자주 발생하는 문제 -->
   <div class="group">
-    <div class="group-hd">자주 발생하는 문제</div>
+    <div class="group-hd" id="qaProblemHd">자주 발생하는 문제</div>
 
     <!-- 체결부 누수 -->
     <div class="card" style="padding:0;overflow:hidden">
       <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
         <span style="display:flex;align-items:center;gap:10px">
           <span style="font-size:20px">💧</span>
-          <span style="font-size:15px;font-weight:600;color:var(--label)">체결부에서 커피가 새요</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)" id="q1">체결부에서 커피가 새요</span>
         </span>
         <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
       </button>
       <div class="fix-content" style="display:none;padding:0 16px 18px">
-        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+        <div id="q1body" style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div style="display:flex;gap:10px;margin-bottom:12px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
             <span>보일러통과 컨테이너를 최대한 조여주세요.</span>
@@ -691,12 +694,12 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
         <span style="display:flex;align-items:center;gap:10px">
           <span style="font-size:20px">⏱️</span>
-          <span style="font-size:15px;font-weight:600;color:var(--label)">추출 시간이 5분을 넘겨요</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)" id="q2">추출 시간이 5분을 넘겨요</span>
         </span>
         <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
       </button>
       <div class="fix-content" style="display:none;padding:0 16px 18px">
-        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+        <div id="q2body" style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
             사용하시는 화구의 불 세기마다 차이가 있을 수 있습니다.<br>
             <b style="color:var(--label)">1컵은 3분대, 2컵은 4분대</b>가 가장 권장하는 추출 시간입니다.
@@ -726,12 +729,12 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
         <span style="display:flex;align-items:center;gap:10px">
           <span style="font-size:20px">🔧</span>
-          <span style="font-size:15px;font-weight:600;color:var(--label)">컵이 돌아가요</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)" id="q3">컵이 돌아가요</span>
         </span>
         <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
       </button>
       <div class="fix-content" style="display:none;padding:0 16px 18px">
-        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+        <div id="q3body" style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
             사용자의 체결 강도에 따라 간혹 컵이 돌아갈 수 있습니다.<br>
             이 경우 체결이 정상적으로 되지 않아 <b style="color:var(--label)">체결부 누수</b>가 생길 수 있고, 추출이 정상적으로 이루어지지 않습니다.
@@ -764,12 +767,12 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
         <span style="display:flex;align-items:center;gap:10px">
           <span style="font-size:20px">⚙️</span>
-          <span style="font-size:15px;font-weight:600;color:var(--label)">안전밸브에서 압력이 새요</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)" id="q4">안전밸브에서 압력이 새요</span>
         </span>
         <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
       </button>
       <div class="fix-content" style="display:none;padding:0 16px 18px">
-        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+        <div id="q4body" style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div style="display:flex;gap:10px;margin-bottom:12px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
             <span>안전밸브에서 압력이 새는 경우 육각 나사를 조금 더 조여주세요.</span>
@@ -794,12 +797,12 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
         <span style="display:flex;align-items:center;gap:10px">
           <span style="font-size:20px">🔘</span>
-          <span style="font-size:15px;font-weight:600;color:var(--label)">하단 실리콘 압력밸브가 이탈돼요</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)" id="q5">하단 실리콘 압력밸브가 이탈돼요</span>
         </span>
         <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
       </button>
       <div class="fix-content" style="display:none;padding:0 16px 18px">
-        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+        <div id="q5body" style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
             참고로 실리콘 압력밸브 입구가 작은 틈으로 개방되어 있는 것은 <b style="color:var(--label)">의도된 설계</b>입니다.
           </div>
@@ -831,12 +834,12 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
         <span style="display:flex;align-items:center;gap:10px">
           <span style="font-size:20px">💨</span>
-          <span style="font-size:15px;font-weight:600;color:var(--label)">추출될 때 압력이 세게 나와요</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)" id="q6">추출될 때 압력이 세게 나와요</span>
         </span>
         <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
       </button>
       <div class="fix-content" style="display:none;padding:0 16px 18px">
-        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+        <div id="q6body" style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
             매커포트는 <b style="color:var(--label)">7bar의 높은 압력</b>으로 추출되는 모카포트입니다.<br>
             일반적인 모카포트는 1~3bar의 낮은 압력으로 추출되기 때문에 상대적으로 추출 압력이 높게 느껴질 수 있습니다.
@@ -866,12 +869,12 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
         <span style="display:flex;align-items:center;gap:10px">
           <span style="font-size:20px">☕</span>
-          <span style="font-size:15px;font-weight:600;color:var(--label)">크레마 추출이 잘 안 돼요</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)" id="q7">크레마 추출이 잘 안 돼요</span>
         </span>
         <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
       </button>
       <div class="fix-content" style="display:none;padding:0 16px 18px">
-        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+        <div id="q7body" style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
             오래된 원두나 분쇄 원두의 경우 개봉 후 <b style="color:var(--label)">2주일 이상</b> 지나면 크레마 추출이 잘 안될 수 있습니다.
           </div>
@@ -902,12 +905,12 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
         <span style="display:flex;align-items:center;gap:10px">
           <span style="font-size:20px">🧊</span>
-          <span style="font-size:15px;font-weight:600;color:var(--label)">2컵 추출량(60ml 이상) 맞추기 어려워요</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)" id="q8">2컵 추출량(60ml 이상) 맞추기 어려워요</span>
         </span>
         <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
       </button>
       <div class="fix-content" style="display:none;padding:0 16px 18px">
-        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+        <div id="q8body" style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div>
             매커포트는 일반 모카포트에 비해 압력이 높기 때문에 <b style="color:var(--label)">추출 후반부로 갈수록 압력이 높아지는 구조</b>입니다.<br><br>
             기계적인 제어가 어렵기 때문에 2컵량에 해당하는 커피 추출을 천천히 마무리할 수 없습니다. 이 부분을 해결하기 위해 <b style="color:var(--label)">아이스컷 추출법</b>을 권장해드리고 있습니다.<br><br>
@@ -925,12 +928,12 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
         <span style="display:flex;align-items:center;gap:10px">
           <span style="font-size:20px">🎛️</span>
-          <span style="font-size:15px;font-weight:600;color:var(--label)">압력캡은 어떻게 사용하나요?</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)" id="q9">압력캡은 어떻게 사용하나요?</span>
         </span>
         <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
       </button>
       <div class="fix-content" style="display:none;padding:0 16px 18px">
-        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+        <div id="q9body" style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div>
             매커포트의 <b style="color:var(--label)">압력캡</b>은 사용자가 추출 압력을 직접 조절할 수 있는 기능으로, 일반 모카포트에서는 제공되지 않는 매커포트만의 차별화된 기능입니다.<br><br>
             압력캡을 최대 <b style="color:var(--label)">360도까지 개방</b>하면 사용자의 추출 시간을 단축하고 커피 향미를 극대화할 수 있습니다.
@@ -944,12 +947,12 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
         <span style="display:flex;align-items:center;gap:10px">
           <span style="font-size:20px">🧇</span>
-          <span style="font-size:15px;font-weight:600;color:var(--label)">스트레이너 사용법</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)" id="q10">스트레이너 사용법</span>
         </span>
         <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
       </button>
       <div class="fix-content" style="display:none;padding:0 16px 18px">
-        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+        <div id="q10body" style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div>
             스트레이너는 커피 추출 시 미분과 이물질을 걸러주는 부품입니다.<br>
             올바른 사용법은 아래 영상에서 확인하세요.
@@ -969,7 +972,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div style="display:flex;align-items:center;gap:10px">
         <span style="font-size:22px">✉️</span>
         <div>
-          <div style="font-size:14px;font-weight:700;color:var(--label)">A/S 문의</div>
+          <div style="font-size:14px;font-weight:700;color:var(--label)" id="qaAsTitle">A/S 문의</div>
           <div style="font-size:12px;color:var(--label3);margin-top:2px">maeilcoffees@gmail.com</div>
         </div>
       </div>
@@ -1014,17 +1017,17 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 <div class="modal-bg" id="buyerModal">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">매커포트 사용자를 위한 특별 한정판 예약</div>
-    <div class="modal-desc" style="line-height:1.7">
+    <div class="modal-title" id="buyerTitle">매커포트 사용자를 위한 특별 한정판 예약</div>
+    <div class="modal-desc" style="line-height:1.7" id="buyerDesc">
       해당 페이지는 <b>매커포트 사용자분들</b>을 위해 특별히 제작되는 <b>1컵 매커포트</b> 예약 페이지입니다.<br><br>
       기존 참여자분들의 정보(<b>주문자 이름 또는 전화번호</b>)를 입력하고 확인을 눌러주세요.
     </div>
     <div style="background:var(--orange-bg, rgba(255,149,0,.1));border-radius:12px;padding:12px 14px;margin-bottom:10px;font-size:13px;color:var(--label2);line-height:1.7">
-      ⚠️ 현재 <b>기존 2컵 예약자분들</b>은 매커포트를 받아보신 이후에 접속하실 수 있습니다.
+      <span id="buyerNotice2cup">⚠️ 현재 <b>기존 2컵 예약자분들</b>은 매커포트를 받아보신 이후에 접속하실 수 있습니다.</span>
     </div>
     <div style="background:var(--fill);border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:var(--label2);line-height:1.7">
-      매커포트 사용자이신데 정보가 확인되지 않는 경우<br>
-      아래 이메일로 <b>주문자 성함과 전화번호</b>를 보내주세요.<br>
+      <span id="buyerNoticeContact">매커포트 사용자이신데 정보가 확인되지 않는 경우<br>
+      아래 이메일로 <b>주문자 성함과 전화번호</b>를 보내주세요.</span><br>
       <a href="mailto:maeilcoffees@gmail.com?subject=1컵매커포트 예약 정보 확인 요청" style="color:var(--blue);font-weight:600;text-decoration:none">✉️ maeilcoffees@gmail.com</a>
     </div>
     <input id="buyerInput" type="text" placeholder="이름 또는 전화번호 (예: 010-1234-5678)"
@@ -1032,7 +1035,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       onkeydown="if(event.key==='Enter')verifyBuyer()">
     <div id="buyerError" style="font-size:13px;color:var(--red);min-height:20px;padding:4px 4px 8px"></div>
     <div class="modal-btns">
-      <button class="btn btn-secondary" style="flex:1" onclick="closeBuyerModal()">취소</button>
+      <button class="btn btn-secondary" style="flex:1" onclick="closeBuyerModal()" id="buyerCancelBtn">취소</button>
       <button class="btn btn-primary" style="flex:2" id="buyerConfirmBtn" onclick="verifyBuyer()">확인</button>
     </div>
   </div>
@@ -1044,18 +1047,18 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-handle"></div>
     <div style="text-align:center;padding:8px 0 4px">
       <div style="font-size:48px;margin-bottom:12px">☕</div>
-      <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:16px">1컵 매커포트 특별 한정판</div>
+      <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:16px" id="buyerSuccessTitle">1컵 매커포트 특별 한정판</div>
     </div>
     <div class="card" style="background:var(--fill);border-radius:16px;padding:20px;margin-bottom:20px;line-height:1.8">
-      <div style="font-size:15px;color:var(--label)">
+      <div style="font-size:15px;color:var(--label)" id="buyerSuccessBody">
         매커포트 사용자분들을 위해 특별히 제작되는 <b>1컵 매커포트</b> 예약 페이지입니다.<br><br>
         📦 1차 예약 발송은 <b>12월 ~ 27년 2월</b> 발송 예정입니다.<br><br>
         <span style="font-size:13px;color:var(--label2)">초기 프리오더 참여자는 <b>회원가입 또는 비회원 주문</b> 모두 가능합니다.</span>
       </div>
     </div>
     <div class="modal-btns">
-      <button class="btn btn-secondary" style="flex:1" onclick="closeBuyerSuccessModal()">닫기</button>
-      <button class="btn btn-primary" style="flex:2" onclick="goToPurchasePage()">예약 페이지로 이동 →</button>
+      <button class="btn btn-secondary" style="flex:1" onclick="closeBuyerSuccessModal()" id="buyerCloseBtn">닫기</button>
+      <button class="btn btn-primary" style="flex:2" onclick="goToPurchasePage()" id="buyerGoBtn">예약 페이지로 이동 →</button>
     </div>
   </div>
 </div>
@@ -1063,6 +1066,342 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 <div class="toast" id="toast"></div>
 
 <script>
+const LANGS = ['ko', 'en'];
+let currentLang = localStorage.getItem('maekeo_lang') || 'ko';
+
+const I18N = {
+  ko: {
+    seg0: '분쇄분석AI', seg1: '타이머', seg2: '기록',
+    navShop: '소모품', navProduct: '매커포트예약',
+    camTitle: '원두 사진 촬영 안내',
+    camSub: '흰색 바탕 위에 분쇄된 원두를 넓게 펼쳐 촬영하세요\n100원 동전을 함께 놓으면 더 정확합니다',
+    camTip: '렌즈를 최대한 가깝게 대고\n터치해 초점을 맞춘 후 촬영하세요',
+    btnCamera: '카메라로 촬영', btnGallery: '갤러리에서 선택',
+    btnAnalyze: '분석 시작', btnReset: '다시 분석',
+    btnSpeak: '🔊 음성', btnSaveGrind: '기록 저장',
+    scanLbl: '분석 중',
+    grindHd: '분쇄 굵기', measureHd: '측정값', aiHd: 'AI 추천',
+    levelLbl: '분쇄 레벨', mokaLbl: '매커포트 적합도',
+    brewLbl: '적합 추출', confLbl: '분석 신뢰도',
+    sizeHd: '평균 입자', uniHd: '균일도',
+    rangeNote: '매커포트 적합 범위', rangeVal: '300 — 500 μm',
+    measureNote: '측정값은 AI 시각 추정치입니다. 방향 판단 참고용으로 활용하세요.',
+    adviceCap: '바리스타 조언',
+    confHigh: '높음', confMid: '보통', confLow: '낮음',
+    confMidReason: '💡 정확도를 높이려면: 흰 종이 위에 원두를 더 넓게 펼치고, 자연광에서 최대한 가까이 촬영해주세요.',
+    confLowReason: '⚠️ 신뢰도가 낮습니다. 흰 배경 사용, 균일하게 펼치기, 그림자 없는 밝은 환경에서 다시 촬영하면 정확도가 높아집니다.',
+    timerStart: '시작', timerPause: '일시정지', timerResume: '계속',
+    timerReset: '초기화', timerStop: '추출 종료',
+    timerStageName0: '시작 준비', timerStageDesc0: '버튼을 눌러 추출을 시작하세요',
+    timerRecommend: '권장 추출 시간 4 ~ 5분',
+    screenWarn: '화면을 끄지 마세요.',
+    screenWarnSub: '화면이 꺼지면 알람이 울리지 않을 수 있습니다.',
+    warnTitle: '불을 줄이세요 — 압력 안정화',
+    warnBody: '3분 경과. 중약불로 낮춰 7bar 압력을 안정적으로 유지하세요.',
+    dangerTitle: '추출 시간 초과 — 과추출 주의',
+    dangerBody: '6분을 넘었습니다. 고압 추출이 길어지면 크레마가 무너지고 쓴맛이 강해집니다.',
+    elapsedLbl: '총 경과 시간', dosingLbl: '권장 도징량', dosingVal: '20g ~ 23g',
+    waterLbl: '물 사용량', waterVal: '1컵 110~130ml · 2컵 150~170ml',
+    tl0name: '중불 가열', tl0time: '0:00 — 3:00 · 압력 생성 대기',
+    tl1name: '불 줄이기', tl1time: '3:00 알람 · 압력 안정화',
+    tl2name: '추출 시간 초과', tl2time: '6:00 알람 · 과추출 주의',
+    tl3name: '불 끄기', tl3time: '추출이 시작될 때 즉시',
+    historyHd: '추출 기록',
+    historyEmpty: '아직 저장된 기록이 없습니다.\n분석 또는 타이머 후 저장해보세요.',
+    saveTitle: '기록 저장', saveMemo: '메모 입력 (선택)',
+    saveCancel: '취소', saveSave: '저장',
+    savedToast: '기록이 저장되었습니다',
+    deleteBtn: '삭제',
+    updateNew: '새 버전이 있습니다 🎉',
+    updateLater: '나중에', updateNow: '업데이트',
+    installTitle: '앱으로 설치하기 📲',
+    installDesc: '홈 화면에 추가하면 앱처럼 빠르게 실행할 수 있습니다.',
+    installDismiss: '오늘 하루 안 보기', installOk: '확인',
+    // 음성
+    voice1min: '1분이 지났습니다.',
+    voice2min: '2분이 지났습니다.',
+    voice3min: '3분 경과. 불을 중약불로 줄이세요. 압력을 안정화하세요.',
+    voice4min: '4분. 가장 이상적인 추출 시간대입니다.',
+    voice5min: '5분. 적정 추출 시간대입니다.',
+    voice6min: '6분을 초과했습니다. 추출 시간이 너무 길어졌습니다. 과추출 주의하세요.',
+    voice7min: '7분이 경과했습니다. 타이머를 종료합니다.',
+    voiceStart: '추출 시작',
+    voiceStartMsg: '가열을 시작합니다.',
+    voiceOptimal: '매커포트에 최적입니다.',
+    voiceFine: '분쇄도가 조금 곱습니다. 그라인더를 굵게 조정하세요.',
+    voiceCoarse: '분쇄도가 조금 굵습니다. 그라인더를 곱게 조정하세요.',
+    voiceResult: (lv) => `분석 완료. 분쇄 레벨은 ${lv}입니다.`,
+
+    // ═══ 신규 추가 ═══
+    seg3: '문제해결',
+    navBean: '🫘 매커 원두 구매', navSupply: '🔩 소모품',
+    nav2cup: '2컵매커포트예약', nav1cup: '1컵매커포트예약',
+    // 컵수 모드
+    cup1Btn: '☕ 1컵', cup1Sub: '3분대', cup2Btn: '☕☕ 2컵', cup2Sub: '4분대',
+    cup1Toast: '☕ 1컵 모드 — 3분대 추출 권장',
+    cup2Toast: '☕☕ 2컵 모드 — 4분대 추출 권장',
+    cup1Rec: '권장 추출 시간 3분대 (1컵)', cup2Rec: '권장 추출 시간 4분대 (2컵)',
+    cup1Stage: '☕ 1컵 — 3분대 추출 권장', cup2Stage: '☕☕ 2컵 — 4분대 추출 권장',
+    recTimeLbl: '권장 추출 시간', recTimeVal: '1컵 3분대 · 2컵 4분대',
+    // 불 세기 테스트
+    flameBtn: '🔥 불 세기 테스트', flameTitle: '🔥 불 세기 테스트',
+    flameDesc: '원두 없이 뜨거운 물만 채우세요.<br><b>1컵: 110~130ml · 2컵: 150~170ml</b><br>물이 추출되기 시작하는 시간을 확인합니다.<br><b>1컵은 3분대, 2컵은 4분대</b>에 추출이 시작되면 적정 불 세기입니다.<br><span style="font-size:12px;color:var(--label3)">※ 타이머 탭에서 선택한 컵수 기준으로 판정합니다.</span>',
+    flameStart: '시작', flameCancel: '취소', flameRetry: '다시 테스트',
+    flameHeating: '가열 중...', flameDetected: '💧 지금 추출 시작됨',
+    // Q&A 링크
+    qaSupplyLink: '매커포트 소모품 구매하기',
+    qaVideoLink: '매커포트 공식 사용 영상',
+    qaBeginnerHd: '처음 사용하시나요?',
+    qaProblemHd: '자주 발생하는 문제',
+    qaAsTitle: 'A/S 문의',
+    // STEP
+    step1Lbl: 'STEP 1', step1Title: '내 화구에 맞는 불 세기 찾기',
+    step2Lbl: 'STEP 2', step2Title: '본 추출하기',
+    // Q&A 카드 제목
+    q1: '체결부에서 커피가 새요',
+    q2: '추출 시간이 5분을 넘겨요',
+    q3: '컵이 돌아가요',
+    q4: '안전밸브에서 압력이 새요',
+    q5: '하단 실리콘 압력밸브가 이탈돼요',
+    q6: '추출될 때 압력이 세게 나와요',
+    q7: '크레마 추출이 잘 안 돼요',
+    q8: '2컵 추출량(60ml 이상) 맞추기 어려워요',
+    q9: '압력캡은 어떻게 사용하나요?',
+    q10: '스트레이너 사용법',
+    // 구매자 인증
+    buyerTitle: '매커포트 사용자를 위한 특별 한정판 예약',
+    buyerConfirm: '확인', buyerCancel: '취소', buyerChecking: '확인 중...',
+    buyerPlaceholder: '이름 또는 전화번호 (예: 010-1234-5678)',
+    buyerSuccessTitle: '1컵 매커포트 특별 한정판',
+    buyerGoBtn: '예약 페이지로 이동 →', buyerClose: '닫기',
+    buyerDesc: '해당 페이지는 <b>매커포트 사용자분들</b>을 위해 특별히 제작되는 <b>1컵 매커포트</b> 예약 페이지입니다.<br><br>기존 참여자분들의 정보(<b>주문자 이름 또는 전화번호</b>)를 입력하고 확인을 눌러주세요.',
+    buyerNotice2cup: '⚠️ 현재 <b>기존 2컵 예약자분들</b>은 매커포트를 받아보신 이후에 접속하실 수 있습니다.',
+    buyerNoticeContact: '매커포트 사용자이신데 정보가 확인되지 않는 경우<br>아래 이메일로 <b>주문자 성함과 전화번호</b>를 보내주세요.',
+    buyerSuccessBody: '매커포트 사용자분들을 위해 특별히 제작되는 <b>1컵 매커포트</b> 예약 페이지입니다.<br><br>📦 1차 예약 발송은 <b>12월 ~ 27년 2월</b> 발송 예정입니다.<br><br><span style="font-size:13px;color:var(--label2)">초기 프리오더 참여자는 <b>회원가입 또는 비회원 주문</b> 모두 가능합니다.</span>',
+    fDescTooStrong: (tm,cup) => `${tm}에 추출이 시작됐습니다. (${cup} 기준)<br>불을 많이 줄여서 다시 테스트해보세요.`,
+    fDescStrong: (tm,cup) => `${tm}에 추출이 시작됐습니다. (${cup} 기준)<br>불을 조금 줄여서 다시 테스트해보세요.`,
+    fDescPerfect: (tm,cup) => `${tm}에 추출이 시작됐습니다. (${cup} 기준)<br>이 불 세기를 유지하세요.`,
+    fDescWeak: (tm,cup) => `${tm}에 추출이 시작됐습니다. (${cup} 기준)<br>불을 조금 높이거나 압력캡을 180도 개방해서<br>추출을 유도해보세요.`,
+    fDescTooWeak: (cup) => `추출이 너무 늦게 시작됐습니다. (${cup} 기준)<br>불을 많이 높이거나 압력캡을 180도 개방해서<br>추출을 유도해보세요.`,
+    fVoiceTooStrong: (tm) => `${tm}에 추출이 시작됐습니다. 불이 너무 강합니다. 불을 많이 줄여서 다시 테스트해보세요.`,
+    fVoiceStrong: (tm) => `${tm}에 추출이 시작됐습니다. 불이 약간 강합니다. 조금 줄여서 다시 테스트해보세요.`,
+    fVoicePerfect: (tm) => `${tm}에 추출이 시작됐습니다. 완벽한 불 세기입니다. 이 세기를 유지하세요.`,
+    fVoiceWeak: (tm) => `${tm}에 추출이 시작됐습니다. 불이 약간 약합니다. 불을 조금 높이거나 압력캡을 180도 개방해서 추출을 유도해보세요.`,
+    fVoiceTooWeak: () => `불이 너무 약합니다. 불을 많이 높이거나 압력캡을 180도 개방해서 추출을 유도해보세요.`,
+    cupLbl1: '1컵', cupLbl2: '2컵',
+    brewPatternToast: (lbl,h) => `☕ ${lbl} ${h}시 추출 시간입니다`,
+    brewPatternVoice: (lbl,h,avg) => avg
+      ? `${lbl} ${h}시, 평소 이 시간대에 추출을 시작하셨네요. 평균 추출 시간은 ${avg}입니다. 오늘도 맛있는 커피 추출을 시작해볼까요?`
+      : `${lbl} ${h}시, 평소 이 시간대에 추출을 시작하셨네요. 오늘도 맛있는 커피 추출을 시작해볼까요?`,
+    // 3차: 알림/음성/오류 메시지
+    tlWait: '압력 생성 대기', tlAlarm: '알람', tlStabilize: '압력 안정화',
+    tlOverBrew: '과추출 주의', tlBrewRec: '추출 권장',
+    tStopped: '종료',
+    partUnit: '개',
+    flameOptTooStrong: '불이 너무 강합니다', flameOptStrong: '불이 약간 강합니다',
+    flameOptPerfect: '완벽한 불 세기입니다!', flameOptWeak: '불이 약간 약합니다',
+    flameOptTooWeak: '불이 너무 약합니다',
+    flameWait: '조금 더 기다려주세요.',
+    flameNowOpt: '지금부터 물이 나오기 시작하면 적정 불 세기입니다.',
+    errNoPhoto: '사진을 먼저 선택해주세요',
+    errTakePhoto: '커피 원두 사진을 촬영해주세요',
+    errFileTooBig: t('errFileTooBig'),
+    errLowRes: t('errLowRes'),
+    errImgLoad: t('errImgLoad'),
+    errImgRead: t('errImgRead'),
+    errAnalysisFail: t('errAnalysisFail'),
+    errNoResult: t('errNoResult'),
+    errTimeout: t('errTimeout'),
+    errNetwork: t('errNetwork'),
+    errNotFound: t('errNotFound'),
+    errEnterInfo: t('errEnterInfo'),
+    tMorning: '오전', tAfternoon: '오후', tEvening: '저녁', tDawn: '새벽',
+    btnInstall: '설치',
+    lvMid: '중간',
+    // Q&A 본문
+    q1body: "<div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span>\n            <span>보일러통과 컨테이너를 최대한 조여주세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span>\n            <span>압력캡 안에 있는 압력추 방향이 정상인지 확인해주세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span>\n            <span>원두 분쇄도가 너무 곱거나 너무 굵으면 누수가 발생할 수 있습니다. <b>고운 설탕 입자</b> 정도의 굵기를 기준으로 사용해주세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:4px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">4.</span>\n            <span>위 방법으로도 해결되지 않으면 아래 메일로 문의해주세요.</span>\n          </div>",
+    q2body: "<div style=\"background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px\">\n            사용하시는 화구의 불 세기마다 차이가 있을 수 있습니다.<br>\n            <b style=\"color:var(--label)\">1컵은 3분대, 2컵은 4분대</b>가 가장 권장하는 추출 시간입니다.\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span>\n            <span>우선 뜨거운 물만 넣고 <b>컵수 기준 시간(1컵 3분대 / 2컵 4분대)에 추출이 시작되는 불 세기</b>를 찾아보세요. (타이머 탭 🔥 불 세기 테스트 활용)</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span>\n            <span>인덕션이나 소형 가스불의 경우 압력캡을 180도~360도 개방해서 추출 시간을 컵수 기준(1컵 3분대 / 2컵 4분대)에 맞춰보세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span>\n            <span>너무 강한 템핑은 피해주세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:4px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">4.</span>\n            <span>너무 곱거나 너무 굵은 분쇄도도 영향을 줄 수 있습니다. <b>고운 설탕 입자</b> 정도의 굵기를 기준으로 사용해주세요.</span>\n          </div>",
+    q3body: "<div style=\"background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px\">\n            사용자의 체결 강도에 따라 간혹 컵이 돌아갈 수 있습니다.<br>\n            이 경우 체결이 정상적으로 되지 않아 <b style=\"color:var(--label)\">체결부 누수</b>가 생길 수 있고, 추출이 정상적으로 이루어지지 않습니다.\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span>\n            <span>컵을 최대한 시계 방향으로 조여주세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span>\n            <span>컵 내부에 있는 육각 나사 2개 중 1개를 먼저 조여주세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span>\n            <span>나머지 육각 나사를 조여주세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:4px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">4.</span>\n            <span>나사 정렬 정도는 신경쓰지 않으셔도 됩니다.</span>\n          </div>\n          <a href=\"https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1\" target=\"_blank\" style=\"display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none\">\n            🛒 매커포트 수리키트 구매하기\n          </a>",
+    q4body: "<div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span>\n            <span>안전밸브에서 압력이 새는 경우 육각 나사를 조금 더 조여주세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span>\n            <span>육각 나사를 조여도 압력이 계속 새는 경우는 <b>실링 손상</b>으로 발생할 수 있습니다.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:4px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span>\n            <span>실링은 <b>자가 교체가 가능</b>합니다.</span>\n          </div>\n          <a href=\"https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1\" target=\"_blank\" style=\"display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none\">\n            🛒 실링 소모품 구매하기\n          </a>",
+    q5body: "<div style=\"background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px\">\n            참고로 실리콘 압력밸브 입구가 작은 틈으로 개방되어 있는 것은 <b style=\"color:var(--label)\">의도된 설계</b>입니다.\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span>\n            <span>초기 사용 시 실리콘 압력밸브가 자리 잡기 전이라 이탈이 생길 수 있습니다.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span>\n            <span>실리콘 압력밸브를 장착할 때 나사를 돌리듯이 돌리면서 넣으면 빠지지 않고 잘 장착됩니다.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span>\n            <span>커피 추출 후 매번 압력밸브를 빼서 세척하실 필요는 없습니다.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:4px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">4.</span>\n            <span>실리콘 압력밸브를 분실하신 경우 소모품에서 구매 가능합니다.</span>\n          </div>\n          <a href=\"https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1\" target=\"_blank\" style=\"display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none\">\n            🛒 실리콘 압력밸브 구매하기\n          </a>",
+    q6body: "<div style=\"background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px\">\n            매커포트는 <b style=\"color:var(--label)\">7bar의 높은 압력</b>으로 추출되는 모카포트입니다.<br>\n            일반적인 모카포트는 1~3bar의 낮은 압력으로 추출되기 때문에 상대적으로 추출 압력이 높게 느껴질 수 있습니다.\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span>\n            <span>웹에서 제공되는 <b>타이머</b> 사용을 권장합니다.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span>\n            <span>원두 분쇄도를 점검해보세요. 웹에서 제공되는 <b>분쇄도 측정</b> 기능을 사용해보세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span>\n            <span>강한 템핑보다는 디스트리뷰터만 사용하거나 약한 템핑으로 마무리하세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:4px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">4.</span>\n            <span>압력캡을 약간 개방해서 추출해보세요.</span>\n          </div>",
+    q7body: "<div style=\"background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px\">\n            오래된 원두나 분쇄 원두의 경우 개봉 후 <b style=\"color:var(--label)\">2주일 이상</b> 지나면 크레마 추출이 잘 안될 수 있습니다.\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span>\n            <span>원두 분쇄도를 확인해보세요. 웹에서 제공하는 <b>분쇄도 측정</b> 기능을 사용해보세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span>\n            <span>원두 도징량은 <b>20~23g</b> 사용을 권장합니다.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:4px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span>\n            <span>강한 템핑보다는 약한 템핑 또는 디스트리뷰터만 사용해보세요.</span>\n          </div>\n          <div style=\"margin-top:12px;font-size:13px;color:var(--label2)\">\n            매커가 사용하는 분쇄 원두를 사용해보시려면 아래 링크에서 구매하실 수 있습니다.\n          </div>\n          <a href=\"https://smartstore.naver.com/maeco/category/776e7d77ad034cd8807d9f1e29b52ead?cp=1\" target=\"_blank\" style=\"display:block;margin-top:10px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none\">\n            🛒 매커 분쇄 원두 구매하기\n          </a>",
+    q8body: "<div>\n            매커포트는 일반 모카포트에 비해 압력이 높기 때문에 <b style=\"color:var(--label)\">추출 후반부로 갈수록 압력이 높아지는 구조</b>입니다.<br><br>\n            기계적인 제어가 어렵기 때문에 2컵량에 해당하는 커피 추출을 천천히 마무리할 수 없습니다. 이 부분을 해결하기 위해 <b style=\"color:var(--label)\">아이스컷 추출법</b>을 권장해드리고 있습니다.<br><br>\n            해당 추출법은 아래 영상에서 확인하실 수 있습니다.\n          </div>\n          <a href=\"https://youtu.be/OOEnyGT81hM\" target=\"_blank\" style=\"display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none\">\n            ▶️ 아이스컷 추출법 영상 보기\n          </a>",
+    q9body: "<div>\n            매커포트의 <b style=\"color:var(--label)\">압력캡</b>은 사용자가 추출 압력을 직접 조절할 수 있는 기능으로, 일반 모카포트에서는 제공되지 않는 매커포트만의 차별화된 기능입니다.<br><br>\n            압력캡을 최대 <b style=\"color:var(--label)\">360도까지 개방</b>하면 사용자의 추출 시간을 단축하고 커피 향미를 극대화할 수 있습니다.\n          </div>",
+    q10body: "<div>\n            스트레이너는 커피 추출 시 미분과 이물질을 걸러주는 부품입니다.<br>\n            올바른 사용법은 아래 영상에서 확인하세요.\n          </div>\n          <a href=\"https://youtu.be/jWCpN_adH0c\" target=\"_blank\" style=\"display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none\">\n            ▶️ 스트레이너 사용법 영상 보기\n          </a>",
+    step1body: "<div style=\"background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px\">\n            원두 없이 <b style=\"color:var(--label)\">뜨거운 물</b>만 넣고 진행합니다.<br>\n            <b style=\"color:var(--label)\">1컵: 110~130ml · 2컵: 150~170ml</b><br>첫 사용 시 1회만 진행하면 됩니다.\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span>\n            <span>뜨거운 물을 컵수에 맞게 보일러통에 채워주세요. (1컵 110~130ml / 2컵 150~170ml)</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span>\n            <span>체결을 최대한 조여주세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span>\n            <span><b>강불</b>로 시작한 후 추출물이 나오는 시간을 확인하세요.</span>\n          </div>\n          <div style=\"background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:13px\">\n            <div style=\"margin-bottom:6px;font-weight:600;color:var(--label)\">📊 추출 시작 시간 기준</div>\n            <div style=\"margin-bottom:4px\">✅ <b>1컵: 3분대</b> / <b>2컵: 4분대</b> → 적정 불 세기입니다</div>\n            <div style=\"margin-bottom:4px\">⚠️ 기준보다 빠름 → 불을 조금 줄이세요</div>\n            <div>⚠️ 기준보다 느림 → 불을 높이거나 압력캡을 개방하세요</div>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:4px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">4.</span>\n            <span>인덕션이나 소형 가스불은 <b>압력캡을 180도 개방</b>해서 추출해보세요. 기준보다 빨리 시작되면 캡을 조금씩 닫아 컵수 기준 시간에 맞게 조정하세요.</span>\n          </div>\n          <button onclick=\"switchTab('timer',document.querySelectorAll('.seg-btn')[1]);document.getElementById('flameModal').classList.add('show')\" style=\"width:100%;margin-top:12px;padding:12px;border:none;border-radius:10px;background:var(--orange);color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer\">\n            🔥 불 세기 테스트 바로가기\n          </button>",
+    step2body: "<div style=\"background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px\">\n            <div style=\"margin-bottom:6px;font-weight:600;color:var(--label)\">💧 컵수별 물 사용량 & 추출 기준</div>\n            <div style=\"margin-bottom:4px\">• <b>1컵</b>: 물 110~130ml → 추출량 40ml · <b>3분대 추출 권장</b></div>\n            <div>• <b>2컵</b>: 물 150~170ml → 추출량 80ml · <b>4분대 추출 권장</b> (아이스컷 추천)</div>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span>\n            <span>뜨거운 물을 컵수에 맞게 보일러통에 채워주세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span>\n            <span>원두 <b>20~24g</b>을 고운 설탕 기준으로 분쇄해 바스켓에 담아주세요. 분쇄도 측정은 앱의 분쇄분석AI를 이용해보세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span>\n            <span>체결을 최대한 조여주세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">4.</span>\n            <span>STEP 1에서 찾은 <b>불 세기</b>로 가열을 시작하세요.</span>\n          </div>\n          <div style=\"display:flex;gap:10px;margin-bottom:12px\">\n            <span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">5.</span>\n            <span>추출이 시작되면 <b>바로 불을 끄고</b> 잔열로 마무리하세요.</span>\n          </div>\n          <a href=\"https://youtu.be/OOEnyGT81hM\" target=\"_blank\" style=\"display:block;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none\">\n            ▶️ 아이스컷 추출법 영상 보기\n          </a>",
+  },
+  en: {
+    seg0: 'Grind AI', seg1: 'Timer', seg2: 'History',
+    navShop: 'Supplies', navProduct: 'Maekerpot Reserve',
+    camTitle: 'Photo Guide',
+    camSub: 'Place ground coffee on white paper and take a photo.\nAdding a coin improves accuracy.',
+    camTip: 'Get as close as possible\nand tap to focus before shooting.',
+    btnCamera: 'Camera', btnGallery: 'Gallery',
+    btnAnalyze: 'Analyze', btnReset: 'Re-Analyze',
+    btnSpeak: '🔊 Voice', btnSaveGrind: 'Save',
+    scanLbl: 'Analyzing...',
+    grindHd: 'Grind Size', measureHd: 'Measurements', aiHd: 'AI Advice',
+    levelLbl: 'Grind Level', mokaLbl: 'Maekerpot Fit',
+    brewLbl: 'Best Brew', confLbl: 'Confidence',
+    sizeHd: 'Avg Particle', uniHd: 'Uniformity',
+    rangeNote: 'Maekerpot Range', rangeVal: '300 — 500 μm',
+    measureNote: 'Values are AI visual estimates. Use as a reference guide.',
+    adviceCap: 'Barista Advice',
+    confHigh: 'High', confMid: 'Medium', confLow: 'Low',
+    confMidReason: '💡 For better accuracy: spread grounds wider on white paper and shoot in natural light, up close.',
+    confLowReason: '⚠️ Low confidence. Try again with white background, spread evenly, in bright lighting without shadows.',
+    timerStart: 'Start', timerPause: 'Pause', timerResume: 'Resume',
+    timerReset: 'Reset', timerStop: 'Stop Brew',
+    timerStageName0: 'Ready', timerStageDesc0: 'Press start to begin extraction',
+    timerRecommend: 'Recommended: 4 ~ 5 min',
+    screenWarn: 'Keep screen on.',
+    screenWarnSub: 'Alarms may not sound if the screen turns off.',
+    warnTitle: 'Reduce Heat — Stabilize Pressure',
+    warnBody: '3 min passed. Lower to medium-low heat to maintain 7bar pressure.',
+    dangerTitle: 'Over-Extraction Warning',
+    dangerBody: 'Exceeded 6 minutes. Long extraction destroys crema and causes bitterness.',
+    elapsedLbl: 'Elapsed Time', dosingLbl: 'Recommended Dose', dosingVal: '20g ~ 23g',
+    waterLbl: 'Water Amount', waterVal: '1 cup 110~130ml · 2 cups 150~170ml',
+    tl0name: 'Medium Heat', tl0time: '0:00 — 3:00 · Building pressure',
+    tl1name: 'Reduce Heat', tl1time: '3:00 alarm · Stabilize pressure',
+    tl2name: 'Overtime', tl2time: '6:00 alarm · Over-extraction risk',
+    tl3name: 'Turn Off', tl3time: 'Turn off when brew starts',
+    historyHd: 'Brew History',
+    historyEmpty: 'No records yet.\nSave after analysis or timer.',
+    saveTitle: 'Save Record', saveMemo: 'Add memo (optional)',
+    saveCancel: 'Cancel', saveSave: 'Save',
+    savedToast: 'Record saved',
+    deleteBtn: 'Delete',
+    updateNew: 'New version available 🎉',
+    updateLater: 'Later', updateNow: 'Update',
+    installTitle: 'Install App 📲',
+    installDesc: 'Add to home screen to launch like a native app.',
+    installDismiss: 'Not today', installOk: 'OK',
+    voice1min: '1 minute passed.',
+    voice2min: '2 minutes passed.',
+    voice3min: '3 minutes. Reduce to medium-low heat and stabilize pressure.',
+    voice4min: '4 minutes. This is the ideal extraction window.',
+    voice5min: '5 minutes. Good extraction time.',
+    voice6min: 'Over 6 minutes. Risk of over-extraction. Watch your brew.',
+    voice7min: '7 minutes reached. Timer stopped.',
+    voiceStart: 'Extraction started.',
+    voiceStartMsg: 'Starting heat.',
+    voiceOptimal: 'Perfect grind for Maekerpot.',
+    voiceFine: 'Grind is slightly too fine. Adjust coarser.',
+    voiceCoarse: 'Grind is slightly too coarse. Adjust finer.',
+    voiceResult: (lv) => `Analysis complete. Grind level: ${lv}.`,
+
+    // ═══ New additions ═══
+    seg3: 'Troubleshoot',
+    navBean: '🫘 Coffee Beans', navSupply: '🔩 Parts',
+    nav2cup: '2-Cup Reserve', nav1cup: '1-Cup Reserve',
+    // Cup mode
+    cup1Btn: '☕ 1 Cup', cup1Sub: '~3 min', cup2Btn: '☕☕ 2 Cups', cup2Sub: '~4 min',
+    cup1Toast: '☕ 1-Cup mode — brew around 3 min',
+    cup2Toast: '☕☕ 2-Cup mode — brew around 4 min',
+    cup1Rec: 'Recommended brew time: ~3 min (1 cup)', cup2Rec: 'Recommended brew time: ~4 min (2 cups)',
+    cup1Stage: '☕ 1 Cup — brew around 3 min', cup2Stage: '☕☕ 2 Cups — brew around 4 min',
+    recTimeLbl: 'Recommended Time', recTimeVal: '1 cup ~3 min · 2 cups ~4 min',
+    // Flame test
+    flameBtn: '🔥 Flame Test', flameTitle: '🔥 Flame Test',
+    flameDesc: 'Fill with hot water only, no coffee grounds.<br><b>1 cup: 110~130ml · 2 cups: 150~170ml</b><br>Check when water starts to extract.<br>Optimal if extraction starts around <b>3 min (1 cup) or 4 min (2 cups)</b>.<br><span style="font-size:12px;color:var(--label3)">※ Judged by the cup count selected in the Timer tab.</span>',
+    flameStart: 'Start', flameCancel: 'Cancel', flameRetry: 'Test Again',
+    flameHeating: 'Heating...', flameDetected: '💧 Extraction Started',
+    // Q&A links
+    qaSupplyLink: 'Buy Maekeo Pot Parts',
+    qaVideoLink: 'Official Usage Video',
+    qaBeginnerHd: 'First time using it?',
+    qaProblemHd: 'Common Issues',
+    qaAsTitle: 'A/S Inquiry',
+    // STEP
+    step1Lbl: 'STEP 1', step1Title: 'Find the right flame level for your stove',
+    step2Lbl: 'STEP 2', step2Title: 'Main extraction',
+    // Q&A card titles
+    q1: 'Coffee leaks from the joint',
+    q2: 'Extraction takes over 5 minutes',
+    q3: 'The cup rotates',
+    q4: 'Pressure leaks from the safety valve',
+    q5: 'The bottom silicone pressure valve comes off',
+    q6: 'Extraction pressure feels too strong',
+    q7: 'Crema does not form well',
+    q8: 'Hard to reach 2-cup volume (60ml+)',
+    q9: 'How do I use the pressure cap?',
+    q10: 'How to use the strainer',
+    // Buyer verification
+    buyerTitle: 'Limited Edition Reservation for Maekeo Pot Users',
+    buyerConfirm: 'Confirm', buyerCancel: 'Cancel', buyerChecking: 'Checking...',
+    buyerPlaceholder: 'Name or phone number (e.g. 010-1234-5678)',
+    buyerSuccessTitle: '1-Cup Maekeo Pot Limited Edition',
+    buyerGoBtn: 'Go to Reservation Page →', buyerClose: 'Close',
+    buyerDesc: 'This page is a reservation page for the <b>1-Cup Maekeo Pot</b>, made specially for <b>Maekeo Pot users</b>.<br><br>Enter your existing order information (<b>name or phone number</b>) and press Confirm.',
+    buyerNotice2cup: '⚠️ Existing <b>2-cup reservation holders</b> can access this after receiving their Maekeo Pot.',
+    buyerNoticeContact: 'If you are a Maekeo Pot user but your information is not found,<br>please email us your <b>order name and phone number</b>.',
+    buyerSuccessBody: 'A reservation page for the <b>1-Cup Maekeo Pot</b>, made specially for Maekeo Pot users.<br><br>📦 First-round shipping is scheduled for <b>December ~ February 2027</b>.<br><br><span style="font-size:13px;color:var(--label2)">Early pre-order participants can order as a <b>member or guest</b>.</span>',
+    fDescTooStrong: (tm,cup) => `Extraction started at ${tm}. (${cup} basis)<br>Lower the flame significantly and test again.`,
+    fDescStrong: (tm,cup) => `Extraction started at ${tm}. (${cup} basis)<br>Lower the flame slightly and test again.`,
+    fDescPerfect: (tm,cup) => `Extraction started at ${tm}. (${cup} basis)<br>Keep this flame level.`,
+    fDescWeak: (tm,cup) => `Extraction started at ${tm}. (${cup} basis)<br>Raise the flame slightly or open the pressure cap 180°<br>to encourage extraction.`,
+    fDescTooWeak: (cup) => `Extraction started too late. (${cup} basis)<br>Raise the flame significantly or open the pressure cap 180°<br>to encourage extraction.`,
+    fVoiceTooStrong: (tm) => `Extraction started at ${tm}. The flame is too strong. Lower it significantly and test again.`,
+    fVoiceStrong: (tm) => `Extraction started at ${tm}. The flame is slightly strong. Lower it a little and test again.`,
+    fVoicePerfect: (tm) => `Extraction started at ${tm}. Perfect flame level. Keep this setting.`,
+    fVoiceWeak: (tm) => `Extraction started at ${tm}. The flame is slightly weak. Raise it a little or open the pressure cap 180 degrees.`,
+    fVoiceTooWeak: () => `The flame is too weak. Raise it significantly or open the pressure cap 180 degrees.`,
+    cupLbl1: '1 cup', cupLbl2: '2 cups',
+    brewPatternToast: (lbl,h) => `☕ Time to brew — ${lbl}`,
+    brewPatternVoice: (lbl,h,avg) => avg
+      ? `You usually brew around this time. Your average brew time is ${avg}. Shall we make a great cup today?`
+      : `You usually brew around this time. Shall we make a great cup today?`,
+    // 3rd: alerts / voice / error messages
+    tlWait: 'Building pressure', tlAlarm: 'alarm', tlStabilize: 'Stabilize pressure',
+    tlOverBrew: 'Over-extraction risk', tlBrewRec: 'recommended',
+    tStopped: 'Stopped',
+    partUnit: '',
+    flameOptTooStrong: 'Flame is too strong', flameOptStrong: 'Flame is slightly strong',
+    flameOptPerfect: 'Perfect flame level!', flameOptWeak: 'Flame is slightly weak',
+    flameOptTooWeak: 'Flame is too weak',
+    flameWait: 'Please wait a bit longer.',
+    flameNowOpt: 'If water starts flowing from now, the flame level is correct.',
+    errNoPhoto: 'Please select a photo first',
+    errTakePhoto: 'Please take a photo of coffee grounds',
+    errFileTooBig: 'File is too large. Please keep it under 10MB.',
+    errLowRes: 'Resolution is too low. Please shoot closer.',
+    errImgLoad: 'Failed to load image. Please try again.',
+    errImgRead: 'Could not read the image.',
+    errAnalysisFail: 'Analysis failed. Please try again.',
+    errNoResult: 'No analysis result. Please try again.',
+    errTimeout: 'Server timeout. Please try again.',
+    errNetwork: 'Network error',
+    errNotFound: 'No matching record found.',
+    errEnterInfo: 'Please enter a name or phone number.',
+    tMorning: 'morning', tAfternoon: 'afternoon', tEvening: 'evening', tDawn: 'early morning',
+    btnInstall: 'Install',
+    lvMid: 'Medium',
+    // Q&A bodies
+    q1body: "<div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span><span>Tighten the boiler and container as much as possible.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span><span>Check that the pressure weight inside the pressure cap is facing the right direction.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span><span>A grind that is too fine or too coarse can cause leaks. Use a grind similar to <b>fine sugar</b>.</span></div><div style=\"display:flex;gap:10px;margin-bottom:4px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">4.</span><span>If the problem persists, please contact us by email.</span></div>",
+    q2body: "<div style=\"background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px\">Flame strength varies by stove.<br><b style=\"color:var(--label)\">Around 3 min for 1 cup, 4 min for 2 cups</b> is the recommended brew time.</div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span><span>First run hot water only and find the flame level where extraction starts at the target time (1 cup ~3 min / 2 cups ~4 min). Use the 🔥 Flame Test in the Timer tab.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span><span>For induction or small gas burners, open the pressure cap 180°~360° to adjust the brew time to the target range.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span><span>Avoid tamping too hard.</span></div><div style=\"display:flex;gap:10px;margin-bottom:4px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">4.</span><span>A grind that is too fine or too coarse also matters. Use a grind similar to <b>fine sugar</b>.</span></div>",
+    q3body: "<div style=\"background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px\">Depending on how tightly it is assembled, the cup may occasionally rotate.<br>In that case the seal is incomplete, which can cause <b style=\"color:var(--label)\">leaking at the joint</b> and prevent proper extraction.</div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span><span>Turn the cup clockwise as tight as possible.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span><span>Tighten one of the two hex screws inside the cup first.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span><span>Then tighten the remaining hex screw.</span></div><div style=\"display:flex;gap:10px;margin-bottom:4px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">4.</span><span>You do not need to worry about screw alignment.</span></div><a href=\"https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1\" target=\"_blank\" style=\"display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none\">🛒 Buy Maekeo Pot Repair Kit</a>",
+    q4body: "<div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span><span>If pressure leaks from the safety valve, tighten the hex screw a little more.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span><span>If pressure still leaks after tightening, it may be caused by a <b>damaged seal</b>.</span></div><div style=\"display:flex;gap:10px;margin-bottom:4px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span><span>The seal <b>can be replaced by yourself</b>.</span></div><a href=\"https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1\" target=\"_blank\" style=\"display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none\">🛒 Buy Replacement Seal</a>",
+    q5body: "<div style=\"background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px\">Note: the small opening at the silicone pressure valve inlet is an <b style=\"color:var(--label)\">intentional design</b>.</div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span><span>During early use the silicone pressure valve may come off before it settles into place.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span><span>When installing it, twist it in like a screw so it seats firmly and does not come off.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span><span>You do not need to remove and wash the pressure valve after every brew.</span></div><div style=\"display:flex;gap:10px;margin-bottom:4px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">4.</span><span>If you lose the silicone pressure valve, you can buy a replacement from the parts store.</span></div><a href=\"https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1\" target=\"_blank\" style=\"display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none\">🛒 Buy Silicone Pressure Valve</a>",
+    q6body: "<div style=\"background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px\">Maekeo Pot brews at a high pressure of <b style=\"color:var(--label)\">7 bar</b>.<br>Regular moka pots brew at 1~3 bar, so the pressure can feel relatively strong.</div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span><span>We recommend using the <b>Timer</b> provided in this app.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span><span>Check your grind size. Try the <b>Grind Analysis</b> feature in this app.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span><span>Instead of hard tamping, use only a distributor or tamp lightly.</span></div><div style=\"display:flex;gap:10px;margin-bottom:4px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">4.</span><span>Try brewing with the pressure cap slightly open.</span></div>",
+    q7body: "<div style=\"background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px\">For old beans or pre-ground coffee, crema may not form well <b style=\"color:var(--label)\">2 weeks or more</b> after opening.</div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span><span>Check your grind size. Try the <b>Grind Analysis</b> feature in this app.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span><span>We recommend a dose of <b>20~23g</b>.</span></div><div style=\"display:flex;gap:10px;margin-bottom:4px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span><span>Instead of hard tamping, tamp lightly or use only a distributor.</span></div><div style=\"margin-top:12px;font-size:13px;color:var(--label2)\">If you would like to try the ground coffee Maekeo uses, you can buy it at the link below.</div><a href=\"https://smartstore.naver.com/maeco/category/776e7d77ad034cd8807d9f1e29b52ead?cp=1\" target=\"_blank\" style=\"display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none\">🛒 Buy Maekeo Ground Coffee</a>",
+    q8body: "<div>Maekeo Pot runs at higher pressure than regular moka pots, so <b style=\"color:var(--label)\">pressure builds up toward the end of extraction</b>.<br><br>Because this is hard to control mechanically, you cannot slowly finish a 2-cup extraction. To solve this we recommend the <b style=\"color:var(--label)\">ice-cut brewing method</b>.<br><br>You can watch the method in the video below.</div><a href=\"https://youtu.be/OOEnyGT81hM\" target=\"_blank\" style=\"display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none\">▶️ Watch Ice-Cut Brewing Video</a>",
+    q9body: "<div>The <b style=\"color:var(--label)\">pressure cap</b> lets you adjust brewing pressure directly — a feature not available on regular moka pots.<br><br>Opening the cap up to <b style=\"color:var(--label)\">360°</b> shortens your brew time and maximizes coffee flavor.</div>",
+    q10body: "<div>The strainer filters out fines and debris during extraction.<br>Check the video below for correct usage.</div><a href=\"https://youtu.be/jWCpN_adH0c\" target=\"_blank\" style=\"display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none\">▶️ Watch Strainer Usage Video</a>",
+    step1body: "<div style=\"background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px\">Use <b style=\"color:var(--label)\">hot water only</b>, no coffee grounds.<br><b style=\"color:var(--label)\">1 cup: 110~130ml · 2 cups: 150~170ml</b><br>You only need to do this once when you first use it.</div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span><span>Fill the boiler with hot water for your cup count. (1 cup 110~130ml / 2 cups 150~170ml)</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span><span>Tighten the assembly as much as possible.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span><span>Start on <b>high heat</b> and check when extraction begins.</span></div><div style=\"background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px\"><div style=\"margin-bottom:6px;font-weight:600;color:var(--label)\">📊 Extraction start time guide</div><div style=\"margin-bottom:4px\">✅ <b>1 cup: ~3 min</b> / <b>2 cups: ~4 min</b> → correct flame level</div><div style=\"margin-bottom:4px\">⚠️ Faster than target → lower the flame slightly</div><div>⚠️ Slower than target → raise the flame or open the pressure cap</div></div><div style=\"display:flex;gap:10px;margin-bottom:4px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">4.</span><span>For induction or small gas burners, <b>open the pressure cap 180°</b> and try again. If it starts too early, close the cap gradually to match the target time.</span></div><button onclick=\"switchTab('timer',document.querySelectorAll('.seg-btn')[1]);document.getElementById('flameModal').classList.add('show')\" style=\"width:100%;margin-top:12px;padding:12px;border:none;border-radius:10px;background:var(--orange);color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer\">🔥 Go to Flame Test</button>",
+    step2body: "<div style=\"background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px\"><div style=\"margin-bottom:6px;font-weight:600;color:var(--label)\">💧 Water & yield by cup count</div><div style=\"margin-bottom:4px\">• <b>1 cup</b>: water 110~130ml → yield 40ml · <b>brew around 3 min</b></div><div>• <b>2 cups</b>: water 150~170ml → yield 80ml · <b>brew around 4 min</b> (ice-cut recommended)</div></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">1.</span><span>Fill the boiler with hot water for your cup count.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">2.</span><span>Grind <b>20~24g</b> of beans to a fine-sugar texture and add to the basket. Try the Grind Analysis feature to check your grind.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">3.</span><span>Tighten the assembly as much as possible.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">4.</span><span>Heat using the <b>flame level</b> you found in STEP 1.</span></div><div style=\"display:flex;gap:10px;margin-bottom:12px\"><span style=\"color:var(--blue);font-weight:700;flex-shrink:0\">5.</span><span>When extraction starts, <b>turn off the heat immediately</b> and let residual heat finish it.</span></div><a href=\"https://youtu.be/OOEnyGT81hM\" target=\"_blank\" style=\"display:block;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none\">▶️ Watch Ice-Cut Brewing Video</a>",
+  }
+};
+
+function t(key, ...args) {
+  const val = I18N[currentLang][key];
+  if (typeof val === 'function') return val(...args);
+  return val || I18N['ko'][key] || key;
+}
+
+
 // ═══ TAB ═══
 function switchTab(tab, segBtn, tabBtn) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -1087,12 +1426,12 @@ function handleFile(e) {
   e.target.value = '';
 
   if (file.size > 10 * 1024 * 1024) {
-    toast('파일이 너무 큽니다. 10MB 이하로 촬영해주세요.');
+    toast(t('errFileTooBig'));
     return;
   }
 
   const reader = new FileReader();
-  reader.onerror = () => toast('이미지를 읽을 수 없습니다.');
+  reader.onerror = () => toast(t('errImgRead'));
   reader.onload = ev => {
     const img = new Image();
     img.onload = () => {
@@ -1116,14 +1455,14 @@ function handleFile(e) {
       document.getElementById('analyzeRow').style.display = 'flex';
       document.getElementById('resultPanel').classList.remove('show');
     };
-    img.onerror = () => toast('이미지 로드 실패. 다시 시도해주세요.');
+    img.onerror = () => toast(t('errImgLoad'));
     img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
 }
 
 function startAnalysis() {
-  if (!currentBase64) { toast('사진을 먼저 선택해주세요'); return; }
+  if (!currentBase64) { toast(t('errNoPhoto')); return; }
   document.getElementById('analyzeRow').style.display = 'none';
   doAnalysis();
 }
@@ -1140,7 +1479,7 @@ function checkImageQuality(base64) {
     if (img.naturalWidth > 0 && img.naturalWidth < 300) {
       return currentLang === 'en'
         ? 'Image resolution too low. Take a closer photo.'
-        : '해상도가 낮습니다. 더 가까이 촬영해주세요.';
+        : t('errLowRes');
     }
     return null;
   } catch(e) { return null; }
@@ -1166,7 +1505,7 @@ async function doAnalysis() {
     document.getElementById('loadingPanel').classList.remove('show');
     document.getElementById('scanOverlay').classList.remove('show');
     console.error('분석 오류:', e);
-    toast(e.message || '분석 실패. 다시 시도해주세요.');
+    toast(e.message || t('errAnalysisFail'));
     document.getElementById('analyzeRow').style.display = 'flex';
   }
 }
@@ -1203,14 +1542,14 @@ async function callAPI(base64) {
     }
 
     if (!d.data) {
-      throw new Error('분석 결과가 없습니다. 다시 시도해주세요.');
+      throw new Error(t('errNoResult'));
     }
 
     return normalizeV2(d.data);
 
   } catch(e) {
-    if (e.name === 'AbortError') throw new Error('서버 응답 시간 초과. 다시 시도해주세요.');
-    throw new Error(e.message || '분석 실패. 다시 시도해주세요.');
+    if (e.name === 'AbortError') throw new Error(t('errTimeout'));
+    throw new Error(e.message || t('errAnalysisFail'));
   }
 }
 
@@ -1243,7 +1582,7 @@ function normalizeV2(data) {
 }
 
 function normalize(r) {
-  if (r.isCoffee === false) { toast('커피 원두 사진을 촬영해주세요'); return null; }
+  if (r.isCoffee === false) { toast(t('errTakePhoto')); return null; }
   return {
     percent:        Math.min(100, Math.max(0, Number(r.percent) || 50)),
     particleSize:   Number(r.particleSize) || 400,
@@ -1535,8 +1874,8 @@ function setCupMode(n) {
     }
   }
   const recEl = document.getElementById('timerRecommendText');
-  if (recEl) recEl.textContent = n === 1 ? '권장 추출 시간 3분대 (1컵)' : '권장 추출 시간 4분대 (2컵)';
-  toast(n === 1 ? '☕ 1컵 모드 — 3분대 추출 권장' : '☕☕ 2컵 모드 — 4분대 추출 권장');
+  if (recEl) recEl.textContent = n === 1 ? t('cup1Rec') : t('cup2Rec');
+  toast(n === 1 ? t('cup1Toast') : t('cup2Toast'));
   renderStages();
   updateTimerUI();
 }
@@ -1558,9 +1897,9 @@ function renderStages() {
   const optStr = cupMode === 1 ? '3분대' : '4분대';
   const cupStr = cupMode === 1 ? '1컵' : '2컵';
   document.getElementById('stageList').innerHTML = `
-    <div class="tl-row upcoming" id="sRow0"><div class="tl-dot" id="tDot0"></div><div class="tl-info"><div class="tl-name">${t('tl0name')}</div><div class="tl-time">0:00 — ${warnStr} · 압력 생성 대기</div></div><div class="tl-badge" id="sBadge0">${t('timerStart')}</div></div>
-    <div class="tl-row upcoming" id="sRow1"><div class="tl-dot" id="tDot1"></div><div class="tl-info"><div class="tl-name">${t('tl1name')}</div><div class="tl-time">${warnStr} 알람 · 압력 안정화 (${cupStr} ${optStr} 추출 권장)</div></div><div class="tl-badge" id="sBadge1">${t('timerStart')}</div></div>
-    <div class="tl-row upcoming" id="sRow2"><div class="tl-dot" id="tDot2"></div><div class="tl-info"><div class="tl-name">${t('tl2name')}</div><div class="tl-time">${dangerStr} 알람 · 과추출 주의</div></div><div class="tl-badge" id="sBadge2">${t('timerStart')}</div></div>
+    <div class="tl-row upcoming" id="sRow0"><div class="tl-dot" id="tDot0"></div><div class="tl-info"><div class="tl-name">${t('tl0name')}</div><div class="tl-time">0:00 — ${warnStr} · ${t('tlWait')}</div></div><div class="tl-badge" id="sBadge0">${t('timerStart')}</div></div>
+    <div class="tl-row upcoming" id="sRow1"><div class="tl-dot" id="tDot1"></div><div class="tl-info"><div class="tl-name">${t('tl1name')}</div><div class="tl-time">${warnStr} ${t('tlAlarm')} · ${t('tlStabilize')} (${cupStr} ${optStr} ${t('tlBrewRec')})</div></div><div class="tl-badge" id="sBadge1">${t('timerStart')}</div></div>
+    <div class="tl-row upcoming" id="sRow2"><div class="tl-dot" id="tDot2"></div><div class="tl-info"><div class="tl-name">${t('tl2name')}</div><div class="tl-time">${dangerStr} ${t('tlAlarm')} · ${t('tlOverBrew')}</div></div><div class="tl-badge" id="sBadge2">${t('timerStart')}</div></div>
     <div class="tl-row upcoming" id="sRow3"><div class="tl-dot" id="tDot3"></div><div class="tl-info"><div class="tl-name">${t('tl3name')}</div><div class="tl-time">${t('tl3time')}</div></div><div class="tl-badge" id="sBadge3">${t('timerStart')}</div></div>
   `;
 }
@@ -1570,14 +1909,14 @@ function fmt(s) { return `${Math.floor(Math.abs(s)/60)}:${String(Math.abs(s)%60)
 function updateTimerUI() {
   const elapsed = getElapsed();
   let nm, dc;
-  if      (elapsed===0)       { nm=t('timerStageName0'); dc=(cupMode===1?'☕ 1컵 — 3분대 추출 권장':'☕☕ 2컵 — 4분대 추출 권장'); }
+  if      (elapsed===0)       { nm=t('timerStageName0'); dc=(cupMode===1?t('cup1Stage'):t('cup2Stage')); }
   else if (elapsed<WARN_AT)   { nm=t('tl0name'); dc=`${t('tl0time')} — ${fmt(WARN_AT-elapsed)}`; }
   else if (elapsed<DANGER_AT) { nm=t('tl1name'); dc=`${fmt(elapsed)} ${t('elapsedLbl')}`; }
   else                        { nm=t('tl2name'); dc=`${fmt(elapsed)} ${t('elapsedLbl')}`; }
   document.getElementById('stageName').textContent = nm;
   document.getElementById('stageDesc').textContent = dc;
   document.getElementById('timerDisplay').textContent   = fmt(elapsed);
-  document.getElementById('timerSub').textContent       = elapsed < STOP_AT ? `/ ${fmt(STOP_AT)}` : (currentLang==='en'?'Stopped':'종료');
+  document.getElementById('timerSub').textContent       = elapsed < STOP_AT ? `/ ${fmt(STOP_AT)}` : t('tStopped');
   document.getElementById('elapsedDisplay').textContent = fmt(elapsed);
 
   const rf = document.getElementById('ringFill');
@@ -1775,10 +2114,10 @@ function startFlameTest() {
   document.getElementById('flameResult').style.display = 'none';
   document.getElementById('flameExtractionBtnWrap').style.display = 'none';
   document.getElementById('flameModalBtns').style.display = 'flex';
-  document.getElementById('flameStartBtn').textContent = '시작';
+  document.getElementById('flameStartBtn').textContent = t('flameStart');
   document.getElementById('flameModalDesc').style.display = 'block';
   document.getElementById('flameDisplay').textContent = '0:00';
-  document.getElementById('flameStatus').textContent = '가열 중...';
+  document.getElementById('flameStatus').textContent = t('flameHeating');
   flameRunning = false;
   flameStart = null;
   if (flameRAF) cancelAnimationFrame(flameRAF);
@@ -1816,12 +2155,12 @@ function flameTestStart() {
     if (elapsed >= optMin - 60 && !announced2) {
       announced2 = true;
       document.getElementById('flameStatus').textContent = `${fmt(optMin-60)} 경과. 조금 더 기다려주세요.`;
-      speak('조금 더 기다려주세요.');
+      speak(t('flameWait'));
     }
     if (elapsed >= optMin && !announced3) {
       announced3 = true;
       document.getElementById('flameStatus').textContent = `${cupLabel} 기준 ${fmt(optMin)}~${fmt(optMax)} 사이 추출 시작이 적정입니다.`;
-      speak('지금부터 물이 나오기 시작하면 적정 불 세기입니다.');
+      speak(t('flameNowOpt'));
     }
     if (elapsed >= optMax && !announced4) {
       announced4 = true;
@@ -1861,7 +2200,7 @@ function showFlameResult(elapsed) {
   document.getElementById('flameTimerWrap').style.display = 'none';
   document.getElementById('flameResult').style.display = 'block';
   document.getElementById('flameModalBtns').style.display = 'flex';
-  document.getElementById('flameStartBtn').textContent = '다시 테스트';
+  document.getElementById('flameStartBtn').textContent = t('flameRetry');
   document.getElementById('flameStartBtn').onclick = flameTestStart;
 
   let emoji, title, desc, voice;
@@ -1869,28 +2208,24 @@ function showFlameResult(elapsed) {
   // 컵수별 최적 구간: 1컵 3:00~4:00, 2컵 4:00~5:00
   const optMin = cupMode === 1 ? 180 : 240;
   const optMax = cupMode === 1 ? 240 : 300;
-  const cupLabel = cupMode === 1 ? '1컵' : '2컵';
+  const cupLabel = cupMode === 1 ? t('cupLbl1') : t('cupLbl2');
+  const tmStr = fmt(elapsed), tmVoice = fmtVoice(elapsed);
 
   if (elapsed < optMin - 60) {
-    emoji = '🔴'; title = '불이 너무 강합니다';
-    desc = `${fmt(elapsed)}에 추출이 시작됐습니다. (${cupLabel} 기준)<br>불을 많이 줄여서 다시 테스트해보세요.`;
-    voice = `${fmtVoice(elapsed)}에 추출이 시작됐습니다. 불이 너무 강합니다. 불을 많이 줄여서 다시 테스트해보세요.`;
+    emoji = '🔴'; title = t('flameOptTooStrong');
+    desc = t('fDescTooStrong', tmStr, cupLabel); voice = t('fVoiceTooStrong', tmVoice);
   } else if (elapsed < optMin) {
-    emoji = '⚠️'; title = '불이 약간 강합니다';
-    desc = `${fmt(elapsed)}에 추출이 시작됐습니다. (${cupLabel} 기준)<br>불을 조금 줄여서 다시 테스트해보세요.`;
-    voice = `${fmtVoice(elapsed)}에 추출이 시작됐습니다. 불이 약간 강합니다. 조금 줄여서 다시 테스트해보세요.`;
+    emoji = '⚠️'; title = t('flameOptStrong');
+    desc = t('fDescStrong', tmStr, cupLabel); voice = t('fVoiceStrong', tmVoice);
   } else if (elapsed <= optMax) {
-    emoji = '✅'; title = '완벽한 불 세기입니다!';
-    desc = `${fmt(elapsed)}에 추출이 시작됐습니다. (${cupLabel} 기준)<br>이 불 세기를 유지하세요.`;
-    voice = `${fmtVoice(elapsed)}에 추출이 시작됐습니다. 완벽한 불 세기입니다. 이 세기를 유지하세요.`;
+    emoji = '✅'; title = t('flameOptPerfect');
+    desc = t('fDescPerfect', tmStr, cupLabel); voice = t('fVoicePerfect', tmVoice);
   } else if (elapsed <= optMax + 60) {
-    emoji = '⚠️'; title = '불이 약간 약합니다';
-    desc = `${fmt(elapsed)}에 추출이 시작됐습니다. (${cupLabel} 기준)<br>불을 조금 높이거나 압력캡을 180도 개방해서<br>추출을 유도해보세요.`;
-    voice = `${fmtVoice(elapsed)}에 추출이 시작됐습니다. 불이 약간 약합니다. 불을 조금 높이거나 압력캡을 180도 개방해서 추출을 유도해보세요.`;
+    emoji = '⚠️'; title = t('flameOptWeak');
+    desc = t('fDescWeak', tmStr, cupLabel); voice = t('fVoiceWeak', tmVoice);
   } else {
-    emoji = '🔴'; title = '불이 너무 약합니다';
-    desc = `추출이 너무 늦게 시작됐습니다. (${cupLabel} 기준)<br>불을 많이 높이거나 압력캡을 180도 개방해서<br>추출을 유도해보세요.`;
-    voice = `불이 너무 약합니다. 불을 많이 높이거나 압력캡을 180도 개방해서 추출을 유도해보세요.`;
+    emoji = '🔴'; title = t('flameOptTooWeak');
+    desc = t('fDescTooWeak', cupLabel); voice = t('fVoiceTooWeak');
   }
 
   document.getElementById('flameResultEmoji').textContent = emoji;
@@ -1910,7 +2245,7 @@ function closeFlameModal() {
 function openBuyerModal() {
   document.getElementById('buyerInput').value = '';
   document.getElementById('buyerError').textContent = '';
-  document.getElementById('buyerConfirmBtn').textContent = '확인';
+  document.getElementById('buyerConfirmBtn').textContent = t('buyerConfirm');
   document.getElementById('buyerConfirmBtn').disabled = false;
   document.getElementById('buyerModal').classList.add('show');
   setTimeout(() => document.getElementById('buyerInput').focus(), 350);
@@ -1935,11 +2270,11 @@ async function verifyBuyer() {
   const btn   = document.getElementById('buyerConfirmBtn');
 
   if (!query || query.length < 2) {
-    errEl.textContent = '이름 또는 전화번호를 입력해주세요.';
+    errEl.textContent = t('errEnterInfo');
     return;
   }
 
-  btn.textContent = '확인 중...';
+  btn.textContent = t('buyerChecking');
   btn.disabled = true;
   errEl.textContent = '';
 
@@ -1958,13 +2293,13 @@ async function verifyBuyer() {
       closeBuyerModal();
       document.getElementById('buyerSuccessModal').classList.add('show');
     } else {
-      errEl.textContent = d.message || '등록된 정보를 찾을 수 없습니다.';
-      btn.textContent = '확인';
+      errEl.textContent = d.message || t('errNotFound');
+      btn.textContent = t('buyerConfirm');
       btn.disabled = false;
     }
   } catch(e) {
-    errEl.textContent = '오류: ' + (e.message || '네트워크 오류');
-    btn.textContent = '확인';
+    errEl.textContent = '오류: ' + (e.message || t('errNetwork'));
+    btn.textContent = t('buyerConfirm');
     btn.disabled = false;
   }
 }
@@ -2030,18 +2365,15 @@ function checkBrewTimePattern() {
 
     // 시간대 텍스트
     const h = currentHour;
-    const timeLabel = h < 6  ? '새벽' :
-                      h < 12 ? '오전' :
-                      h < 18 ? '오후' : '저녁';
+    const timeLabel = h < 6  ? t('tDawn') :
+                      h < 12 ? t('tMorning') :
+                      h < 18 ? t('tAfternoon') : t('tEvening');
 
     // 음성 안내
-    const msg = avgStr
-      ? `${timeLabel} ${h}시, 평소 이 시간대에 추출을 시작하셨네요. 평균 추출 시간은 ${avgStr}입니다. 오늘도 맛있는 커피 추출을 시작해볼까요?`
-      : `${timeLabel} ${h}시, 평소 이 시간대에 추출을 시작하셨네요. 오늘도 맛있는 커피 추출을 시작해볼까요?`;
+    const msg = t('brewPatternVoice', timeLabel, h, avgStr);
 
-    // 토스트 + 음성 (3초 후 — 앱 로딩 완료 후)
     setTimeout(() => {
-      toast(`☕ ${timeLabel} ${h}시 추출 시간입니다`);
+      toast(t('brewPatternToast', timeLabel, h));
       setTimeout(() => speak(msg), 500);
     }, 3000);
 
@@ -2250,7 +2582,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.8.9';
+const CURRENT_VERSION = 'v1.9.4';
 
 async function checkVersionFromServer() {
   try {
@@ -2314,143 +2646,13 @@ function applyUpdate() {
 }
 
 // ═══ 다국어 (한국어 / English) ═══
-const LANGS = ['ko', 'en'];
 const LANG_LABELS = { ko: '한', en: 'EN' };
 const LANG_VOICE = { ko: 'ko-KR', en: 'en-US' };
 
-const I18N = {
-  ko: {
-    seg0: '분쇄분석AI', seg1: '타이머', seg2: '기록',
-    navShop: '소모품', navProduct: '매커포트예약',
-    camTitle: '원두 사진 촬영 안내',
-    camSub: '흰색 바탕 위에 분쇄된 원두를 넓게 펼쳐 촬영하세요\n100원 동전을 함께 놓으면 더 정확합니다',
-    camTip: '렌즈를 최대한 가깝게 대고\n터치해 초점을 맞춘 후 촬영하세요',
-    btnCamera: '카메라로 촬영', btnGallery: '갤러리에서 선택',
-    btnAnalyze: '분석 시작', btnReset: '다시 분석',
-    btnSpeak: '🔊 음성', btnSaveGrind: '기록 저장',
-    scanLbl: '분석 중',
-    grindHd: '분쇄 굵기', measureHd: '측정값', aiHd: 'AI 추천',
-    levelLbl: '분쇄 레벨', mokaLbl: '매커포트 적합도',
-    brewLbl: '적합 추출', confLbl: '분석 신뢰도',
-    sizeHd: '평균 입자', uniHd: '균일도',
-    rangeNote: '매커포트 적합 범위', rangeVal: '300 — 500 μm',
-    measureNote: '측정값은 AI 시각 추정치입니다. 방향 판단 참고용으로 활용하세요.',
-    adviceCap: '바리스타 조언',
-    confHigh: '높음', confMid: '보통', confLow: '낮음',
-    confMidReason: '💡 정확도를 높이려면: 흰 종이 위에 원두를 더 넓게 펼치고, 자연광에서 최대한 가까이 촬영해주세요.',
-    confLowReason: '⚠️ 신뢰도가 낮습니다. 흰 배경 사용, 균일하게 펼치기, 그림자 없는 밝은 환경에서 다시 촬영하면 정확도가 높아집니다.',
-    timerStart: '시작', timerPause: '일시정지', timerResume: '계속',
-    timerReset: '초기화', timerStop: '추출 종료',
-    timerStageName0: '시작 준비', timerStageDesc0: '버튼을 눌러 추출을 시작하세요',
-    timerRecommend: '권장 추출 시간 4 ~ 5분',
-    screenWarn: '화면을 끄지 마세요.',
-    screenWarnSub: '화면이 꺼지면 알람이 울리지 않을 수 있습니다.',
-    warnTitle: '불을 줄이세요 — 압력 안정화',
-    warnBody: '3분 경과. 중약불로 낮춰 7bar 압력을 안정적으로 유지하세요.',
-    dangerTitle: '추출 시간 초과 — 과추출 주의',
-    dangerBody: '6분을 넘었습니다. 고압 추출이 길어지면 크레마가 무너지고 쓴맛이 강해집니다.',
-    elapsedLbl: '총 경과 시간', dosingLbl: '권장 도징량', dosingVal: '20g ~ 23g',
-    waterLbl: '물 사용량', waterVal: '1컵 110~130ml · 2컵 150~170ml',
-    tl0name: '중불 가열', tl0time: '0:00 — 3:00 · 압력 생성 대기',
-    tl1name: '불 줄이기', tl1time: '3:00 알람 · 압력 안정화',
-    tl2name: '추출 시간 초과', tl2time: '6:00 알람 · 과추출 주의',
-    tl3name: '불 끄기', tl3time: '추출이 시작될 때 즉시',
-    historyHd: '추출 기록',
-    historyEmpty: '아직 저장된 기록이 없습니다.\n분석 또는 타이머 후 저장해보세요.',
-    saveTitle: '기록 저장', saveMemo: '메모 입력 (선택)',
-    saveCancel: '취소', saveSave: '저장',
-    savedToast: '기록이 저장되었습니다',
-    deleteBtn: '삭제',
-    updateNew: '새 버전이 있습니다 🎉',
-    updateLater: '나중에', updateNow: '업데이트',
-    installTitle: '앱으로 설치하기 📲',
-    installDesc: '홈 화면에 추가하면 앱처럼 빠르게 실행할 수 있습니다.',
-    installDismiss: '오늘 하루 안 보기', installOk: '확인',
-    // 음성
-    voice1min: '1분이 지났습니다.',
-    voice2min: '2분이 지났습니다.',
-    voice3min: '3분 경과. 불을 중약불로 줄이세요. 압력을 안정화하세요.',
-    voice4min: '4분. 가장 이상적인 추출 시간대입니다.',
-    voice5min: '5분. 적정 추출 시간대입니다.',
-    voice6min: '6분을 초과했습니다. 추출 시간이 너무 길어졌습니다. 과추출 주의하세요.',
-    voice7min: '7분이 경과했습니다. 타이머를 종료합니다.',
-    voiceStart: '추출 시작',
-    voiceStartMsg: '가열을 시작합니다.',
-    voiceOptimal: '매커포트에 최적입니다.',
-    voiceFine: '분쇄도가 조금 곱습니다. 그라인더를 굵게 조정하세요.',
-    voiceCoarse: '분쇄도가 조금 굵습니다. 그라인더를 곱게 조정하세요.',
-    voiceResult: (lv) => `분석 완료. 분쇄 레벨은 ${lv}입니다.`,
-  },
-  en: {
-    seg0: 'Grind AI', seg1: 'Timer', seg2: 'History',
-    navShop: 'Supplies', navProduct: 'Maekerpot Reserve',
-    camTitle: 'Photo Guide',
-    camSub: 'Place ground coffee on white paper and take a photo.\nAdding a coin improves accuracy.',
-    camTip: 'Get as close as possible\nand tap to focus before shooting.',
-    btnCamera: 'Camera', btnGallery: 'Gallery',
-    btnAnalyze: 'Analyze', btnReset: 'Re-Analyze',
-    btnSpeak: '🔊 Voice', btnSaveGrind: 'Save',
-    scanLbl: 'Analyzing...',
-    grindHd: 'Grind Size', measureHd: 'Measurements', aiHd: 'AI Advice',
-    levelLbl: 'Grind Level', mokaLbl: 'Maekerpot Fit',
-    brewLbl: 'Best Brew', confLbl: 'Confidence',
-    sizeHd: 'Avg Particle', uniHd: 'Uniformity',
-    rangeNote: 'Maekerpot Range', rangeVal: '300 — 500 μm',
-    measureNote: 'Values are AI visual estimates. Use as a reference guide.',
-    adviceCap: 'Barista Advice',
-    confHigh: 'High', confMid: 'Medium', confLow: 'Low',
-    confMidReason: '💡 For better accuracy: spread grounds wider on white paper and shoot in natural light, up close.',
-    confLowReason: '⚠️ Low confidence. Try again with white background, spread evenly, in bright lighting without shadows.',
-    timerStart: 'Start', timerPause: 'Pause', timerResume: 'Resume',
-    timerReset: 'Reset', timerStop: 'Stop Brew',
-    timerStageName0: 'Ready', timerStageDesc0: 'Press start to begin extraction',
-    timerRecommend: 'Recommended: 4 ~ 5 min',
-    screenWarn: 'Keep screen on.',
-    screenWarnSub: 'Alarms may not sound if the screen turns off.',
-    warnTitle: 'Reduce Heat — Stabilize Pressure',
-    warnBody: '3 min passed. Lower to medium-low heat to maintain 7bar pressure.',
-    dangerTitle: 'Over-Extraction Warning',
-    dangerBody: 'Exceeded 6 minutes. Long extraction destroys crema and causes bitterness.',
-    elapsedLbl: 'Elapsed Time', dosingLbl: 'Recommended Dose', dosingVal: '20g ~ 23g',
-    waterLbl: 'Water Amount', waterVal: '1 cup 110~130ml · 2 cups 150~170ml',
-    tl0name: 'Medium Heat', tl0time: '0:00 — 3:00 · Building pressure',
-    tl1name: 'Reduce Heat', tl1time: '3:00 alarm · Stabilize pressure',
-    tl2name: 'Overtime', tl2time: '6:00 alarm · Over-extraction risk',
-    tl3name: 'Turn Off', tl3time: 'Turn off when brew starts',
-    historyHd: 'Brew History',
-    historyEmpty: 'No records yet.\nSave after analysis or timer.',
-    saveTitle: 'Save Record', saveMemo: 'Add memo (optional)',
-    saveCancel: 'Cancel', saveSave: 'Save',
-    savedToast: 'Record saved',
-    deleteBtn: 'Delete',
-    updateNew: 'New version available 🎉',
-    updateLater: 'Later', updateNow: 'Update',
-    installTitle: 'Install App 📲',
-    installDesc: 'Add to home screen to launch like a native app.',
-    installDismiss: 'Not today', installOk: 'OK',
-    voice1min: '1 minute passed.',
-    voice2min: '2 minutes passed.',
-    voice3min: '3 minutes. Reduce to medium-low heat and stabilize pressure.',
-    voice4min: '4 minutes. This is the ideal extraction window.',
-    voice5min: '5 minutes. Good extraction time.',
-    voice6min: 'Over 6 minutes. Risk of over-extraction. Watch your brew.',
-    voice7min: '7 minutes reached. Timer stopped.',
-    voiceStart: 'Extraction started.',
-    voiceStartMsg: 'Starting heat.',
-    voiceOptimal: 'Perfect grind for Maekerpot.',
-    voiceFine: 'Grind is slightly too fine. Adjust coarser.',
-    voiceCoarse: 'Grind is slightly too coarse. Adjust finer.',
-    voiceResult: (lv) => `Analysis complete. Grind level: ${lv}.`,
-  }
-};
 
-let currentLang = localStorage.getItem('maekeo_lang') || 'ko';
 
-function t(key, ...args) {
-  const val = I18N[currentLang][key];
-  if (typeof val === 'function') return val(...args);
-  return val || I18N['ko'][key] || key;
-}
+
+
 
 function cycleLang() {
   const idx = LANGS.indexOf(currentLang);
@@ -2461,16 +2663,70 @@ function cycleLang() {
 
 function applyLang() {
   const l = currentLang;
-  // document.getElementById('langBtn') 제거됨 (공지 버튼으로 교체)
+  const setTxt = (id, key) => { const e = document.getElementById(id); if (e) e.textContent = t(key); };
+  const setHtml = (id, key) => { const e = document.getElementById(id); if (e) e.innerHTML = t(key); };
 
-  // Nav
+  // 언어 버튼
+  const langBtn = document.getElementById('langBtn');
+  if (langBtn) langBtn.textContent = (l === 'ko') ? '한' : 'EN';
+
+  // 헤더 링크
+  setTxt('navBean', 'navBean');
+  setTxt('navSupply', 'navSupply');
+  setTxt('navProduct', 'nav2cup');
+  setTxt('navProduct1cup', 'nav1cup');
+
+  // 세그먼트
+  setTxt('seg3', 'seg3');
+
+  // 컵수 버튼
+  const c1 = document.getElementById('cup1Btn'), c2 = document.getElementById('cup2Btn');
+  if (c1) c1.innerHTML = `${t('cup1Btn')} <span style="font-weight:400;font-size:12px">${t('cup1Sub')}</span>`;
+  if (c2) c2.innerHTML = `${t('cup2Btn')} <span style="font-weight:400;font-size:12px">${t('cup2Sub')}</span>`;
+  const recEl = document.getElementById('timerRecommendText');
+  if (recEl) recEl.textContent = cupMode === 1 ? t('cup1Rec') : t('cup2Rec');
+  setTxt('recTimeLbl', 'recTimeLbl');
+  setTxt('recTimeVal', 'recTimeVal');
+
+  // 불 세기 테스트
+  setTxt('flameBtn', 'flameBtn');
+  setTxt('flameTitle', 'flameTitle');
+  setHtml('flameModalDesc', 'flameDesc');
+
+  // Q&A
+  setTxt('qaBeginnerHd', 'qaBeginnerHd');
+  setTxt('qaProblemHd', 'qaProblemHd');
+  setTxt('qaSupplyLink', 'qaSupplyLink');
+  setTxt('qaVideoLink', 'qaVideoLink');
+  setTxt('qaAsTitle', 'qaAsTitle');
+  setTxt('step1Title', 'step1Title');
+  setTxt('step2Title', 'step2Title');
+  for (let i = 1; i <= 10; i++) setTxt('q' + i, 'q' + i);
+  for (let i = 1; i <= 10; i++) setHtml('q' + i + 'body', 'q' + i + 'body');
+  setHtml('step1body', 'step1body');
+  setHtml('step2body', 'step2body');
+
+  // 구매자 인증
+  setTxt('buyerTitle', 'buyerTitle');
+  const bi = document.getElementById('buyerInput');
+  if (bi) bi.placeholder = t('buyerPlaceholder');
+  setTxt('buyerConfirmBtn', 'buyerConfirm');
+  setHtml('buyerDesc', 'buyerDesc');
+  setHtml('buyerNotice2cup', 'buyerNotice2cup');
+  setHtml('buyerNoticeContact', 'buyerNoticeContact');
+  setTxt('buyerSuccessTitle', 'buyerSuccessTitle');
+  setHtml('buyerSuccessBody', 'buyerSuccessBody');
+  setTxt('buyerCloseBtn', 'buyerClose');
+  setTxt('buyerGoBtn', 'buyerGoBtn');
+  setTxt('buyerCancelBtn', 'buyerCancel');
+
+  // Nav (기존)
   document.getElementById('seg0').textContent = t('seg0');
   document.getElementById('seg1').textContent = t('seg1');
   document.getElementById('seg2').textContent = t('seg2');
   const navShopEl = document.getElementById('navShop');
   if (navShopEl) navShopEl.textContent = t('navShop');
-  const navProductEl = document.getElementById('navProduct');
-  if (navProductEl) navProductEl.textContent = '2컵매커포트예약';
+
 
   // Tab bar
   document.querySelectorAll('.tab-lbl')[0].textContent = t('seg0');
