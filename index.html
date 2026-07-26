@@ -259,7 +259,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <!-- 1줄: 로고 + 원두/소모품 링크 -->
     <div style="display:flex;flex-direction:column;gap:1px">
       <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.8.9</span>
+      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.9.5</span>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <a class="nav-link" href="https://smartstore.naver.com/maeco/category/776e7d77ad034cd8807d9f1e29b52ead?cp=1" target="_blank" style="font-size:12px;padding:6px 10px">🫘 매커 원두 구매</a>
@@ -269,7 +269,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <!-- 2줄: 예약 버튼 -->
   <div style="display:flex;gap:6px;padding:4px 16px 8px">
     <a class="nav-link" href="https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000042" target="_blank" style="flex:1;text-align:center;font-size:12px;padding:7px 10px" id="navProduct">2컵매커포트예약</a>
-    <button onclick="openBuyerModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer" id="navProduct1cup">1컵매커포트예약</button>
+    <button onclick="openReserveInfoModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer" id="navProduct1cup">1컵매커포트예약</button>
   </div>
   <div class="seg-wrap" id="segWrap">
     <div class="segmented">
@@ -1006,6 +1006,33 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeApiKeyModal()">취소</button>
       <button class="btn btn-primary" style="flex:2" onclick="saveApiKey()">저장 후 분석</button>
+    </div>
+  </div>
+</div>
+
+<!-- 1컵 매커포트 예약 안내 모달 -->
+<div class="modal-bg" id="reserveInfoModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:8px 0 4px">
+      <div style="font-size:44px;margin-bottom:10px">☕</div>
+      <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:16px">1컵 매커포트 예약 안내</div>
+    </div>
+    <div style="font-size:14px;color:var(--label2);line-height:1.8;margin-bottom:16px">
+      해당 1컵 매커포트는 <b style="color:var(--label)">주문자 생산 방식</b>의 상품입니다.
+    </div>
+    <div style="background:var(--blue-bg);border:1.5px solid var(--blue);border-radius:14px;padding:16px;margin-bottom:16px;text-align:center">
+      <div style="font-size:12px;color:var(--blue);font-weight:600;margin-bottom:4px">📦 발송 일정</div>
+      <div style="font-size:19px;font-weight:800;color:var(--blue)">26년 12월 ~ 27년 2월</div>
+      <div style="font-size:12px;color:var(--label2);margin-top:6px">주문 차수는 발송 순서를 의미합니다.</div>
+    </div>
+    <div style="font-size:13px;color:var(--label2);line-height:1.7;margin-bottom:20px">
+      자세한 내용은 앞으로 채널에서 과정을 소개할 예정입니다.<br>
+      위 내용을 확인하셨으면 확인을 눌러주세요.
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeReserveInfoModal()">취소</button>
+      <button class="btn btn-primary" style="flex:2" onclick="goToReservePage()">확인 후 예약하기 →</button>
     </div>
   </div>
 </div>
@@ -2045,6 +2072,17 @@ function closeFlameModal() {
 }
 
 // ═══ 1차~4차 구매자 인증 ═══
+function openReserveInfoModal() {
+  document.getElementById('reserveInfoModal').classList.add('show');
+}
+function closeReserveInfoModal() {
+  document.getElementById('reserveInfoModal').classList.remove('show');
+}
+function goToReservePage() {
+  window.open('https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000043', '_blank');
+  closeReserveInfoModal();
+}
+
 function openBuyerModal() {
   document.getElementById('buyerInput').value = '';
   document.getElementById('buyerError').textContent = '';
@@ -2388,7 +2426,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.8.9';
+const CURRENT_VERSION = 'v1.9.5';
 
 async function checkVersionFromServer() {
   try {
