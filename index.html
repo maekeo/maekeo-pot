@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.9.8</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.0.0</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -275,9 +275,13 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </div>
   </div>
   <!-- 2줄: 예약 버튼 -->
-  <div style="display:flex;gap:6px;padding:4px 16px 8px">
+  <div style="display:flex;gap:6px;padding:4px 16px 4px">
     <a class="nav-link" href="https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000042" target="_blank" style="flex:1;text-align:center;font-size:12px;padding:7px 10px" id="navProduct">2컵매커포트예약</a>
     <button onclick="openReserveInfoModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer" id="navProduct1cup">1컵매커포트예약</button>
+  </div>
+  <!-- 3줄: 가압보일러통 예약 -->
+  <div style="display:flex;gap:6px;padding:0 16px 8px">
+    <button onclick="openBoilerInfoModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer">가압보일러통예약</button>
   </div>
   <div class="seg-wrap" id="segWrap">
     <div class="segmented">
@@ -1014,6 +1018,28 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeApiKeyModal()">취소</button>
       <button class="btn btn-primary" style="flex:2" onclick="saveApiKey()">저장 후 분석</button>
+    </div>
+  </div>
+</div>
+
+<!-- 가압보일러통 예약 안내 모달 -->
+<div class="modal-bg" id="boilerInfoModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:8px 0 4px">
+      <div style="font-size:44px;margin-bottom:10px">🫖</div>
+      <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:16px">가압보일러통 예약 안내</div>
+    </div>
+    <div style="font-size:14px;color:var(--label2);line-height:1.8;margin-bottom:16px">
+      해당 가압보일러통은 <b style="color:var(--label)">주문자 생산 방식</b>으로 예약되는 상품입니다.
+    </div>
+    <a href="https://youtu.be/DbHBvrVTpJk" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--bg2);border:1.5px solid var(--red);border-radius:12px;text-decoration:none;margin-bottom:20px">
+      <span style="font-size:16px">▶️</span>
+      <span style="font-size:14px;font-weight:700;color:var(--red)">가압보일러통 사용 공식 영상</span>
+    </a>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeBoilerInfoModal()">취소</button>
+      <button class="btn btn-primary" style="flex:2" onclick="goToBoilerPage()">확인 후 예약하기 →</button>
     </div>
   </div>
 </div>
@@ -2095,6 +2121,17 @@ function goToReservePage() {
   closeReserveInfoModal();
 }
 
+function openBoilerInfoModal() {
+  document.getElementById('boilerInfoModal').classList.add('show');
+}
+function closeBoilerInfoModal() {
+  document.getElementById('boilerInfoModal').classList.remove('show');
+}
+function goToBoilerPage() {
+  window.open('https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000028', '_blank');
+  closeBoilerInfoModal();
+}
+
 function openBuyerModal() {
   document.getElementById('buyerInput').value = '';
   document.getElementById('buyerError').textContent = '';
@@ -2438,7 +2475,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.9.8';
+const CURRENT_VERSION = 'v2.0.0';
 
 async function checkVersionFromServer() {
   try {
