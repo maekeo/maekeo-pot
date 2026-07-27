@@ -257,13 +257,21 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 <div class="nav">
   <div class="nav-inner">
     <!-- 1줄: 로고 + 원두/소모품 링크 -->
-    <div style="display:flex;flex-direction:column;gap:1px">
-      <span class="nav-title">MAEKEO LAB</span>
-      <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.9.5</span>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <span class="nav-title">MAEKEO LAB</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v1.9.6</span>
+      </div>
+      <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
+        <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
+          <path d="M27.4 3.1c-.32-1.2-1.27-2.15-2.47-2.47C22.76.1 14 .1 14 .1s-8.76 0-10.93.53C1.87.95.92 1.9.6 3.1.07 5.27.07 10 .07 10s0 4.73.53 6.9c.32 1.2 1.27 2.15 2.47 2.47C5.24 19.9 14 19.9 14 19.9s8.76 0 10.93-.53c1.2-.32 2.15-1.27 2.47-2.47.53-2.17.53-6.9.53-6.9s0-4.73-.53-6.9z" fill="#FF0000"/>
+          <path d="M11.2 14.2l7.27-4.2-7.27-4.2v8.4z" fill="#fff"/>
+        </svg>
+      </a>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
-      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/776e7d77ad034cd8807d9f1e29b52ead?cp=1" target="_blank" style="font-size:12px;padding:6px 10px">🫘 매커 원두 구매</a>
-      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="font-size:12px;padding:6px 10px">🔩 소모품</a>
+      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/776e7d77ad034cd8807d9f1e29b52ead?cp=1" target="_blank" style="font-size:12px;padding:6px 10px">매커 원두 구매</a>
+      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="font-size:12px;padding:6px 10px">소모품</a>
     </div>
   </div>
   <!-- 2줄: 예약 버튼 -->
@@ -2426,7 +2434,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v1.9.5';
+const CURRENT_VERSION = 'v1.9.6';
 
 async function checkVersionFromServer() {
   try {
