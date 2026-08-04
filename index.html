@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.0.3</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.0.4</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -279,9 +279,10 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <a class="nav-link" href="https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000042" target="_blank" style="flex:1;text-align:center;font-size:12px;padding:7px 10px" id="navProduct">2컵매커포트예약</a>
     <button onclick="openReserveInfoModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer" id="navProduct1cup">1컵매커포트예약</button>
   </div>
-  <!-- 3줄: 가압보일러통 예약 -->
+  <!-- 3줄: 가압보일러통 예약 + 발송일정 -->
   <div style="display:flex;gap:6px;padding:0 16px 8px">
     <button onclick="openBoilerInfoModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer">가압보일러통예약</button>
+    <button onclick="openScheduleModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer">📅 예약발송일정</button>
   </div>
   <div class="seg-wrap" id="segWrap">
     <div class="segmented">
@@ -1018,6 +1019,46 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeApiKeyModal()">취소</button>
       <button class="btn btn-primary" style="flex:2" onclick="saveApiKey()">저장 후 분석</button>
+    </div>
+  </div>
+</div>
+
+<!-- 예약 발송 일정 모달 -->
+<div class="modal-bg" id="scheduleModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:8px 0 4px">
+      <div style="font-size:44px;margin-bottom:10px">📅</div>
+      <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:12px">예약 발송 일정</div>
+    </div>
+    <div style="font-size:14px;color:var(--label2);line-height:1.8;margin-bottom:16px">
+      각 예약된 상품의 일정을 공유해드립니다.<br>
+      일정이 변경되면 상시 반영해드리겠습니다.
+    </div>
+    <div style="background:var(--fill);border-radius:14px;padding:16px 18px;margin-bottom:20px">
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sep)">
+        <span style="font-size:14px;color:var(--label)">8월 매커포트</span>
+        <span style="font-size:14px;font-weight:700;color:var(--blue)">8월말 예정</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sep)">
+        <span style="font-size:14px;color:var(--label)">8월 가압보일러통</span>
+        <span style="font-size:14px;font-weight:700;color:var(--blue)">8월말 예정</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sep)">
+        <span style="font-size:14px;color:var(--label)">8월 원목손잡이</span>
+        <span style="font-size:14px;font-weight:700;color:var(--blue)">8월말 예정</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sep)">
+        <span style="font-size:14px;color:var(--label)">9월 매커포트</span>
+        <span style="font-size:14px;font-weight:700;color:var(--blue)">9월 2주차 예정</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0">
+        <span style="font-size:14px;color:var(--label)">1컵 매커포트</span>
+        <span style="font-size:14px;font-weight:700;color:var(--blue)">12월~27년 2월 예정</span>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-primary" style="flex:1" onclick="closeScheduleModal()">확인</button>
     </div>
   </div>
 </div>
@@ -2130,6 +2171,12 @@ function goToBoilerPage() {
   window.open('https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000028', '_blank');
   closeBoilerInfoModal();
 }
+function openScheduleModal() {
+  document.getElementById('scheduleModal').classList.add('show');
+}
+function closeScheduleModal() {
+  document.getElementById('scheduleModal').classList.remove('show');
+}
 
 function openBuyerModal() {
   document.getElementById('buyerInput').value = '';
@@ -2474,7 +2521,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.0.3';
+const CURRENT_VERSION = 'v2.0.4';
 
 async function checkVersionFromServer() {
   try {
