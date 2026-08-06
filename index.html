@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.0.4</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.0.8</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -1204,7 +1204,7 @@ const I18N = {
     dangerBody: '6분을 넘었습니다. 고압 추출이 길어지면 크레마가 무너지고 쓴맛이 강해집니다.',
     elapsedLbl: '총 경과 시간', dosingLbl: '권장 도징량', dosingVal: '20g ~ 23g',
     waterLbl: '물 사용량', waterVal: '1컵 110~130ml · 2컵 150~170ml',
-    tl0name: '중불 가열', tl0time: '0:00 — 3:00 · 압력 생성 대기',
+    tl0name: '중강불 가열', tl0time: '0:00 — 3:00 · 압력 생성 대기',
     tl1name: '불 줄이기', tl1time: '3:00 알람 · 압력 안정화',
     tl2name: '추출 시간 초과', tl2time: '6:00 알람 · 과추출 주의',
     tl3name: '불 끄기', tl3time: '추출이 시작될 때 즉시',
@@ -1267,7 +1267,7 @@ const I18N = {
     dangerBody: 'Exceeded 6 minutes. Long extraction destroys crema and causes bitterness.',
     elapsedLbl: 'Elapsed Time', dosingLbl: 'Recommended Dose', dosingVal: '20g ~ 23g',
     waterLbl: 'Water Amount', waterVal: '1 cup 110~130ml · 2 cups 150~170ml',
-    tl0name: 'Medium Heat', tl0time: '0:00 — 3:00 · Building pressure',
+    tl0name: 'Medium-High Heat', tl0time: '0:00 — 3:00 · Building pressure',
     tl1name: 'Reduce Heat', tl1time: '3:00 alarm · Stabilize pressure',
     tl2name: 'Overtime', tl2time: '6:00 alarm · Over-extraction risk',
     tl3name: 'Turn Off', tl3time: 'Turn off when brew starts',
@@ -1752,12 +1752,12 @@ let WARN_AT = 180, DANGER_AT = 300, STOP_AT = 420;
 
 function applyCupTimings() {
   if (cupMode === 1) {
-    WARN_AT = 180;   // 3분 — 불 줄이기
-    DANGER_AT = 300; // 5분 — 과추출 주의 (1컵은 3~4분 최적)
+    WARN_AT = 120;   // 2분 — 불 줄이기
+    DANGER_AT = 240; // 4분 — 과추출 주의 (1컵 권장 3분대)
     STOP_AT = 420;
   } else {
-    WARN_AT = 240;   // 4분 — 불 줄이기
-    DANGER_AT = 360; // 6분 — 과추출 주의 (2컵은 4~5분 최적)
+    WARN_AT = 180;   // 3분 — 불 줄이기
+    DANGER_AT = 300; // 5분 — 과추출 주의 (2컵 권장 4분대)
     STOP_AT = 420;
   }
 }
@@ -2041,8 +2041,8 @@ function flameTestStart() {
 
   let announced1 = false, announced2 = false, announced3 = false, announced4 = false, announced5 = false;
   // 컵수별 기준: 1컵 최적 3:00~4:00, 2컵 최적 4:00~5:00
-  const optMin = cupMode === 1 ? 180 : 240;
-  const optMax = cupMode === 1 ? 240 : 300;
+  const optMin = cupMode === 1 ? 120 : 240;
+  const optMax = cupMode === 1 ? 180 : 300;
   const endAt  = optMax + 60;
   const cupLabel = cupMode === 1 ? '1컵' : '2컵';
 
@@ -2110,8 +2110,8 @@ function showFlameResult(elapsed) {
   let emoji, title, desc, voice;
 
   // 컵수별 최적 구간: 1컵 3:00~4:00, 2컵 4:00~5:00
-  const optMin = cupMode === 1 ? 180 : 240;
-  const optMax = cupMode === 1 ? 240 : 300;
+  const optMin = cupMode === 1 ? 120 : 240;
+  const optMax = cupMode === 1 ? 180 : 300;
   const cupLabel = cupMode === 1 ? '1컵' : '2컵';
 
   if (elapsed < optMin - 60) {
@@ -2521,7 +2521,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.0.4';
+const CURRENT_VERSION = 'v2.0.8';
 
 async function checkVersionFromServer() {
   try {
