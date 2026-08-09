@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.1.1</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.1.2</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -560,14 +560,14 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
 
     <!-- 공식 영상 링크 -->
-    <a href="https://youtu.be/cIMaZ8pCPZU" target="_blank"
-      style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--red);border-radius:14px;padding:14px 16px;text-decoration:none;margin-bottom:4px">
+    <button onclick="openVideoInfoModal()"
+      style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--red);border-radius:14px;padding:14px 16px;cursor:pointer;font-family:inherit;margin-bottom:4px">
       <div style="display:flex;align-items:center;gap:10px">
         <span style="font-size:22px">📺</span>
         <div style="font-size:14px;font-weight:700;color:var(--red)">매커포트 공식 사용 영상</div>
       </div>
       <span style="font-size:18px;color:var(--red)">›</span>
-    </a>
+    </button>
 
     <!-- STEP 1 -->
     <div class="card" style="padding:0;overflow:hidden">
@@ -1025,6 +1025,26 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeApiKeyModal()">취소</button>
       <button class="btn btn-primary" style="flex:2" onclick="saveApiKey()">저장 후 분석</button>
+    </div>
+  </div>
+</div>
+
+<!-- 공식 영상 안내 모달 -->
+<div class="modal-bg" id="videoInfoModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:8px 0 4px">
+      <div style="font-size:44px;margin-bottom:10px">📺</div>
+      <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:16px">매커포트 공식 사용 영상</div>
+    </div>
+    <div style="font-size:14px;color:var(--label2);line-height:1.8;margin-bottom:20px">
+      매커포트는 더 이상 종이 매뉴얼을 제공하지 않고,<br>
+      <b style="color:var(--label)">매커랩 웹앱</b>을 통해 사용법을 안내해드립니다.<br><br>
+      아래 영상에서 매커포트 사용법을 확인하실 수 있습니다.
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeVideoInfoModal()">취소</button>
+      <button class="btn btn-primary" style="flex:2" onclick="goToVideoPage()">▶️ 영상 보기</button>
     </div>
   </div>
 </div>
@@ -2183,6 +2203,16 @@ function openScheduleModal() {
 function closeScheduleModal() {
   document.getElementById('scheduleModal').classList.remove('show');
 }
+function openVideoInfoModal() {
+  document.getElementById('videoInfoModal').classList.add('show');
+}
+function closeVideoInfoModal() {
+  document.getElementById('videoInfoModal').classList.remove('show');
+}
+function goToVideoPage() {
+  window.open('https://youtu.be/cIMaZ8pCPZU', '_blank');
+  closeVideoInfoModal();
+}
 
 function openBuyerModal() {
   document.getElementById('buyerInput').value = '';
@@ -2527,7 +2557,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.1.1';
+const CURRENT_VERSION = 'v2.1.2';
 
 async function checkVersionFromServer() {
   try {
