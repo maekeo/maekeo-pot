@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.0.8</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.0.9</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -899,6 +899,9 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <div style="display:flex;gap:10px;margin-bottom:4px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span>
             <span>강한 템핑보다는 약한 템핑 또는 디스트리뷰터만 사용해보세요.</span>
+          </div>
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:13px;line-height:1.7">
+            💡 일반 브랜드용 분쇄 원두는 <b style="color:var(--label)">에스프레소용 분쇄도</b>로 되어 있어, 사용 시 <b style="color:var(--label)">압력캡을 180~360도 개방</b>한 후 추출을 권장합니다.
           </div>
           <div style="margin-top:12px;font-size:13px;color:var(--label2)">
             매커가 사용하는 분쇄 원두를 사용해보시려면 아래 링크에서 구매하실 수 있습니다.
@@ -2521,7 +2524,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.0.8';
+const CURRENT_VERSION = 'v2.0.9';
 
 async function checkVersionFromServer() {
   try {
