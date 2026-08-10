@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.1.5</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.1.6</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -276,7 +276,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   </div>
   <!-- 2줄: 예약 버튼 -->
   <div style="display:flex;gap:6px;padding:4px 16px 4px">
-    <a class="nav-link" href="https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000042" target="_blank" style="flex:1;text-align:center;font-size:12px;padding:7px 10px" id="navProduct">2컵매커포트예약</a>
+    <button onclick="openPreorderModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer" id="navProduct">2컵매커포트예약</button>
     <button onclick="openReserveInfoModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer" id="navProduct1cup">1컵매커포트예약</button>
   </div>
   <!-- 3줄: 가압보일러통 예약 + 발송일정 -->
@@ -1037,6 +1037,30 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeApiKeyModal()">취소</button>
       <button class="btn btn-primary" style="flex:2" onclick="saveApiKey()">저장 후 분석</button>
+    </div>
+  </div>
+</div>
+
+<!-- 9월말 발송 프리오더 예약 모달 -->
+<div class="modal-bg" id="preorderModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:8px 0 4px">
+      <div style="font-size:44px;margin-bottom:10px">🛒</div>
+      <div style="font-size:19px;font-weight:700;color:var(--label);margin-bottom:16px">9월말 발송 매커포트<br>프리오더 예약</div>
+    </div>
+    <div id="preorderCountdown" style="background:var(--blue-bg);border:1.5px solid var(--blue);border-radius:14px;padding:16px;margin-bottom:14px;text-align:center">
+      <div style="font-size:12px;color:var(--blue);font-weight:600;margin-bottom:4px">⏰ 예약 마감까지</div>
+      <div style="font-size:26px;font-weight:800;color:var(--blue)" id="preorderDday">D-5</div>
+      <div style="font-size:12px;color:var(--label2);margin-top:6px">8월 15일 마감</div>
+    </div>
+    <div style="background:var(--fill);border-radius:14px;padding:14px 16px;margin-bottom:20px;text-align:center">
+      <span style="font-size:13px;color:var(--label2)">📦 발송 예정</span>
+      <span style="font-size:14px;font-weight:700;color:var(--label);margin-left:8px">9월말</span>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" style="flex:1" onclick="closePreorderModal()">취소</button>
+      <button class="btn btn-primary" style="flex:2" onclick="goToPreorderPage()">예약하러 가기 →</button>
     </div>
   </div>
 </div>
@@ -2275,6 +2299,37 @@ function closePartsModal() {
   document.getElementById('partsModal').classList.remove('show');
 }
 
+// 프리오더 마감 카운트다운 (8월 15일 마감)
+function openPreorderModal() {
+  updatePreorderCountdown();
+  document.getElementById('preorderModal').classList.add('show');
+}
+function closePreorderModal() {
+  document.getElementById('preorderModal').classList.remove('show');
+}
+function goToPreorderPage() {
+  window.open('https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000042', '_blank');
+  closePreorderModal();
+}
+function updatePreorderCountdown() {
+  const el = document.getElementById('preorderDday');
+  const box = document.getElementById('preorderCountdown');
+  if (!el) return;
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const deadline = new Date(now.getFullYear(), 7, 15); // 8월=month 7, 15일
+  const diff = Math.round((deadline - today) / 86400000);
+  if (diff > 0) {
+    el.textContent = 'D-' + diff;
+  } else if (diff === 0) {
+    el.textContent = '오늘 마감';
+  } else {
+    el.textContent = '예약 마감';
+    if (box) { box.style.background = 'var(--fill)'; box.style.borderColor = 'var(--sep)'; }
+    el.style.color = 'var(--label2)';
+  }
+}
+
 function openBuyerModal() {
   document.getElementById('buyerInput').value = '';
   document.getElementById('buyerError').textContent = '';
@@ -2618,7 +2673,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.1.5';
+const CURRENT_VERSION = 'v2.1.6';
 
 async function checkVersionFromServer() {
   try {
