@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.1.4</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.1.5</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -1176,9 +1176,13 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       자세한 내용은 앞으로 채널에서 과정을 소개할 예정입니다.<br>
       위 내용을 확인하셨으면 확인을 눌러주세요.
     </div>
-    <a href="https://youtu.be/zEhv5tiisFs" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--bg2);border:1.5px solid var(--red);border-radius:12px;text-decoration:none;margin-bottom:16px">
+    <a href="https://youtu.be/zEhv5tiisFs" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--bg2);border:1.5px solid var(--red);border-radius:12px;text-decoration:none;margin-bottom:8px">
       <span style="font-size:16px">▶️</span>
-      <span style="font-size:14px;font-weight:700;color:var(--red)">1컵 매커포트 영상 보기</span>
+      <span style="font-size:14px;font-weight:700;color:var(--red)">1컵 매커포트 영상 보기 (1차 과정)</span>
+    </a>
+    <a href="https://www.youtube.com/watch?v=mBDYaawlxf8&t=180s" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--bg2);border:1.5px solid var(--red);border-radius:12px;text-decoration:none;margin-bottom:16px">
+      <span style="font-size:16px">▶️</span>
+      <span style="font-size:14px;font-weight:700;color:var(--red)">1컵 매커포트 영상 보기 (2차 과정)</span>
     </a>
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeReserveInfoModal()">취소</button>
@@ -2614,7 +2618,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.1.4';
+const CURRENT_VERSION = 'v2.1.5';
 
 async function checkVersionFromServer() {
   try {
