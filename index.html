@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.1.2</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.1.3</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -730,6 +730,9 @@ body.flash-danger{animation:flashDanger .35s ease 6}
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">4.</span>
             <span>너무 곱거나 너무 굵은 분쇄도도 영향을 줄 수 있습니다. <b>고운 설탕 입자</b> 정도의 굵기를 기준으로 사용해주세요.</span>
           </div>
+          <button onclick="openWeightModal()" style="width:100%;margin-top:12px;padding:12px;border:none;border-radius:10px;background:var(--blue-bg);color:var(--blue);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">
+            🔍 압력추 방향 점검
+          </button>
         </div>
       </div>
     </div>
@@ -1025,6 +1028,23 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeApiKeyModal()">취소</button>
       <button class="btn btn-primary" style="flex:2" onclick="saveApiKey()">저장 후 분석</button>
+    </div>
+  </div>
+</div>
+
+<!-- 압력추 방향 점검 모달 -->
+<div class="modal-bg" id="weightModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:4px 0 4px">
+      <div style="font-size:18px;font-weight:700;color:var(--label);margin-bottom:14px">압력추 방향 점검</div>
+    </div>
+    <div style="font-size:13px;color:var(--label2);line-height:1.7;margin-bottom:14px;text-align:center">
+      압력캡 내부의 <b style="color:var(--label)">압력추 방향</b>이 올바른지 확인해주세요.
+    </div>
+    <img src="/pressure-weight-direction.png" alt="압력추 방향" style="width:100%;border-radius:12px;margin-bottom:20px">
+    <div class="modal-btns">
+      <button class="btn btn-primary" style="flex:1" onclick="closeWeightModal()">확인</button>
     </div>
   </div>
 </div>
@@ -2205,13 +2225,18 @@ function closeScheduleModal() {
 }
 function openVideoInfoModal() {
   document.getElementById('videoInfoModal').classList.add('show');
-}
-function closeVideoInfoModal() {
+}function closeVideoInfoModal() {
   document.getElementById('videoInfoModal').classList.remove('show');
 }
 function goToVideoPage() {
   window.open('https://youtu.be/cIMaZ8pCPZU', '_blank');
   closeVideoInfoModal();
+}
+function openWeightModal() {
+  document.getElementById('weightModal').classList.add('show');
+}
+function closeWeightModal() {
+  document.getElementById('weightModal').classList.remove('show');
 }
 
 function openBuyerModal() {
@@ -2557,7 +2582,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.1.2';
+const CURRENT_VERSION = 'v2.1.3';
 
 async function checkVersionFromServer() {
   try {
