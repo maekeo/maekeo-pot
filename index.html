@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.1.7</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.2.0</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -568,6 +568,19 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       </div>
       <span style="font-size:18px;color:var(--red)">›</span>
     </button>
+
+    <!-- 레시피 공유 카페 링크 -->
+    <a href="https://cafe.naver.com/f-e/cafes/31260040/menus/31?viewType=I" target="_blank"
+      style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid #03C75A;border-radius:14px;padding:14px 16px;text-decoration:none;margin-bottom:4px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px">⭐</span>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:#03C75A">나만의 레시피 공유하기</div>
+          <div style="font-size:12px;color:var(--label3);margin-top:2px">매커포트 레시피 공유 카페</div>
+        </div>
+      </div>
+      <span style="font-size:18px;color:#03C75A">›</span>
+    </a>
 
     <!-- 부품 명칭 -->
     <button onclick="openPartsModal()" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:14px 16px;cursor:pointer;font-family:inherit;margin-bottom:10px">
@@ -2696,7 +2709,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.1.7';
+const CURRENT_VERSION = 'v2.2.0';
 
 async function checkVersionFromServer() {
   try {
