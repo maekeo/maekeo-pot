@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.3.0</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.3.1</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -274,14 +274,9 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <a class="nav-link" href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="font-size:12px;padding:6px 10px">소모품</a>
     </div>
   </div>
-  <!-- 2줄: 예약 버튼 -->
-  <div style="display:flex;gap:6px;padding:4px 16px 4px">
-    <button onclick="openPreorderModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer" id="navProduct">2컵매커포트예약</button>
-    <button onclick="openReserveInfoModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer" id="navProduct1cup">1컵매커포트예약</button>
-  </div>
-  <!-- 3줄: 가압보일러통 예약 + 발송일정 -->
-  <div style="display:flex;gap:6px;padding:0 16px 8px">
-    <button onclick="openBoilerInfoModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer">가압보일러통예약</button>
+  <!-- 예약 버튼 (통합) -->
+  <div style="display:flex;gap:6px;padding:4px 16px 8px">
+    <button onclick="openReserveSelectModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer" id="navProduct">🛒 매커포트 예약</button>
     <button onclick="openScheduleModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer">📅 예약발송일정</button>
   </div>
   <div class="seg-wrap" id="segWrap">
@@ -1106,6 +1101,42 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeApiKeyModal()">취소</button>
       <button class="btn btn-primary" style="flex:2" onclick="saveApiKey()">저장 후 분석</button>
+    </div>
+  </div>
+</div>
+
+<!-- 매커포트 예약 선택 모달 -->
+<div class="modal-bg" id="reserveSelectModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:8px 0 4px">
+      <div style="font-size:44px;margin-bottom:10px">🛒</div>
+      <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:6px">매커포트 예약</div>
+      <div style="font-size:13px;color:var(--label2);margin-bottom:16px">예약하실 상품을 선택해주세요.</div>
+    </div>
+    <button onclick="selectReserve('preorder')" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:16px;cursor:pointer;font-family:inherit;margin-bottom:8px">
+      <span style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px">☕☕</span>
+        <span style="font-size:15px;font-weight:600;color:var(--label)">2컵 매커포트 예약</span>
+      </span>
+      <span style="font-size:18px;color:var(--label3)">›</span>
+    </button>
+    <button onclick="selectReserve('onecup')" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:16px;cursor:pointer;font-family:inherit;margin-bottom:8px">
+      <span style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px">☕</span>
+        <span style="font-size:15px;font-weight:600;color:var(--label)">1컵 매커포트 예약</span>
+      </span>
+      <span style="font-size:18px;color:var(--label3)">›</span>
+    </button>
+    <button onclick="selectReserve('boiler')" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:16px;cursor:pointer;font-family:inherit;margin-bottom:20px">
+      <span style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px">🔩</span>
+        <span style="font-size:15px;font-weight:600;color:var(--label)">가압보일러통 예약</span>
+      </span>
+      <span style="font-size:18px;color:var(--label3)">›</span>
+    </button>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeReserveSelectModal()">닫기</button>
     </div>
   </div>
 </div>
@@ -2344,11 +2375,23 @@ function closeFlameModal() {
 }
 
 // ═══ 1차~4차 구매자 인증 ═══
+function openReserveSelectModal() {
+  document.getElementById('reserveSelectModal').classList.add('show');
+}
+function closeReserveSelectModal() {
+  document.getElementById('reserveSelectModal').classList.remove('show');
+}
+function selectReserve(type) {
+  closeReserveSelectModal();
+  if (type === 'preorder') openPreorderModal();
+  else if (type === 'onecup') openReserveInfoModal();
+  else if (type === 'boiler') openBoilerInfoModal();
+}
+
 function openReserveInfoModal() {
   updateReserveCountdown();
   document.getElementById('reserveInfoModal').classList.add('show');
-}
-function updateReserveCountdown() {
+}function updateReserveCountdown() {
   const el = document.getElementById('reserveDday');
   const box = document.getElementById('reserveCountdown');
   if (!el) return;
@@ -2805,7 +2848,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.3.0';
+const CURRENT_VERSION = 'v2.3.1';
 
 async function checkVersionFromServer() {
   try {
