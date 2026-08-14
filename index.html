@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.2.8</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.3.0</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -364,6 +364,16 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <div id="confReason" style="display:none; padding:10px 16px 12px; font-size:13px; color:var(--label2); line-height:1.5; border-top:.5px solid var(--sep);"></div>
         </div>
       </div>
+
+      <!-- 굵게 분쇄 시 원두 추천 -->
+      <div id="coarseBeanRec" style="display:none;margin-top:10px;background:var(--fill);border-radius:14px;padding:16px">
+        <div style="font-size:13px;color:var(--label2);line-height:1.7;margin-bottom:10px">
+          💡 분쇄가 어려우신가요?<br>매커가 직접 분쇄한 원두를 사용해보세요.
+        </div>
+        <a href="https://smartstore.naver.com/maeco/category/776e7d77ad034cd8807d9f1e29b52ead?cp=1" target="_blank" style="display:block;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none">
+          🛒 매커 분쇄 원두 구매하기
+        </a>
+      </div>
     </div>
     <div class="group">
       <div class="group-hd">측정값</div>
@@ -381,7 +391,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         </div>
         <div class="row" style="border-top:.5px solid var(--sep)">
           <span class="row-label" style="font-size:14px;color:var(--label2)">매커포트 적합 범위</span>
-          <span class="row-value" style="font-size:14px;color:var(--blue);font-weight:500">300 — 500 μm</span>
+          <span class="row-value" style="font-size:14px;color:var(--blue);font-weight:500">400 — 500 μm</span>
         </div>
       </div>
       <!-- Insights -->
@@ -1362,7 +1372,7 @@ const I18N = {
     levelLbl: '분쇄 레벨', mokaLbl: '매커포트 적합도',
     brewLbl: '적합 추출', confLbl: '분석 신뢰도',
     sizeHd: '평균 입자', uniHd: '균일도',
-    rangeNote: '매커포트 적합 범위', rangeVal: '300 — 500 μm',
+    rangeNote: '매커포트 적합 범위', rangeVal: '400 — 500 μm',
     measureNote: '측정값은 AI 시각 추정치입니다. 방향 판단 참고용으로 활용하세요.',
     adviceCap: '바리스타 조언',
     confHigh: '높음', confMid: '보통', confLow: '낮음',
@@ -1425,7 +1435,7 @@ const I18N = {
     levelLbl: 'Grind Level', mokaLbl: 'Maekerpot Fit',
     brewLbl: 'Best Brew', confLbl: 'Confidence',
     sizeHd: 'Avg Particle', uniHd: 'Uniformity',
-    rangeNote: 'Maekerpot Range', rangeVal: '300 — 500 μm',
+    rangeNote: 'Maekerpot Range', rangeVal: '400 — 500 μm',
     measureNote: 'Values are AI visual estimates. Use as a reference guide.',
     adviceCap: 'Barista Advice',
     confHigh: 'High', confMid: 'Medium', confLow: 'Low',
@@ -1752,7 +1762,7 @@ function showResult(r) {
     const values = r.histogram.values;
     const labels = r.histogram.labels;
     const maxVal = Math.max(...values, 1);
-    const optimalRanges = ['300-400', '400-500'];
+    const optimalRanges = ['400-500'];
     const dangerRanges  = ['<100'];
     bars.innerHTML = labels.map((label, i) => {
       const heightPct = Math.round((values[i] / maxVal) * 100);
@@ -1771,7 +1781,7 @@ function showResult(r) {
     const bars = document.getElementById('histogramBars');
     wrap.style.display = 'block';
     const maxCount = Math.max(...r.histogram.map(h => h.count), 1);
-    const optimalRanges = ['300-400', '400-500'];
+    const optimalRanges = ['400-500'];
     const dangerRanges  = ['<200'];
     bars.innerHTML = r.histogram.map(h => {
       const heightPct = Math.round((h.count / maxCount) * 100);
@@ -1791,6 +1801,14 @@ function showResult(r) {
   fitEl.style.color = r.mokaFit.includes('최적') ? 'var(--green)'
     : r.mokaFit.includes('약간') ? 'var(--orange)'
     : r.mokaFit.includes('많이') ? 'var(--red)' : 'var(--label2)';
+
+  // 굵게 분쇄 시 매커 분쇄 원두 추천 (약간 굵음부터)
+  const coarseRec = document.getElementById('coarseBeanRec');
+  if (coarseRec) {
+    const fit = r.mokaFit || '';
+    const isCoarse = fit.includes('굵') || fit.toLowerCase().includes('coarse') || fit.includes('粗');
+    coarseRec.style.display = isCoarse ? 'block' : 'none';
+  }
 
   const conf = r.uniformity >= 75 ? 'high' : r.uniformity >= 55 ? 'mid' : 'low';
   const confEl = document.getElementById('resBadge');
@@ -2787,7 +2805,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.2.8';
+const CURRENT_VERSION = 'v2.3.0';
 
 async function checkVersionFromServer() {
   try {
