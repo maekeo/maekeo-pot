@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.2.4</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.2.7</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -590,6 +590,31 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       </span>
       <span style="font-size:18px;color:var(--label3)">›</span>
     </button>
+
+    <!-- 인덕션 사용 안내 -->
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:10px">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">🔌</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">인덕션 사용 안내</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div style="margin-bottom:10px">
+            매커포트는 <b style="color:var(--label)">스테인리스 316</b> 소재로 제작되어 자성이 없습니다. 따라서 인덕션에서는 <b style="color:var(--label)">별도의 인덕터(인덕션 플레이트)</b>를 사용해야 정상적으로 가열됩니다.
+          </div>
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7">
+            💡 <b style="color:var(--label)">왜 스테인리스 316인가요?</b><br>
+            의료용으로도 쓰이는 고급 소재로, 가격은 비싸지만 <b style="color:var(--label)">내부 변형이나 녹에 매우 강해</b> 오랫동안 안심하고 사용할 수 있습니다.
+          </div>
+          <a href="https://smartstore.naver.com/maeco/products/12529911968" target="_blank" style="display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none">
+            🛒 인덕터(플레이트) 구매하기
+          </a>
+        </div>
+      </div>
+    </div>
 
     <!-- STEP 1 -->
     <div class="card" style="padding:0;overflow:hidden">
@@ -2762,7 +2787,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.2.4';
+const CURRENT_VERSION = 'v2.2.7';
 
 async function checkVersionFromServer() {
   try {
