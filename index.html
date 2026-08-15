@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.3.2</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.3.3</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -662,7 +662,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
             <span>인덕션이나 소형 가스불은 <b>압력캡을 180도 개방</b>해서 추출해보세요. 기준보다 빨리 시작되면 캡을 조금씩 닫아 컵수 기준 시간에 맞게 조정하세요.</span>
           </div>
           <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-top:8px;font-size:13px;line-height:1.7">
-            💡 인덕션 <b style="color:var(--label)">플레이트(인덕터)</b>를 사용할 경우, 열 전달이 느려 추출 시작 시간이 <b style="color:var(--label)">약 1분가량 늘어날 수 있습니다.</b>
+            💡 <b style="color:var(--label)">플레이트(인덕터)</b>를 사용할 경우, 열 전달이 느려 추출 시작 시간이 <b style="color:var(--label)">약 1분가량 늘어날 수 있습니다.</b>
           </div>
           <button onclick="switchTab('timer',document.querySelectorAll('.seg-btn')[1]);document.getElementById('flameModal').classList.add('show')" style="width:100%;margin-top:12px;padding:12px;border:none;border-radius:10px;background:var(--orange);color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">
             🔥 불 세기 테스트 바로가기
@@ -2851,7 +2851,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.3.2';
+const CURRENT_VERSION = 'v2.3.3';
 
 async function checkVersionFromServer() {
   try {
