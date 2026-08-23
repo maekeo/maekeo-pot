@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.3.9</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.4.0</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -1242,13 +1242,19 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         <span style="font-size:14px;color:var(--label)">8월 매커포트</span>
         <span style="font-size:14px;font-weight:700;color:var(--blue)">8월 24~25일 발송 예정</span>
       </div>
-      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sep)">
-        <span style="font-size:14px;color:var(--label)">8월 가압보일러통</span>
-        <span style="font-size:14px;font-weight:700;color:var(--blue)">8월말 예정</span>
+      <div style="padding:8px 0;border-bottom:1px solid var(--sep)">
+        <div style="display:flex;justify-content:space-between">
+          <span style="font-size:14px;color:var(--label)">8월 가압보일러통</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue)">9월 2주차 예정</span>
+        </div>
+        <div style="font-size:11px;color:var(--label3);margin-top:4px;line-height:1.5">원목에 천연 하드왁스 오일 최종 도포 후 최소 7일 경화를 위해 부득이하게 지연되었습니다.</div>
       </div>
-      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sep)">
-        <span style="font-size:14px;color:var(--label)">8월 원목손잡이</span>
-        <span style="font-size:14px;font-weight:700;color:var(--blue)">8월말 예정</span>
+      <div style="padding:8px 0;border-bottom:1px solid var(--sep)">
+        <div style="display:flex;justify-content:space-between">
+          <span style="font-size:14px;color:var(--label)">8월 원목손잡이</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue)">9월 2주차 예정</span>
+        </div>
+        <div style="font-size:11px;color:var(--label3);margin-top:4px;line-height:1.5">원목에 천연 하드왁스 오일 최종 도포 후 최소 7일 경화를 위해 부득이하게 지연되었습니다.</div>
       </div>
       <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sep)">
         <span style="font-size:14px;color:var(--label)">9월 매커포트</span>
@@ -2851,7 +2857,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.3.9';
+const CURRENT_VERSION = 'v2.4.0';
 
 async function checkVersionFromServer() {
   try {
