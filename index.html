@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.4.2</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.4.3</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -713,6 +713,41 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <a href="https://youtu.be/OOEnyGT81hM" target="_blank" style="display:block;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none">
             ▶️ 아이스컷 추출법 영상 보기
           </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">🧼</span>
+          <span>
+            <div style="font-size:11px;color:var(--blue);font-weight:700;margin-bottom:2px">STEP 3</div>
+            <div style="font-size:15px;font-weight:600;color:var(--label)">세척 &amp; 관리</div>
+          </span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div style="font-weight:600;color:var(--label);margin-bottom:8px">🗓️ 정기 기본 세척 (1~2주에 1회)</div>
+          <div style="display:flex;gap:10px;margin-bottom:16px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
+            <span>바스켓에 원두 없이 <b>물만 넣고 추출 1회</b>를 진행해주세요.</span>
+          </div>
+          <div style="font-weight:600;color:var(--label);margin-bottom:8px">🧴 월간 심화 세척 (월 1회)</div>
+          <div style="display:flex;gap:10px;margin-bottom:8px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
+            <span><b>실리콘 소모품을 제외</b>하고, 뜨거운 물에 <b>과탄산소다</b>를 풀어 <b>5분 정도</b> 담가주세요.</span>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span>
+            <span>이후 <b>물 길들이기</b>를 한 번 진행한 뒤 사용해주세요.</span>
+          </div>
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7">
+            ⚠️ <b style="color:var(--label)">주의</b> — 과탄산소다로 세척할 때는 반드시 <b style="color:var(--label)">환기</b>를 하면서 진행해주세요.
+          </div>
         </div>
       </div>
     </div>
@@ -2857,7 +2892,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.4.2';
+const CURRENT_VERSION = 'v2.4.3';
 
 async function checkVersionFromServer() {
   try {
