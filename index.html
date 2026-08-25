@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.4.5</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.4.7</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -756,7 +756,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 
   <!-- 자주 발생하는 문제 -->
   <div class="group">
-    <div class="group-hd">문제해결</div>
+    <div class="group-hd">Q&amp;A</div>
 
     <!-- 체결부 누수 -->
     <div class="card" style="padding:0;overflow:hidden">
@@ -1089,6 +1089,28 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           </div>
           <div style="background:var(--fill);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7">
             💡 <b style="color:var(--label)">압력추 · 압력 스프링 · 추출봉 내부</b>를 <b style="color:var(--label)">과탄산소다</b>로 세척하면 해결됩니다.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 보일러통 잔량 -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">💧</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">추출 후 보일러통에 물이 남아 있어요</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div style="margin-bottom:10px">
+            보일러통에 물이 조금 남는 것은 <b style="color:var(--label)">고장이 아니라 의도된 설계</b>입니다.
+          </div>
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7">
+            💡 매커포트는 <b style="color:var(--label)">바스켓 봉의 길이</b>를 보일러통 바닥에서 일정 높이만큼 띄워 설계했습니다.<br><br>
+            가열 시 보일러통 내부에 물이 조금 남도록 하여, <b style="color:var(--label)">물이 완전히 마르며 발생하는 과열·열 변형(눌음) 현상을 방지</b>하기 위함입니다.
           </div>
         </div>
       </div>
@@ -2888,7 +2910,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.4.5';
+const CURRENT_VERSION = 'v2.4.7';
 
 async function checkVersionFromServer() {
   try {
