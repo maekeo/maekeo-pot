@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.5.0</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.5.1</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -1395,7 +1395,7 @@ const I18N = {
     waterLbl: '물 사용량', waterVal: '1컵 110~130ml · 2컵 150~170ml',
     tl0name: '중강불 가열', tl0time: '0:00 — 3:00 · 압력 생성 대기',
     tl1name: '불 줄이기', tl1time: '3:00 알람 · 압력 안정화',
-    tl2name: '추출 시간 초과', tl2time: '6:00 알람 · 과추출 주의',
+    tl2name: '추출 시간 초과', tl2time: '과추출 주의',
     tl3name: '불 끄기', tl3time: '추출이 시작될 때 즉시',
     historyHd: '추출 기록',
     historyEmpty: '아직 저장된 기록이 없습니다.\n분석 또는 타이머 후 저장해보세요.',
@@ -1414,8 +1414,8 @@ const I18N = {
     voice3min: '3분 경과. 불을 중약불로 줄이세요. 압력을 안정화하세요.',
     voice4min: '4분. 가장 이상적인 추출 시간대입니다.',
     voice5min: '5분. 적정 추출 시간대입니다.',
-    voice6min: '6분을 초과했습니다. 추출 시간이 너무 길어졌습니다. 과추출 주의하세요.',
-    voice7min: '7분이 경과했습니다. 타이머를 종료합니다.',
+    voice6min: '권장 추출 시간을 초과했습니다. 과추출에 주의하세요.',
+    voice7min: '추출 시간이 종료되었습니다.',
     voiceStart: '추출 시작',
     voiceStartMsg: '가열을 시작합니다.',
     voiceOptimal: '매커포트에 최적입니다.',
@@ -1458,7 +1458,7 @@ const I18N = {
     waterLbl: 'Water Amount', waterVal: '1 cup 110~130ml · 2 cups 150~170ml',
     tl0name: 'Medium-High Heat', tl0time: '0:00 — 3:00 · Building pressure',
     tl1name: 'Reduce Heat', tl1time: '3:00 alarm · Stabilize pressure',
-    tl2name: 'Overtime', tl2time: '6:00 alarm · Over-extraction risk',
+    tl2name: 'Overtime', tl2time: 'Over-extraction risk',
     tl3name: 'Turn Off', tl3time: 'Turn off when brew starts',
     historyHd: 'Brew History',
     historyEmpty: 'No records yet.\nSave after analysis or timer.',
@@ -1476,8 +1476,8 @@ const I18N = {
     voice3min: '3 minutes. Reduce to medium-low heat and stabilize pressure.',
     voice4min: '4 minutes. This is the ideal extraction window.',
     voice5min: '5 minutes. Good extraction time.',
-    voice6min: 'Over 6 minutes. Risk of over-extraction. Watch your brew.',
-    voice7min: '7 minutes reached. Timer stopped.',
+    voice6min: 'Recommended time exceeded. Watch for over-extraction.',
+    voice7min: 'Extraction time is over.',
     voiceStart: 'Extraction started.',
     voiceStartMsg: 'Starting heat.',
     voiceOptimal: 'Perfect grind for Maekerpot.',
@@ -1950,12 +1950,12 @@ let WARN_AT = 180, DANGER_AT = 300, STOP_AT = 420;
 function applyCupTimings() {
   if (cupMode === 1) {
     WARN_AT = 120;   // 2분 — 불 줄이기
-    DANGER_AT = 240; // 4분 — 과추출 주의 (1컵 권장 3분 전후)
-    STOP_AT = 420;
+    DANGER_AT = 210; // 3분 30초 — 과추출 주의 (1컵 권장 3분 전후)
+    STOP_AT = 240;   // 4분 종료
   } else {
     WARN_AT = 180;   // 3분 — 불 줄이기
-    DANGER_AT = 300; // 5분 — 과추출 주의 (2컵 권장 4분 전후)
-    STOP_AT = 420;
+    DANGER_AT = 270; // 4분 30초 — 과추출 주의 (2컵 권장 4분 전후)
+    STOP_AT = 300;   // 5분 종료
   }
 }
 
@@ -2678,7 +2678,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.5.0';
+const CURRENT_VERSION = 'v2.5.1';
 
 async function checkVersionFromServer() {
   try {
