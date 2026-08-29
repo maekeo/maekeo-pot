@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.4.9</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.5.0</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -440,8 +440,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="timer-card">
       <!-- 컵수 선택 -->
       <div style="display:flex;gap:8px;padding:16px 16px 0">
-        <button id="cup1Btn" onclick="setCupMode(1)" style="flex:1;padding:10px;border:1.5px solid var(--blue);border-radius:12px;background:var(--blue);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">☕ 1컵 <span style="font-weight:400;font-size:12px">3분대</span></button>
-        <button id="cup2Btn" onclick="setCupMode(2)" style="flex:1;padding:10px;border:1.5px solid var(--sep);border-radius:12px;background:transparent;color:var(--label2);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">☕☕ 2컵 <span style="font-weight:400;font-size:12px">4분대</span></button>
+        <button id="cup1Btn" onclick="setCupMode(1)" style="flex:1;padding:10px;border:1.5px solid var(--blue);border-radius:12px;background:var(--blue);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">☕ 1컵 <span style="font-weight:400;font-size:12px">3분 전후</span></button>
+        <button id="cup2Btn" onclick="setCupMode(2)" style="flex:1;padding:10px;border:1.5px solid var(--sep);border-radius:12px;background:transparent;color:var(--label2);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">☕☕ 2컵 <span style="font-weight:400;font-size:12px">4분 전후</span></button>
       </div>
       <div class="timer-hero">
         <div class="ring-wrap">
@@ -462,7 +462,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         </div>
         <div class="stage-name" id="stageName">시작 준비</div>
         <div class="stage-desc" id="stageDesc">버튼을 눌러 추출을 시작하세요</div>
-        <div style="margin-top:8px;font-size:12px;font-weight:600;color:var(--green);letter-spacing:-0.1px" id="timerRecommendText">권장 추출 시간 3분대 (1컵)</div>
+        <div style="margin-top:8px;font-size:12px;font-weight:600;color:var(--green);letter-spacing:-0.1px" id="timerRecommendText">권장 추출 시간 3분 전후 (1컵)</div>
         <div class="prog-dots">
           <div class="prog-dot" id="dot0"></div>
           <div class="prog-dot" id="dot1"></div>
@@ -489,7 +489,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div class="row"><span class="row-label">총 경과 시간</span><span class="row-value" id="elapsedDisplay" style="font-variant-numeric:tabular-nums">0:00</span></div>
       <div class="row"><span class="row-label">권장 도징량</span><span class="row-value">20g ~ 23g</span></div>
       <div class="row"><span class="row-label">물 사용량</span><span class="row-value">1컵 110~130ml · 2컵 150~170ml</span></div>
-      <div class="row"><span class="row-label">권장 추출 시간</span><span class="row-value">1컵 3분대 · 2컵 4분대</span></div>
+      <div class="row"><span class="row-label">권장 추출 시간</span><span class="row-value">1컵 3분 전후 · 2컵 4분 전후</span></div>
     </div>
   </div>
 </div>
@@ -597,8 +597,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
             <div style="margin-bottom:6px;font-weight:600;color:var(--label)">💧 컵수별 물 사용량 & 추출 기준</div>
-            <div style="margin-bottom:4px">• <b>1컵</b>: 물 110~130ml → 추출량 40ml · <b>3분대 추출 권장</b></div>
-            <div>• <b>2컵</b>: 물 150~170ml → 추출량 60ml · <b>4분대 추출 권장</b> (아이스컷 추천)</div>
+            <div style="margin-bottom:4px">• <b>1컵</b>: 물 110~130ml → 추출량 40ml · <b>3분 전후 추출 권장</b></div>
+            <div>• <b>2컵</b>: 물 150~170ml → 추출량 60ml · <b>4분 전후 추출 권장</b> (아이스컷 추천)</div>
           </div>
           <div style="display:flex;gap:10px;margin-bottom:12px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
@@ -712,15 +712,15 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px">
             사용하시는 화구의 불 세기마다 차이가 있을 수 있습니다.<br>
-            <b style="color:var(--label)">1컵은 3분대, 2컵은 4분대</b>가 가장 권장하는 추출 시간입니다.
+            <b style="color:var(--label)">1컵은 3분 전후, 2컵은 4분 전후</b>가 가장 권장하는 추출 시간입니다.
           </div>
           <div style="display:flex;gap:10px;margin-bottom:12px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span>
-            <span>우선 뜨거운 물만 넣고 <b>컵수 기준 시간(1컵 3분대 / 2컵 4분대)에 추출이 시작되는 불 세기</b>를 찾아보세요.</span>
+            <span>우선 뜨거운 물만 넣고 <b>컵수 기준 시간(1컵 3분 전후 / 2컵 4분 전후)에 추출이 시작되는 불 세기</b>를 찾아보세요.</span>
           </div>
           <div style="display:flex;gap:10px;margin-bottom:12px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span>
-            <span>인덕션이나 소형 가스불의 경우 압력캡을 180도~360도 개방해서 추출 시간을 컵수 기준(1컵 3분대 / 2컵 4분대)에 맞춰보세요.</span>
+            <span>인덕션이나 소형 가스불의 경우 압력캡을 180도~360도 개방해서 추출 시간을 컵수 기준(1컵 3분 전후 / 2컵 4분 전후)에 맞춰보세요.</span>
           </div>
           <div style="display:flex;gap:10px;margin-bottom:12px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span>
@@ -1943,18 +1943,18 @@ function saveAndAnalyze() {
 
 // ═══ TIMER ═══
 const RING_C = 534;
-// 컵수 모드: 1컵 = 3분대 권장, 2컵 = 4분대 권장
+// 컵수 모드: 1컵 = 3분 전후 권장, 2컵 = 4분 전후 권장
 let cupMode = parseInt(localStorage.getItem('maekeo_cup_mode') || '1');
 let WARN_AT = 180, DANGER_AT = 300, STOP_AT = 420;
 
 function applyCupTimings() {
   if (cupMode === 1) {
     WARN_AT = 120;   // 2분 — 불 줄이기
-    DANGER_AT = 240; // 4분 — 과추출 주의 (1컵 권장 3분대)
+    DANGER_AT = 240; // 4분 — 과추출 주의 (1컵 권장 3분 전후)
     STOP_AT = 420;
   } else {
     WARN_AT = 180;   // 3분 — 불 줄이기
-    DANGER_AT = 300; // 5분 — 과추출 주의 (2컵 권장 4분대)
+    DANGER_AT = 300; // 5분 — 과추출 주의 (2컵 권장 4분 전후)
     STOP_AT = 420;
   }
 }
@@ -1975,8 +1975,8 @@ function setCupMode(n) {
     }
   }
   const recEl = document.getElementById('timerRecommendText');
-  if (recEl) recEl.textContent = n === 1 ? '권장 추출 시간 3분대 (1컵)' : '권장 추출 시간 4분대 (2컵)';
-  toast(n === 1 ? '☕ 1컵 모드 — 3분대 추출 권장' : '☕☕ 2컵 모드 — 4분대 추출 권장');
+  if (recEl) recEl.textContent = n === 1 ? '권장 추출 시간 3분 전후 (1컵)' : '권장 추출 시간 4분 전후 (2컵)';
+  toast(n === 1 ? '☕ 1컵 모드 — 3분 전후 추출 권장' : '☕☕ 2컵 모드 — 4분 전후 추출 권장');
   renderStages();
   updateTimerUI();
 }
@@ -1995,7 +1995,7 @@ function initTimer() { renderStages(); updateTimerUI(); }
 function renderStages() {
   const warnStr = fmt(WARN_AT);
   const dangerStr = fmt(DANGER_AT);
-  const optStr = cupMode === 1 ? '3분대' : '4분대';
+  const optStr = cupMode === 1 ? '3분 전후' : '4분 전후';
   const cupStr = cupMode === 1 ? '1컵' : '2컵';
   document.getElementById('stageList').innerHTML = `
     <div class="tl-row upcoming" id="sRow0"><div class="tl-dot" id="tDot0"></div><div class="tl-info"><div class="tl-name">${t('tl0name')}</div><div class="tl-time">0:00 — ${warnStr} · 압력 생성 대기</div></div><div class="tl-badge" id="sBadge0">${t('timerStart')}</div></div>
@@ -2010,7 +2010,7 @@ function fmt(s) { return `${Math.floor(Math.abs(s)/60)}:${String(Math.abs(s)%60)
 function updateTimerUI() {
   const elapsed = getElapsed();
   let nm, dc;
-  if      (elapsed===0)       { nm=t('timerStageName0'); dc=(cupMode===1?'☕ 1컵 — 3분대 추출 권장':'☕☕ 2컵 — 4분대 추출 권장'); }
+  if      (elapsed===0)       { nm=t('timerStageName0'); dc=(cupMode===1?'☕ 1컵 — 3분 전후 추출 권장':'☕☕ 2컵 — 4분 전후 추출 권장'); }
   else if (elapsed<WARN_AT)   { nm=t('tl0name'); dc=`${t('tl0time')} — ${fmt(WARN_AT-elapsed)}`; }
   else if (elapsed<DANGER_AT) { nm=t('tl1name'); dc=`${fmt(elapsed)} ${t('elapsedLbl')}`; }
   else                        { nm=t('tl2name'); dc=`${fmt(elapsed)} ${t('elapsedLbl')}`; }
@@ -2678,7 +2678,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.4.9';
+const CURRENT_VERSION = 'v2.5.0';
 
 async function checkVersionFromServer() {
   try {
@@ -2812,7 +2812,7 @@ function applyLang() {
 
   // Timer recommend text (컵수 기준)
   const recommend = document.getElementById('timerRecommendText');
-  if (recommend) recommend.textContent = cupMode === 1 ? '권장 추출 시간 3분대 (1컵)' : '권장 추출 시간 4분대 (2컵)';
+  if (recommend) recommend.textContent = cupMode === 1 ? '권장 추출 시간 3분 전후 (1컵)' : '권장 추출 시간 4분 전후 (2컵)';
 
   // Screen warn
   const warnStrong = document.querySelector('.screen-warn-text strong');
