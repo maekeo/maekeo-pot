@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.5.1</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.5.2</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -428,7 +428,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <!-- 알람 배너 -->
   <div class="alert warn" id="alertWarn">
     <div class="alert-title">불을 줄이세요 — 압력 안정화</div>
-    <div class="alert-body">3분 경과. 중약불로 낮춰 7bar 압력을 안정적으로 유지하세요. 타이머는 계속 진행됩니다.</div>
+    <div class="alert-body">중약불로 낮춰 7bar 압력을 안정적으로 유지하세요. 타이머는 계속 진행됩니다.</div>
   </div>
   <div class="alert danger" id="alertDanger">
     <div class="alert-title">추출 시간 초과 — 과추출 주의</div>
@@ -1388,7 +1388,7 @@ const I18N = {
     screenWarn: '화면을 끄지 마세요.',
     screenWarnSub: '화면이 꺼지면 알람이 울리지 않을 수 있습니다.',
     warnTitle: '불을 줄이세요 — 압력 안정화',
-    warnBody: '3분 경과. 중약불로 낮춰 7bar 압력을 안정적으로 유지하세요.',
+    warnBody: '중약불로 낮춰 7bar 압력을 안정적으로 유지하세요.',
     dangerTitle: '추출 시간 초과 — 과추출 주의',
     dangerBody: '6분을 넘었습니다. 고압 추출이 길어지면 크레마가 무너지고 쓴맛이 강해집니다.',
     elapsedLbl: '총 경과 시간', dosingLbl: '권장 도징량', dosingVal: '20g ~ 23g',
@@ -1411,6 +1411,7 @@ const I18N = {
     // 음성
     voice1min: '1분이 지났습니다.',
     voice2min: '2분이 지났습니다.',
+    voiceReduce: '불을 중약불로 줄이세요. 압력을 안정화하세요.',
     voice3min: '3분 경과. 불을 중약불로 줄이세요. 압력을 안정화하세요.',
     voice4min: '4분. 가장 이상적인 추출 시간대입니다.',
     voice5min: '5분. 적정 추출 시간대입니다.',
@@ -1473,6 +1474,7 @@ const I18N = {
     installDismiss: 'Not today', installOk: 'OK',
     voice1min: '1 minute passed.',
     voice2min: '2 minutes passed.',
+    voiceReduce: 'Reduce to medium-low heat and stabilize pressure.',
     voice3min: '3 minutes. Reduce to medium-low heat and stabilize pressure.',
     voice4min: '4 minutes. This is the ideal extraction window.',
     voice5min: '5 minutes. Good extraction time.',
@@ -2046,34 +2048,23 @@ function updateTimerUI() {
 
 function rafLoop() { updateTimerUI(); timerRAF = requestAnimationFrame(rafLoop); }
 
-let min1Fired = false, min2Fired = false, min4Fired = false, min5Fired = false;
 
 function checkAlarms() {
   const elapsed = getElapsed();
 
-  if (elapsed >= 60 && !min1Fired) {
-    min1Fired = true; speak(t('voice1min'));
-  }
-  if (elapsed >= 120 && !min2Fired) {
-    min2Fired = true; speak(t('voice2min'));
-  }
-
+  // 불 줄이기 (컵수별 WARN_AT: 1컵 2분 / 2컵 3분)
   if (elapsed >= WARN_AT && !warnFired) {
     warnFired = true; playBeep('warn'); flash('warn');
     document.getElementById('alertWarn').classList.add('show');
-    toast(t('warnTitle')); speak(t('voice3min'));
+    toast(t('warnTitle')); speak(t('voiceReduce'));
   }
-  if (elapsed >= 240 && !min4Fired) {
-    min4Fired = true; speak(t('voice4min'));
-  }
-  if (elapsed >= 300 && !min5Fired) {
-    min5Fired = true; speak(t('voice5min'));
-  }
+  // 과추출 주의 (컵수별 DANGER_AT: 1컵 3분30초 / 2컵 4분30초)
   if (elapsed >= DANGER_AT && !dangerFired) {
     dangerFired = true; playBeep('danger'); flash('danger');
     document.getElementById('alertDanger').classList.add('show');
     toast(t('dangerTitle')); speak(t('voice6min'));
   }
+  // 종료 (컵수별 STOP_AT: 1컵 4분 / 2컵 5분)
   if (elapsed >= STOP_AT) {
     cancelAnimationFrame(timerRAF); timerRAF = null;
     clearInterval(timerInterval); timerInterval = null;
@@ -2188,7 +2179,6 @@ function resetTimer() {
   clearInterval(timerInterval); timerInterval = null;
   isRunning=false; startedAt=null; accElapsed=0;
   warnFired=false; dangerFired=false;
-  min1Fired=false; min2Fired=false; min4Fired=false; min5Fired=false;
   document.getElementById('startBtn').textContent = '시작';
   document.getElementById('stopBtn').style.display = 'none';
   document.getElementById('alertWarn').classList.remove('show');
@@ -2678,7 +2668,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.5.1';
+const CURRENT_VERSION = 'v2.5.2';
 
 async function checkVersionFromServer() {
   try {
