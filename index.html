@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.5.3</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.5.4</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -1126,7 +1126,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div id="preorderCountdown" style="background:var(--blue-bg);border:1.5px solid var(--blue);border-radius:14px;padding:16px;margin-bottom:14px;text-align:center">
       <div style="font-size:12px;color:var(--blue);font-weight:600;margin-bottom:4px">⏰ 예약 마감까지</div>
       <div style="font-size:26px;font-weight:800;color:var(--blue)" id="preorderDday">D-5</div>
-      <div style="font-size:12px;color:var(--label2);margin-top:6px">8월 31일 마감</div>
+      <div style="font-size:12px;color:var(--label2);margin-top:6px">9월 4일 마감</div>
+      <div style="font-size:11px;color:var(--label3);margin-top:8px;line-height:1.5;border-top:1px solid var(--sep);padding-top:8px">잔여 수량 소진 시까지 예약이 연장되었습니다.<br>(잔여 수량 소진 시 자동 마감)</div>
     </div>
     <div style="background:var(--fill);border-radius:14px;padding:14px 16px;margin-bottom:20px;text-align:center">
       <span style="font-size:13px;color:var(--label2)">📦 발송 예정</span>
@@ -1251,7 +1252,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div id="boilerCountdown" style="background:var(--blue-bg);border:1.5px solid var(--blue);border-radius:14px;padding:16px;margin-bottom:12px;text-align:center">
       <div style="font-size:12px;color:var(--blue);font-weight:600;margin-bottom:4px">⏰ 예약 마감까지</div>
       <div style="font-size:26px;font-weight:800;color:var(--blue)" id="boilerDday">D-5</div>
-      <div style="font-size:12px;color:var(--label2);margin-top:6px">8월 31일 마감</div>
+      <div style="font-size:12px;color:var(--label2);margin-top:6px">9월 4일 마감</div>
+      <div style="font-size:11px;color:var(--label3);margin-top:8px;line-height:1.5;border-top:1px solid var(--sep);padding-top:8px">잔여 수량 소진 시까지 예약이 연장되었습니다.<br>(잔여 수량 소진 시 자동 마감)</div>
     </div>
     <div style="background:var(--fill);border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:center">
       <div style="font-size:13px;color:var(--label2)">📦 발송 예정</div>
@@ -1283,7 +1285,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div id="reserveCountdown" style="background:var(--blue-bg);border:1.5px solid var(--blue);border-radius:14px;padding:16px;margin-bottom:12px;text-align:center">
       <div style="font-size:12px;color:var(--blue);font-weight:600;margin-bottom:4px">⏰ 2차 예약 마감까지</div>
       <div style="font-size:26px;font-weight:800;color:var(--blue)" id="reserveDday">D-5</div>
-      <div style="font-size:12px;color:var(--label2);margin-top:6px">8월 31일 마감 · 차수는 발송 순서를 의미합니다</div>
+      <div style="font-size:12px;color:var(--label2);margin-top:6px">9월 4일 마감 · 차수는 발송 순서를 의미합니다</div>
+      <div style="font-size:11px;color:var(--label3);margin-top:8px;line-height:1.5;border-top:1px solid var(--sep);padding-top:8px">잔여 수량 소진 시까지 예약이 연장되었습니다.<br>(잔여 수량 소진 시 자동 마감)</div>
     </div>
     <div style="background:var(--fill);border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:center">
       <span style="font-size:13px;color:var(--label2)">📦 발송 예정</span>
@@ -2221,7 +2224,7 @@ function openReserveInfoModal() {
   if (!el) return;
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const deadline = new Date(now.getFullYear(), 7, 31); // 8월 31일
+  const deadline = new Date(now.getFullYear(), 8, 4); // 9월 4일
   const diff = Math.round((deadline - today) / 86400000);
   if (diff > 0) {
     el.textContent = 'D-' + diff;
@@ -2251,7 +2254,7 @@ function updateBoilerCountdown() {
   if (!el) return;
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const deadline = new Date(now.getFullYear(), 7, 31); // 8월 31일
+  const deadline = new Date(now.getFullYear(), 8, 4); // 9월 4일
   const diff = Math.round((deadline - today) / 86400000);
   if (diff > 0) {
     el.textContent = 'D-' + diff;
@@ -2298,7 +2301,7 @@ function closePartsModal() {
   document.getElementById('partsModal').classList.remove('show');
 }
 
-// 프리오더 마감 카운트다운 (8월 31일 마감)
+// 프리오더 마감 카운트다운 (9월 4일 마감)
 function openPreorderModal() {
   updatePreorderCountdown();
   document.getElementById('preorderModal').classList.add('show');
@@ -2316,7 +2319,7 @@ function updatePreorderCountdown() {
   if (!el) return;
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const deadline = new Date(now.getFullYear(), 7, 31); // 8월 31일
+  const deadline = new Date(now.getFullYear(), 8, 4); // 9월 4일
   const diff = Math.round((deadline - today) / 86400000);
   if (diff > 0) {
     el.textContent = 'D-' + diff;
@@ -2672,7 +2675,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.5.3';
+const CURRENT_VERSION = 'v2.5.4';
 
 async function checkVersionFromServer() {
   try {
