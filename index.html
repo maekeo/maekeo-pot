@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.5.9</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.6.0</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -1127,6 +1127,9 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div style="font-size:12px;color:var(--blue);font-weight:600;margin-bottom:4px">⏰ 예약 마감까지</div>
       <div style="font-size:26px;font-weight:800;color:var(--blue)" id="preorderDday">D-5</div>
       <div style="font-size:12px;color:var(--label2);margin-top:6px">9월 20일 마감</div>
+    </div>
+    <div style="background:var(--fill);border:1.5px solid var(--orange);border-radius:12px;padding:12px 14px;margin-bottom:14px;text-align:center">
+      <span style="font-size:13px;font-weight:700;color:var(--orange)">🔥 한정 수량 50개 · 조기 마감될 수 있습니다</span>
     </div>
     <div style="background:var(--fill);border-radius:14px;padding:14px 16px;margin-bottom:20px;text-align:center">
       <span style="font-size:13px;color:var(--label2)">📦 발송 예정</span>
@@ -2672,7 +2675,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.5.9';
+const CURRENT_VERSION = 'v2.6.0';
 
 async function checkVersionFromServer() {
   try {
