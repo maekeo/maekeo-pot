@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.7.0</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.7.1</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -331,6 +331,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 
   <!-- 결과 -->
   <div class="result" id="resultPanel">
+    <!-- 보정 상태 배너 -->
+    <div id="calibBanner" style="display:none;margin-bottom:12px;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.6"></div>
     <!-- 오버레이 이미지 -->
     <div class="group" id="overlayGroup" style="display:none">
       <div class="group-hd">입자 분석 이미지</div>
@@ -1388,7 +1390,7 @@ const I18N = {
     confHigh: '높음', confMid: '보통', confLow: '낮음',
     confMidReason: '💡 정확도를 높이려면: 흰 종이 위에 원두를 더 넓게 펼치고, 자연광에서 최대한 가까이 촬영해주세요.',
     confLowReason: '⚠️ 신뢰도가 낮습니다. 흰 배경 사용, 균일하게 펼치기, 그림자 없는 밝은 환경에서 다시 촬영하면 정확도가 높아집니다.',
-    timerStart: '시작', timerPause: '일시정지', timerResume: '계속',
+    timerStart: '시작', timerPause: '일시정지', timerResume: '계속', timerNew: '새 추출',
     timerReset: '초기화', timerStop: '추출 종료',
     timerStageName0: '시작 준비', timerStageDesc0: '버튼을 눌러 추출을 시작하세요',
     timerRecommend: '권장 추출 시간 4 ~ 5분',
@@ -1452,7 +1454,7 @@ const I18N = {
     confHigh: 'High', confMid: 'Medium', confLow: 'Low',
     confMidReason: '💡 For better accuracy: spread grounds wider on white paper and shoot in natural light, up close.',
     confLowReason: '⚠️ Low confidence. Try again with white background, spread evenly, in bright lighting without shadows.',
-    timerStart: 'Start', timerPause: 'Pause', timerResume: 'Resume',
+    timerStart: 'Start', timerPause: 'Pause', timerResume: 'Resume', timerNew: 'New Brew',
     timerReset: 'Reset', timerStop: 'Stop Brew',
     timerStageName0: 'Ready', timerStageDesc0: 'Press start to begin extraction',
     timerRecommend: 'Recommended: 4 ~ 5 min',
@@ -1768,11 +1770,28 @@ function showResult(r) {
     document.getElementById('speakBtn').style.display = 'none';
     document.getElementById('saveGrindBtn').style.display = 'none';
     document.getElementById('resMethod').textContent = '';
+    const cb = document.getElementById('calibBanner'); if (cb) cb.style.display = 'none';
     window._lastGrindResult = null;
     return;
   }
 
   setTimeout(() => { document.getElementById('meterFill').style.width = (r.percent != null ? r.percent : 0) + '%'; }, 80);
+
+  // 보정 상태 배너 (결과 최상단)
+  const calibBanner = document.getElementById('calibBanner');
+  if (calibBanner) {
+    calibBanner.style.display = 'block';
+    if (r.calibrated) {
+      calibBanner.style.background = 'var(--fill)';
+      calibBanner.style.border = '1.5px solid var(--blue)';
+      calibBanner.innerHTML = '<b style="color:var(--blue)">🔵 동전 기준 보정 완료</b><br><span style="color:var(--label2)">동전을 기준으로 실제 크기를 측정한 결과입니다.</span>';
+    } else {
+      calibBanner.style.background = 'var(--fill)';
+      calibBanner.style.border = '1.5px solid var(--orange)';
+      calibBanner.innerHTML = '<b style="color:var(--orange)">🟠 크기 추정 (참고용)</b><br><span style="color:var(--label2)">동전 없이 추정한 값으로, 실제 마이크론 수치와 차이가 있을 수 있습니다. 정확한 측정을 원하시면 원두 옆에 <b>동전</b>을 함께 놓고 촬영해주세요.</span>';
+    }
+  }
+
   document.getElementById('resLevel').textContent  = r.levelKor || '—';
   document.getElementById('resBrew').textContent   = r.bestBrew;
   document.getElementById('resAdvice').textContent = r.advice;
@@ -2034,6 +2053,7 @@ applyCupTimings();
 
 let startedAt = null, accElapsed = 0, timerRAF = null, timerInterval = null;
 let isRunning = false, warnFired = false, dangerFired = false;
+let timerEnded = false; // 종료(추출 끝) 상태 — '시작'이 새 추출이 되도록 구분
 
 function getElapsed() {
   if (!isRunning) return Math.floor(accElapsed / 1000);
@@ -2111,7 +2131,8 @@ function checkAlarms() {
     }
     cancelAnimationFrame(timerRAF); timerRAF = null;
     clearInterval(timerInterval); timerInterval = null;
-    document.getElementById('startBtn').textContent = t('timerStart');
+    timerEnded = true;
+    document.getElementById('startBtn').textContent = t('timerNew');
     document.getElementById('stopBtn').style.display = 'none';
     playBeep('danger'); flash('danger');
     speak(t('voice7min'));
@@ -2213,16 +2234,21 @@ function toggleTimer() {
     u.volume = 0;
     window.speechSynthesis.speak(u);
   }
+  // 종료 후 '새 추출' — 이전 기록을 리셋하고 처음부터 시작
+  if (timerEnded && !isRunning) {
+    resetTimer();
+    timerEnded = false;
+  }
   if (isRunning) {
     accElapsed += Date.now() - startedAt;
     isRunning = false;
     cancelAnimationFrame(timerRAF); timerRAF = null;
     clearInterval(timerInterval); timerInterval = null;
-    document.getElementById('startBtn').textContent = '계속';
+    document.getElementById('startBtn').textContent = t('timerResume');
   } else {
     const first = accElapsed === 0;
     startedAt = Date.now(); isRunning = true;
-    document.getElementById('startBtn').textContent = '일시정지';
+    document.getElementById('startBtn').textContent = t('timerPause');
     if (first) { playStartSound(); toast(t('voiceStart')); speak(t('voiceStartMsg')); }
     timerRAF = requestAnimationFrame(rafLoop);
     timerInterval = setInterval(checkAlarms, 500);
@@ -2241,7 +2267,8 @@ function stopExtraction() {
     cancelAnimationFrame(timerRAF); timerRAF = null;
     clearInterval(timerInterval); timerInterval = null;
   }
-  document.getElementById('startBtn').textContent = '시작';
+  timerEnded = true; // 종료 상태 — 다음 '시작'은 새 추출
+  document.getElementById('startBtn').textContent = t('timerNew');
   document.getElementById('stopBtn').style.display = 'none';
   updateCupBtnState();
   updateTimerUI();
@@ -2253,8 +2280,8 @@ function resetTimer() {
   cancelAnimationFrame(timerRAF); timerRAF = null;
   clearInterval(timerInterval); timerInterval = null;
   isRunning=false; startedAt=null; accElapsed=0;
-  warnFired=false; dangerFired=false;
-  document.getElementById('startBtn').textContent = '시작';
+  warnFired=false; dangerFired=false; timerEnded=false;
+  document.getElementById('startBtn').textContent = t('timerStart');
   document.getElementById('stopBtn').style.display = 'none';
   document.getElementById('alertWarn').classList.remove('show');
   document.getElementById('alertDanger').classList.remove('show');
@@ -2744,7 +2771,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.7.0';
+const CURRENT_VERSION = 'v2.7.1';
 
 async function checkVersionFromServer() {
   try {
