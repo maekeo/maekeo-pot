@@ -192,7 +192,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 .histogram-lbl{font-size:11px;font-weight:500;color:var(--label2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
 .histogram-bars{display:flex;align-items:flex-end;gap:3px;height:60px}
 .histogram-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
-.histogram-bar{width:100%;border-radius:3px 3px 0 0;transition:height .6s ease;min-height:2px}
+.histogram-bar{width:100%;border-radius:3px 3px 0 0;transition:height .6s ease;min-height:2px;background:var(--label3)}
 .histogram-bar.optimal{background:var(--blue)}
 .histogram-bar.warn{background:var(--orange)}
 .histogram-bar.danger{background:var(--red)}
@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.8.0</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.8.1</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -374,9 +374,9 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         </div>
         <div style="border-top:.5px solid var(--sep)">
           <div class="row"><span class="row-label">분쇄 레벨</span><span class="row-value" id="resLevel">—</span></div>
-          <div class="row"><span class="row-label">매커포트 적합도</span><span class="row-value" id="resMokaFit">—</span></div>
+          <div class="row"><span class="row-label">매커포트 적합도 <span style="font-size:11px;color:var(--label3);font-weight:400">(참고 기준)</span></span><span class="row-value" id="resMokaFit">—</span></div>
           <div class="row"><span class="row-label">적합 추출</span><span class="row-value" id="resBrew">—</span></div>
-          <div class="row"><span class="row-label">분석 신뢰도</span><span class="badge" id="resBadge">—</span></div>
+          <div class="row"><span class="row-label">촬영 품질</span><span class="badge" id="resBadge">—</span></div>
           <div class="row"><span class="row-label">분석 방식</span><span class="row-value" id="resMethod" style="font-size:13px;color:var(--label2)">—</span></div>
           <div id="confReason" style="display:none; padding:10px 16px 12px; font-size:13px; color:var(--label2); line-height:1.5; border-top:.5px solid var(--sep);"></div>
           <div id="grindCompare" style="display:none; padding:12px 16px; font-size:13px; line-height:1.6; border-top:.5px solid var(--sep);"></div>
@@ -404,11 +404,11 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         </div>
         <!-- 입자 분포 히스토그램 -->
         <div class="histogram" id="histogramWrap" style="display:none">
-          <div class="histogram-lbl">입자 분포</div>
+          <div class="histogram-lbl">입자 분포 <span style="font-size:11px;color:var(--label3);font-weight:400">(참고용)</span></div>
           <div class="histogram-bars" id="histogramBars"></div>
         </div>
         <div class="row" style="border-top:.5px solid var(--sep)">
-          <span class="row-label" style="font-size:14px;color:var(--label2)">매커포트 적합 범위</span>
+          <span class="row-label" style="font-size:14px;color:var(--label2)">매커포트 권장 범위 <span style="font-size:11px;color:var(--label3)">(참고)</span></span>
           <span class="row-value" style="font-size:14px;color:var(--blue);font-weight:500">400 — 500 μm</span>
         </div>
       </div>
@@ -1403,9 +1403,9 @@ const I18N = {
     scanLbl: '분석 중',
     grindHd: '분쇄 굵기', measureHd: '측정값', aiHd: 'AI 추천',
     levelLbl: '분쇄 레벨', mokaLbl: '매커포트 적합도',
-    brewLbl: '적합 추출', confLbl: '분석 신뢰도',
+    brewLbl: '적합 추출', confLbl: '촬영 품질',
     sizeHd: '평균 입자', uniHd: '균일도',
-    rangeNote: '매커포트 적합 범위', rangeVal: '400 — 500 μm',
+    rangeNote: '매커포트 권장 범위 (참고)', rangeVal: '400 — 500 μm',
     measureNote: '측정값은 AI 시각 추정치입니다. 방향 판단 참고용으로 활용하세요.',
     adviceCap: '바리스타 조언',
     confHigh: '높음', confMid: '보통', confLow: '낮음',
@@ -1467,9 +1467,9 @@ const I18N = {
     scanLbl: 'Analyzing...',
     grindHd: 'Grind Size', measureHd: 'Measurements', aiHd: 'AI Advice',
     levelLbl: 'Grind Level', mokaLbl: 'Maekerpot Fit',
-    brewLbl: 'Best Brew', confLbl: 'Confidence',
+    brewLbl: 'Best Brew', confLbl: 'Photo Quality',
     sizeHd: 'Avg Particle', uniHd: 'Uniformity',
-    rangeNote: 'Maekerpot Range', rangeVal: '400 — 500 μm',
+    rangeNote: 'Maekerpot Range (ref.)', rangeVal: '400 — 500 μm',
     measureNote: 'Values are AI visual estimates. Use as a reference guide.',
     adviceCap: 'Barista Advice',
     confHigh: 'High', confMid: 'Medium', confLow: 'Low',
@@ -1834,7 +1834,7 @@ function showResult(r) {
     } else {
       calibBanner.style.background = 'var(--fill)';
       calibBanner.style.border = '1.5px solid var(--orange)';
-      calibBanner.innerHTML = '<b style="color:var(--orange)">🟠 크기 추정 (참고용)</b><br><span style="color:var(--label2)">동전 없이 추정한 값으로, 실제 마이크론 수치와 차이가 있을 수 있습니다. 정확한 측정을 원하시면 원두 옆에 <b>동전</b>을 함께 놓고 촬영해주세요.</span>';
+      calibBanner.innerHTML = '<b style="color:var(--orange)">🟠 동전 보정 미확인 (참고용)</b><br><span style="color:var(--label2)">동전 기준 보정이 확인되지 않아, 입자 크기는 사진 기반 <b>참고값</b>입니다. 정확한 비교를 원하시면 원두 옆에 <b>동전</b>을 함께 놓고 촬영해주세요.</span>';
     }
   }
 
@@ -1875,13 +1875,11 @@ function showResult(r) {
     const labels = r.histogram.labels;
     const maxVal = Math.max(...values, 1);
     const optimalRanges = ['400-500'];
-    const dangerRanges  = ['<100'];
     bars.innerHTML = labels.map((label, i) => {
       const heightPct = Math.round((values[i] / maxVal) * 100);
       const cls = values[i] === 0 ? 'empty'
         : optimalRanges.includes(label) ? 'optimal'
-        : dangerRanges.includes(label)  ? 'danger'
-        : 'warn';
+        : '';
       return `<div class="histogram-bar-wrap">
         <div class="histogram-bar ${cls}" style="height:${Math.max(heightPct, 2)}%"></div>
         <div class="histogram-range">${label}</div>
@@ -1894,13 +1892,11 @@ function showResult(r) {
     wrap.style.display = 'block';
     const maxCount = Math.max(...r.histogram.map(h => h.count), 1);
     const optimalRanges = ['400-500'];
-    const dangerRanges  = ['<200'];
     bars.innerHTML = r.histogram.map(h => {
       const heightPct = Math.round((h.count / maxCount) * 100);
       const cls = h.count === 0 ? 'empty'
         : optimalRanges.includes(h.range) ? 'optimal'
-        : dangerRanges.includes(h.range)  ? 'danger'
-        : 'warn';
+        : '';
       return `<div class="histogram-bar-wrap">
         <div class="histogram-bar ${cls}" style="height:${Math.max(heightPct, 2)}%"></div>
         <div class="histogram-range">${h.range}</div>
@@ -1923,20 +1919,21 @@ function showResult(r) {
     coarseRec.style.display = isCoarse ? 'block' : 'none';
   }
 
+  // 촬영 품질(입자 균일도 기반) — 측정 정확도가 아니라 분쇄 균일성 참고 지표
   const conf = (r.uniformity == null) ? 'low' : r.uniformity >= 75 ? 'high' : r.uniformity >= 55 ? 'mid' : 'low';
   const confEl = document.getElementById('resBadge');
-  confEl.textContent = conf === 'high' ? '높음' : conf === 'mid' ? '보통' : '낮음';
+  confEl.textContent = conf === 'high' ? '양호' : conf === 'mid' ? '보통' : '낮음';
   confEl.className = `badge badge-${conf}`;
 
-  // 신뢰도 이유 안내
+  // 참고 안내 — 입자 크기는 사진 기반 참고값임을 명확히
   const reasonEl = document.getElementById('confReason');
+  reasonEl.style.display = 'block';
   if (conf === 'high') {
-    reasonEl.style.display = 'none';
+    reasonEl.textContent = 'ℹ️ 입자 크기는 사진에서 계산한 참고값입니다. 실제 추출 결과와 함께 비교해주세요.';
   } else {
-    reasonEl.style.display = 'block';
     reasonEl.textContent = conf === 'mid'
-      ? '💡 정확도를 높이려면: 흰 종이 위에 원두를 더 넓게 펼치고, 자연광에서 최대한 가까이 촬영해주세요.'
-      : '⚠️ 신뢰도가 낮습니다. 흰 배경 사용, 균일하게 펼치기, 그림자 없는 밝은 환경에서 다시 촬영하면 정확도가 높아집니다.';
+      ? 'ℹ️ 입자 크기는 사진에서 계산한 참고값입니다. 흰 종이 위에 원두를 더 넓게 펼치고 자연광에서 가까이 촬영하면 분석이 더 안정적입니다.'
+      : '⚠️ 촬영 품질이 낮아 값의 편차가 클 수 있습니다. 흰 배경·균일하게 펼치기·밝은 환경에서 다시 촬영해주세요. (입자 크기는 사진 기반 참고값입니다.)';
   }
 
   // 음성 듣기 + 기록 저장 버튼 표시
@@ -1982,7 +1979,7 @@ function showResult(r) {
     methodEl.textContent = currentLang === 'en' ? '🔵 OpenCV · Coin calibrated' : '🔵 OpenCV 실측 · 동전 기준';
     methodEl.style.color = 'var(--blue)';
   } else {
-    methodEl.textContent = currentLang === 'en' ? '🟠 OpenCV · Estimated' : '🟠 OpenCV 실측 · 추정';
+    methodEl.textContent = currentLang === 'en' ? '🟠 OpenCV · Calibration unconfirmed' : '🟠 OpenCV · 보정 미확인';
     methodEl.style.color = 'var(--orange)';
   }
   if (r.qualityWarnings && r.qualityWarnings.length > 0) {
@@ -2893,7 +2890,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.8.0';
+const CURRENT_VERSION = 'v2.8.1';
 
 async function checkVersionFromServer() {
   try {
