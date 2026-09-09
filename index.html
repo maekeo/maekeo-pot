@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.7.1</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.7.2</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -299,6 +299,24 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <img id="previewImg" class="preview" style="display:none" alt="">
     <div class="cam-ph" id="camPh">
       <div class="cam-ph-title">원두 사진 촬영 안내</div>
+      <svg viewBox="0 0 200 120" style="width:170px;height:102px;margin:10px auto 6px;display:block">
+        <rect x="4" y="4" width="192" height="112" rx="10" fill="var(--fill)" stroke="var(--sep)" stroke-width="1.5"/>
+        <!-- 원두 흩뿌림 -->
+        <g fill="#8a5a2b">
+          <ellipse cx="60" cy="45" rx="6" ry="4" transform="rotate(20 60 45)"/>
+          <ellipse cx="85" cy="38" rx="6" ry="4" transform="rotate(-15 85 38)"/>
+          <ellipse cx="110" cy="50" rx="6" ry="4" transform="rotate(35 110 50)"/>
+          <ellipse cx="72" cy="65" rx="6" ry="4" transform="rotate(-25 72 65)"/>
+          <ellipse cx="98" cy="72" rx="6" ry="4" transform="rotate(10 98 72)"/>
+          <ellipse cx="125" cy="68" rx="6" ry="4" transform="rotate(-30 125 68)"/>
+          <ellipse cx="55" cy="80" rx="6" ry="4" transform="rotate(15 55 80)"/>
+          <ellipse cx="115" cy="88" rx="6" ry="4" transform="rotate(-10 115 88)"/>
+        </g>
+        <!-- 동전 -->
+        <circle cx="160" cy="60" r="18" fill="#d9c47a" stroke="#b89a3e" stroke-width="2"/>
+        <text x="160" y="64" font-size="9" fill="#7a6420" text-anchor="middle" font-weight="700">100</text>
+        <text x="160" y="90" font-size="8" fill="var(--label3)" text-anchor="middle">동전</text>
+      </svg>
       <div class="cam-ph-sub">흰색 바탕 위에 분쇄된 원두를 넓게 펼쳐 촬영하세요<br>100원 동전을 함께 놓으면 더 정확합니다</div>
       <div class="cam-ph-tip">렌즈를 최대한 가깝게 대고<br>터치해 초점을 맞춘 후 촬영하세요</div>
     </div>
@@ -359,6 +377,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <div class="row"><span class="row-label">분석 신뢰도</span><span class="badge" id="resBadge">—</span></div>
           <div class="row"><span class="row-label">분석 방식</span><span class="row-value" id="resMethod" style="font-size:13px;color:var(--label2)">—</span></div>
           <div id="confReason" style="display:none; padding:10px 16px 12px; font-size:13px; color:var(--label2); line-height:1.5; border-top:.5px solid var(--sep);"></div>
+          <div id="grindCompare" style="display:none; padding:12px 16px; font-size:13px; line-height:1.6; border-top:.5px solid var(--sep);"></div>
         </div>
       </div>
 
@@ -1771,6 +1790,7 @@ function showResult(r) {
     document.getElementById('saveGrindBtn').style.display = 'none';
     document.getElementById('resMethod').textContent = '';
     const cb = document.getElementById('calibBanner'); if (cb) cb.style.display = 'none';
+    const gc = document.getElementById('grindCompare'); if (gc) gc.style.display = 'none';
     window._lastGrindResult = null;
     return;
   }
@@ -1899,6 +1919,36 @@ function showResult(r) {
 
   // 결과 저장용
   window._lastGrindResult = r;
+
+  // 지난 분석과 비교 (직전 grind 기록의 입자 크기와 대조)
+  const cmpEl = document.getElementById('grindCompare');
+  if (cmpEl) {
+    let prev = null;
+    try {
+      const recs = JSON.parse(localStorage.getItem('maekeo_records') || '[]');
+      prev = recs.find(x => x.type === 'grind' && x.particleSize != null);
+    } catch(e){}
+    if (prev && r.particleSize != null && prev.particleSize != null) {
+      const diff = r.particleSize - prev.particleSize;
+      const absd = Math.abs(diff);
+      let msg, color;
+      if (absd < 15) {
+        msg = `지난 분석과 비슷합니다 (지난번 ${prev.particleSize}μm → 이번 ${r.particleSize}μm)`;
+        color = 'var(--label2)';
+      } else if (diff > 0) {
+        msg = `📈 지난번보다 <b>${absd}μm 굵어졌습니다</b> (${prev.particleSize} → ${r.particleSize}μm)`;
+        color = 'var(--orange)';
+      } else {
+        msg = `📉 지난번보다 <b>${absd}μm 고와졌습니다</b> (${prev.particleSize} → ${r.particleSize}μm)`;
+        color = 'var(--blue)';
+      }
+      cmpEl.style.display = 'block';
+      cmpEl.style.color = color;
+      cmpEl.innerHTML = msg;
+    } else {
+      cmpEl.style.display = 'none';
+    }
+  }
 
   // 분석 방식 표시
   const methodEl = document.getElementById('resMethod');
@@ -2771,7 +2821,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.7.1';
+const CURRENT_VERSION = 'v2.7.2';
 
 async function checkVersionFromServer() {
   try {
