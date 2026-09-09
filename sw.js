@@ -1,14 +1,17 @@
 // MAEKEO LAB Service Worker
 // 캐시 없이 항상 최신 버전 제공
-const VERSION = 'v2.7.2';
+const VERSION = 'v2.8.0';
 
-self.addEventListener('install', () => self.skipWaiting());
+// 자동 skipWaiting 제거 — 사용자가 업데이트를 수락할 때만 활성화
+self.addEventListener('install', () => {
+  // 대기 상태로 두어 진행 중인 작업이 끊기지 않게 함
+});
 
 self.addEventListener('activate', (e) => {
-  // 모든 캐시 삭제
+  // 앱 전용 캐시만 삭제 (다른 오리진/캐시는 건드리지 않음)
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.map(k => caches.delete(k)))
+      Promise.all(keys.filter(k => k.startsWith('maekeo')).map(k => caches.delete(k)))
     ).then(() => self.clients.claim())
   );
 });
@@ -31,5 +34,9 @@ self.addEventListener('fetch', (e) => {
 self.addEventListener('message', (e) => {
   if (e.data && e.data.action === 'GET_VERSION') {
     e.source.postMessage({ type: 'SW_VERSION', version: VERSION });
+  }
+  // 사용자가 업데이트를 수락하면 그때 활성화
+  if (e.data && e.data.action === 'skipWaiting') {
+    self.skipWaiting();
   }
 });

@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.7.2</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.8.0</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -345,6 +345,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="loading" id="loadingPanel">
     <div class="spinner"></div>
     <span class="loading-lbl">분쇄도 분석 중</span>
+    <div id="loadingSlow" style="display:none;font-size:12px;color:var(--label3);margin-top:8px;text-align:center;line-height:1.5">서버가 잠자기 상태였다면 첫 분석은<br>시간이 조금 더 걸릴 수 있습니다.</div>
+    <button onclick="cancelAnalysis()" style="margin-top:14px;padding:8px 20px;border:1.5px solid var(--sep);border-radius:20px;background:transparent;color:var(--label2);font-family:inherit;font-size:13px;cursor:pointer">취소</button>
   </div>
 
   <!-- 결과 -->
@@ -1614,23 +1616,46 @@ async function doAnalysis() {
     toast('⚠️ ' + warning);
   }
 
+  window._analyzing = true;
+  window._analysisCancelled = false;
   document.getElementById('resultPanel').classList.remove('show');
   document.getElementById('loadingPanel').classList.add('show');
   document.getElementById('scanOverlay').classList.add('show');
+  const slowEl = document.getElementById('loadingSlow');
+  if (slowEl) slowEl.style.display = 'none';
+  const slowTimer = setTimeout(() => { if (slowEl) slowEl.style.display = 'block'; }, 8000);
 
   try {
     const result = await callAPI(currentBase64);
+    clearTimeout(slowTimer);
     document.getElementById('loadingPanel').classList.remove('show');
     document.getElementById('scanOverlay').classList.remove('show');
+    if (window._analysisCancelled) { document.getElementById('analyzeRow').style.display = 'flex'; return; }
     if (result) showResult(result);
     else document.getElementById('analyzeRow').style.display = 'flex';
   } catch(e) {
+    clearTimeout(slowTimer);
     document.getElementById('loadingPanel').classList.remove('show');
     document.getElementById('scanOverlay').classList.remove('show');
-    console.error('분석 오류:', e);
-    toast(e.message || '분석 실패. 다시 시도해주세요.');
+    if (window._analysisCancelled) {
+      toast('분석을 취소했습니다.');
+    } else {
+      console.error('분석 오류:', e);
+      toast(e.message || '분석 실패. 다시 시도해주세요.');
+    }
     document.getElementById('analyzeRow').style.display = 'flex';
+  } finally {
+    window._analyzing = false;
+    if (window._applyPendingReload) window._applyPendingReload();
   }
+}
+
+function cancelAnalysis() {
+  window._analysisCancelled = true;
+  try { if (window._analysisCtrl) window._analysisCtrl.abort(); } catch(e){}
+  document.getElementById('loadingPanel').classList.remove('show');
+  document.getElementById('scanOverlay').classList.remove('show');
+  document.getElementById('analyzeRow').style.display = 'flex';
 }
 
 // OpenCV 서버 전용 분석 (UploadFile 방식)
@@ -1649,6 +1674,7 @@ async function callAPI(base64) {
     formData.append('file', blob, 'grind.jpg');
 
     const ctrl = new AbortController();
+    window._analysisCtrl = ctrl;
     const tid = setTimeout(() => ctrl.abort(), 90000);
     const r = await fetch('https://maekeo-grind-server.onrender.com/analyze', {
       method: 'POST',
@@ -1677,8 +1703,8 @@ async function callAPI(base64) {
 }
 
 function normalizeV2(data) {
-  const s = data.summary;
-  const c = data.classification;
+  const s = data.summary || {};
+  const c = data.classification || {};
   const m = data.meta || {};
   const h = data.distribution_chart;
   const v = data.visual_result || {};
@@ -1925,7 +1951,7 @@ function showResult(r) {
   if (cmpEl) {
     let prev = null;
     try {
-      const recs = JSON.parse(localStorage.getItem('maekeo_records') || '[]');
+      const recs = loadRecords();
       prev = recs.find(x => x.type === 'grind' && x.particleSize != null);
     } catch(e){}
     if (prev && r.particleSize != null && prev.particleSize != null) {
@@ -2127,6 +2153,41 @@ function renderStages() {
 
 function fmt(s) { return `${Math.floor(Math.abs(s)/60)}:${String(Math.abs(s)%60).padStart(2,'0')}`; }
 
+// 사용자 입력·외부 응답을 안전하게 표시 (XSS 방지)
+function escapeHtml(v) {
+  if (v == null) return '';
+  return String(v)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// 손상된 저장 데이터로 앱이 멈추지 않도록 안전하게 읽기
+function loadRecords() {
+  try {
+    const raw = localStorage.getItem('maekeo_records');
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    // 각 항목이 객체이고 id가 있는 것만 유효 처리
+    return parsed.filter(x => x && typeof x === 'object');
+  } catch (e) {
+    // 손상된 경우: 원본을 백업해두고 빈 목록으로 복구 (기존 데이터 보존 시도)
+    try { localStorage.setItem('maekeo_records_corrupt_backup', localStorage.getItem('maekeo_records') || ''); } catch(_) {}
+    return [];
+  }
+}
+function saveRecords(records) {
+  try {
+    localStorage.setItem('maekeo_records', JSON.stringify(records));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 function updateTimerUI() {
   const elapsed = getElapsed();
   let nm, dc;
@@ -2322,6 +2383,7 @@ function stopExtraction() {
   document.getElementById('stopBtn').style.display = 'none';
   updateCupBtnState();
   updateTimerUI();
+  if (window._applyPendingReload) window._applyPendingReload();
   // 기록 저장 팝업
   setTimeout(() => showSaveModal('timer'), 400);
 }
@@ -2552,7 +2614,7 @@ function toggleFixCard(btn) {
 // ═══ 추출 시간대 패턴 인식 ═══
 function checkBrewTimePattern() {
   try {
-    const records = JSON.parse(localStorage.getItem('maekeo_records') || '[]');
+    const records = loadRecords();
     if (records.length < 2) return;
 
     const now = new Date();
@@ -2634,7 +2696,7 @@ function showSaveModal(type) {
   const desc = document.getElementById('saveModalDesc');
   if (type === 'grind' && window._lastGrindResult) {
     const r = window._lastGrindResult;
-    desc.innerHTML = `<b>${r.levelKor}</b> · ${r.particleSize}μm · ${r.mokaFit}`;
+    desc.innerHTML = `<b>${escapeHtml(r.levelKor || '—')}</b> · ${escapeHtml(r.particleSize != null ? r.particleSize+'μm' : '측정 불가')} · ${escapeHtml(r.mokaFit || '측정 불가')}`;
   } else if (type === 'timer') {
     const elapsed = getElapsed();
     desc.innerHTML = `${t('elapsedLbl')}: <b>${fmt(elapsed)}</b>`;
@@ -2667,24 +2729,29 @@ function saveRecord() {
     record.extractTime = fmt(getElapsed());
   }
 
-  const records = JSON.parse(localStorage.getItem('maekeo_records') || '[]');
+  const records = loadRecords();
   records.unshift(record);
-  if (records.length > 50) records.pop(); // 최대 50개
-  localStorage.setItem('maekeo_records', JSON.stringify(records));
+  let trimmed = false;
+  const MAX = 100;
+  while (records.length > MAX) { records.pop(); trimmed = true; }
+  saveRecords(records);
 
   closeSaveModal();
   toast(t('savedToast'));
+  if (trimmed) {
+    setTimeout(() => toast('기록이 ' + MAX + '개를 초과해 가장 오래된 기록이 정리되었습니다.'), 2600);
+  }
 }
 
 function deleteRecord(id) {
-  const records = JSON.parse(localStorage.getItem('maekeo_records') || '[]');
+  const records = loadRecords();
   const filtered = records.filter(r => r.id !== id);
-  localStorage.setItem('maekeo_records', JSON.stringify(filtered));
+  saveRecords(filtered);
   renderHistory();
 }
 
 function renderHistory() {
-  const records = JSON.parse(localStorage.getItem('maekeo_records') || '[]');
+  const records = loadRecords();
   const list = document.getElementById('historyList');
   const empty = document.getElementById('historyEmpty');
 
@@ -2696,30 +2763,35 @@ function renderHistory() {
   }
   empty.style.display = 'none';
 
-  list.innerHTML = records.map(r => `
+  list.innerHTML = records.map(r => {
+    const fit = r.mokaFit || '';
+    const fitColor = (fit==='최적'||fit==='Perfect') ? 'var(--green)'
+      : (fit.includes('약간')||fit.includes('slightly')) ? 'var(--orange)' : 'var(--red)';
+    return `
     <div style="background:var(--bg2);border-radius:12px;margin-bottom:10px;overflow:hidden">
       <div style="padding:12px 16px;border-bottom:.5px solid var(--sep);display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:13px;color:var(--label2)">${r.date}</span>
-        <button onclick="deleteRecord(${r.id})" style="border:none;background:none;color:var(--red);font-size:13px;cursor:pointer;padding:0">${t('deleteBtn')}</button>
+        <span style="font-size:13px;color:var(--label2)">${escapeHtml(r.date)}</span>
+        <button onclick="deleteRecord(${Number(r.id)})" style="border:none;background:none;color:var(--red);font-size:13px;cursor:pointer;padding:0">${t('deleteBtn')}</button>
       </div>
       ${r.type === 'grind' ? `
         <div style="padding:10px 16px;border-bottom:.5px solid var(--sep);display:flex;justify-content:space-between">
-          <span style="font-size:15px;font-weight:500;color:var(--label)">${r.levelKor} · ${r.particleSize}μm</span>
-          <span style="font-size:14px;color:${r.mokaFit==='최적'||r.mokaFit==='Perfect'?'var(--green)':r.mokaFit.includes('약간')||r.mokaFit.includes('slightly')?'var(--orange)':'var(--red)'}">${r.mokaFit}</span>
+          <span style="font-size:15px;font-weight:500;color:var(--label)">${escapeHtml(r.levelKor || '—')} · ${escapeHtml(r.particleSize != null ? r.particleSize+'μm' : '측정 불가')}</span>
+          <span style="font-size:14px;color:${fitColor}">${escapeHtml(fit || '측정 불가')}</span>
         </div>
         <div style="padding:10px 16px;border-bottom:.5px solid var(--sep);display:flex;justify-content:space-between">
           <span style="font-size:13px;color:var(--label2)">${t('uniHd')}</span>
-          <span style="font-size:13px;color:var(--label)">${r.uniformity}%</span>
+          <span style="font-size:13px;color:var(--label)">${escapeHtml(r.uniformity != null ? r.uniformity+'%' : '측정 불가')}</span>
         </div>
       ` : `
         <div style="padding:10px 16px;border-bottom:.5px solid var(--sep);display:flex;justify-content:space-between">
           <span style="font-size:15px;font-weight:500;color:var(--label)">${t('elapsedLbl')}</span>
-          <span style="font-size:15px;color:var(--blue)">${r.extractTime}</span>
+          <span style="font-size:15px;color:var(--blue)">${escapeHtml(r.extractTime || '')}</span>
         </div>
       `}
-      ${r.memo ? `<div style="padding:10px 16px;font-size:13px;color:var(--label2)">📝 ${r.memo}</div>` : ''}
+      ${r.memo ? `<div style="padding:10px 16px;font-size:13px;color:var(--label2)">📝 ${escapeHtml(r.memo)}</div>` : ''}
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 // ═══ PWA 설치 안내 ═══
@@ -2821,7 +2893,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.7.2';
+const CURRENT_VERSION = 'v2.8.0';
 
 async function checkVersionFromServer() {
   try {
@@ -2857,10 +2929,23 @@ if ('serviceWorker' in navigator) {
     });
   });
 
-  // Service Worker 메시지 수신
+  // Service Worker 메시지 수신 — 추출/분석 중이면 강제 새로고침 보류
+  let _pendingReload = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (isBusy()) { _pendingReload = true; return; }
     window.location.reload();
   });
+  window._applyPendingReload = () => { if (_pendingReload) window.location.reload(); };
+}
+
+// 추출(타이머 실행/일시정지) 또는 분석 진행 중인지
+function isBusy() {
+  try {
+    if (typeof isRunning !== 'undefined' && isRunning) return true;
+    if (typeof accElapsed !== 'undefined' && accElapsed > 0 && !(typeof timerEnded !== 'undefined' && timerEnded)) return true;
+    if (window._analyzing) return true;
+  } catch(e){}
+  return false;
 }
 
 function showUpdateBanner(worker, latestVersion) {
@@ -2877,6 +2962,12 @@ function dismissUpdate() {
 }
 
 function applyUpdate() {
+  // 추출/분석 중이면 사용자에게 확인
+  if (isBusy()) {
+    const ok = confirm('추출 또는 분석이 진행 중입니다. 지금 업데이트하면 현재 작업이 초기화됩니다. 계속할까요?');
+    if (!ok) { dismissUpdate(); return; }
+  }
+  dismissUpdate();
   if (_newWorker) {
     _newWorker.postMessage({ action: 'skipWaiting' });
   } else {
