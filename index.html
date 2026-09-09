@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.8.1</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.8.2</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -337,7 +337,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <input type="file" id="fileInput" accept="image/*" onchange="handleFile(event)">
 
   <!-- 분석 버튼 -->
-  <div class="btn-row" id="analyzeRow" style="display:none">
+  <div class="btn-row" id="analyzeRow" style="display:none;flex-direction:column;gap:8px">
+    <div style="font-size:11px;color:var(--label3);text-align:center;line-height:1.5">분석을 누르면 선택한 사진이 외부 분석 서버로 전송됩니다.<br>커피 입자와 기준 동전만 나오도록 촬영해주세요.</div>
     <button class="btn btn-primary" onclick="startAnalysis()">분석 시작</button>
   </div>
 
@@ -466,6 +467,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         <button id="cup1Btn" onclick="setCupMode(1)" style="flex:1;padding:10px;border:1.5px solid var(--blue);border-radius:12px;background:var(--blue);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">☕ 1컵 <span style="font-weight:400;font-size:12px">3분 전후</span></button>
         <button id="cup2Btn" onclick="setCupMode(2)" style="flex:1;padding:10px;border:1.5px solid var(--sep);border-radius:12px;background:transparent;color:var(--label2);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">☕☕ 2컵 <span style="font-weight:400;font-size:12px">4분 전후</span></button>
       </div>
+      <div id="cupLockNote" style="display:none;padding:6px 16px 0;font-size:11px;color:var(--label3);text-align:center">추출 중에는 컵 수를 변경할 수 없습니다 · 초기화 후 변경 가능</div>
       <div class="timer-hero">
         <div class="ring-wrap">
           <svg class="timer-svg" viewBox="0 0 196 196">
@@ -494,8 +496,10 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       </div>
       <div class="timer-btns">
         <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()" style="flex:2">시작</button>
-        <button class="btn btn-secondary" onclick="resetTimer()">초기화</button>
-        <button class="btn btn-secondary" id="stopBtn" onclick="stopExtraction()" style="display:none;color:var(--red)">추출 종료</button>
+        <button class="btn btn-secondary" id="stopBtn" onclick="stopExtraction()" style="display:none;color:var(--red);flex:1">추출 종료</button>
+      </div>
+      <div style="text-align:center;margin-top:10px">
+        <button onclick="confirmReset()" style="border:none;background:none;color:var(--label3);font-family:inherit;font-size:13px;cursor:pointer;padding:6px 12px;text-decoration:underline;text-underline-offset:3px">초기화</button>
       </div>
     </div>
   </div>
@@ -524,7 +528,12 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="group-hd" id="historyHd">추출 기록</div>
     <div id="historyList"></div>
     <div id="historyEmpty" style="background:var(--bg2);border-radius:12px;padding:40px 20px;text-align:center;color:var(--label2);font-size:15px;display:none">
-      아직 저장된 기록이 없습니다.<br>분석 또는 타이머 후 저장해보세요.
+      <div style="font-size:40px;margin-bottom:12px">☕</div>
+      <div id="historyEmptyText" style="margin-bottom:20px;line-height:1.6">아직 저장된 기록이 없습니다.<br>분석 또는 추출 후 저장해보세요.</div>
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button onclick="switchTab('grind',document.querySelectorAll('.seg-btn')[0])" style="padding:10px 18px;border:1.5px solid var(--blue);border-radius:12px;background:transparent;color:var(--blue);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">분쇄 분석하기</button>
+        <button onclick="switchTab('timer',document.querySelectorAll('.seg-btn')[1])" style="padding:10px 18px;border:none;border-radius:12px;background:var(--blue);color:#fff;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">추출 시작하기</button>
+      </div>
     </div>
   </div>
 </div>
@@ -2333,6 +2342,8 @@ function updateCupBtnState() {
     b.style.opacity = locked ? '0.45' : '1';
     b.style.cursor = locked ? 'not-allowed' : 'pointer';
   });
+  const note = document.getElementById('cupLockNote');
+  if (note) note.style.display = locked ? 'block' : 'none';
 }
 
 function toggleTimer() {
@@ -2383,6 +2394,15 @@ function stopExtraction() {
   if (window._applyPendingReload) window._applyPendingReload();
   // 기록 저장 팝업
   setTimeout(() => showSaveModal('timer'), 400);
+}
+
+function confirmReset() {
+  // 추출 진행 중(실행/일시정지)에는 실수 방지 확인
+  if (isRunning || (accElapsed > 0 && !timerEnded)) {
+    const ok = confirm('추출이 진행 중입니다. 초기화하면 현재 시간이 사라집니다. 초기화할까요?');
+    if (!ok) return;
+  }
+  resetTimer();
 }
 
 function resetTimer() {
@@ -2754,7 +2774,8 @@ function renderHistory() {
 
   if (records.length === 0) {
     list.innerHTML = '';
-    empty.innerHTML = t('historyEmpty').replace('\n','<br>');
+    const et = document.getElementById('historyEmptyText');
+    if (et) et.innerHTML = t('historyEmpty').replace('\n','<br>');
     empty.style.display = 'block';
     return;
   }
@@ -2890,7 +2911,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.8.1';
+const CURRENT_VERSION = 'v2.8.2';
 
 async function checkVersionFromServer() {
   try {
