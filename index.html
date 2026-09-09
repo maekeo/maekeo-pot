@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.6.0</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.7.0</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -1663,12 +1663,12 @@ function normalizeV2(data) {
   const v = data.visual_result || {};
   const i = data.insights || {};
   return {
-    percent:       Math.min(100, Math.max(0, Number(c.percent) || 50)),
-    particleSize:  Number(s.average_micron)   || 400,
-    uniformity:    Number(s.uniformity_score) || 60,
-    levelKor:      c.levelKor  || '중간',
+    percent:       (c.percent != null && !isNaN(Number(c.percent))) ? Math.min(100, Math.max(0, Number(c.percent))) : null,
+    particleSize:  (s.average_micron != null && !isNaN(Number(s.average_micron))) ? Number(s.average_micron) : null,
+    uniformity:    (s.uniformity_score != null && !isNaN(Number(s.uniformity_score))) ? Number(s.uniformity_score) : null,
+    levelKor:      c.levelKor  || null,
     bestBrew:      c.bestBrew  || '매커포트',
-    mokaFit:       c.mokaFit   || '—',
+    mokaFit:       c.mokaFit   || null,
     particleCount: s.particle_count    || null,
     finesRatio:    s.fines_percentage  ?? null,
     histogram:     h || null,
@@ -1686,13 +1686,13 @@ function normalizeV2(data) {
 function normalize(r) {
   if (r.isCoffee === false) { toast('커피 원두 사진을 촬영해주세요'); return null; }
   return {
-    percent:        Math.min(100, Math.max(0, Number(r.percent) || 50)),
-    particleSize:   Number(r.particleSize) || 400,
-    uniformity:     Number(r.uniformity)   || 60,
-    levelKor:       r.levelKor || r.level  || '중간',
+    percent:        (r.percent != null && !isNaN(Number(r.percent))) ? Math.min(100, Math.max(0, Number(r.percent))) : null,
+    particleSize:   (r.particleSize != null && !isNaN(Number(r.particleSize))) ? Number(r.particleSize) : null,
+    uniformity:     (r.uniformity != null && !isNaN(Number(r.uniformity))) ? Number(r.uniformity) : null,
+    levelKor:       r.levelKor || r.level  || null,
     bestBrew:       r.bestBrew             || '매커포트',
     advice:         r.advice               || '분석 완료.',
-    mokaFit:        r.mokaFit              || '—',
+    mokaFit:        r.mokaFit              || null,
     particleCount:  r.particleCount        || null,
     finesRatio:     r.finesRatio           ?? null,
     histogram:      r.histogram            || null,
@@ -1737,12 +1737,47 @@ document.addEventListener('click', unlockSpeech, { once: true });
 
 function showResult(r) {
   document.getElementById('resultPanel').classList.add('show');
-  setTimeout(() => { document.getElementById('meterFill').style.width = r.percent + '%'; }, 80);
-  document.getElementById('resLevel').textContent  = r.levelKor;
+
+  // 측정 불가 판정: 핵심 값이 누락되면 정상 수치로 표시하지 않고 재촬영 안내
+  const sizeMissing = (r.particleSize == null);
+  const uniMissing  = (r.uniformity == null);
+  const fitMissing  = (!r.mokaFit);
+  const measureFailed = sizeMissing && uniMissing; // 둘 다 없으면 분석 실패로 간주
+
+  if (measureFailed) {
+    document.getElementById('meterFill').style.width = '0%';
+    document.getElementById('resLevel').textContent  = '측정 불가';
+    document.getElementById('resBrew').textContent   = '—';
+    document.getElementById('resAdvice').textContent = '입자를 인식하지 못했습니다. 흰 배경에 원두를 넓게 펼치고, 그림자 없는 밝은 곳에서 초점을 맞춰 다시 촬영해주세요.';
+    document.getElementById('resSize').innerHTML     = '측정 불가';
+    document.getElementById('resUni').innerHTML      = '측정 불가';
+    const fitEl0 = document.getElementById('resMokaFit');
+    fitEl0.textContent = '측정 불가'; fitEl0.style.color = 'var(--label2)';
+    const badge0 = document.getElementById('resBadge');
+    badge0.textContent = '재촬영 필요'; badge0.className = 'badge badge-low';
+    const reason0 = document.getElementById('confReason');
+    reason0.style.display = 'block';
+    reason0.textContent = '⚠️ 분석에 실패했습니다. 흰 종이 위에 원두를 겹치지 않게 펼치고, 자연광에서 최대한 가까이(초점 확인) 다시 촬영해주세요.';
+    // 부가 정보 영역 숨김
+    document.getElementById('resCountCell').style.display = 'none';
+    document.getElementById('resFinesCell').style.display = 'none';
+    document.getElementById('overlayGroup').style.display = 'none';
+    document.getElementById('histogramWrap').style.display = 'none';
+    document.getElementById('coarseBeanRec').style.display = 'none';
+    document.getElementById('insightCard').style.display = 'none';
+    document.getElementById('speakBtn').style.display = 'none';
+    document.getElementById('saveGrindBtn').style.display = 'none';
+    document.getElementById('resMethod').textContent = '';
+    window._lastGrindResult = null;
+    return;
+  }
+
+  setTimeout(() => { document.getElementById('meterFill').style.width = (r.percent != null ? r.percent : 0) + '%'; }, 80);
+  document.getElementById('resLevel').textContent  = r.levelKor || '—';
   document.getElementById('resBrew').textContent   = r.bestBrew;
   document.getElementById('resAdvice').textContent = r.advice;
-  document.getElementById('resSize').innerHTML     = `${r.particleSize}<span class="stat-unit"> μm</span>`;
-  document.getElementById('resUni').innerHTML      = `${r.uniformity}<span class="stat-unit"> %</span>`;
+  document.getElementById('resSize').innerHTML     = sizeMissing ? '측정 불가' : `${r.particleSize}<span class="stat-unit"> μm</span>`;
+  document.getElementById('resUni').innerHTML      = uniMissing ? '측정 불가' : `${r.uniformity}<span class="stat-unit"> %</span>`;
 
   // 입자 수 (OpenCV 서버 결과일 때만)
   if (r.particleCount) {
@@ -1809,8 +1844,9 @@ function showResult(r) {
   }
 
   const fitEl = document.getElementById('resMokaFit');
-  fitEl.textContent = r.mokaFit;
-  fitEl.style.color = r.mokaFit.includes('최적') ? 'var(--green)'
+  fitEl.textContent = r.mokaFit || '측정 불가';
+  fitEl.style.color = !r.mokaFit ? 'var(--label2)'
+    : r.mokaFit.includes('최적') ? 'var(--green)'
     : r.mokaFit.includes('약간') ? 'var(--orange)'
     : r.mokaFit.includes('많이') ? 'var(--red)' : 'var(--label2)';
 
@@ -1822,7 +1858,7 @@ function showResult(r) {
     coarseRec.style.display = isCoarse ? 'block' : 'none';
   }
 
-  const conf = r.uniformity >= 75 ? 'high' : r.uniformity >= 55 ? 'mid' : 'low';
+  const conf = (r.uniformity == null) ? 'low' : r.uniformity >= 75 ? 'high' : r.uniformity >= 55 ? 'mid' : 'low';
   const confEl = document.getElementById('resBadge');
   confEl.textContent = conf === 'high' ? '높음' : conf === 'mid' ? '보통' : '낮음';
   confEl.className = `badge badge-${conf}`;
@@ -1969,6 +2005,11 @@ function applyCupTimings() {
 }
 
 function setCupMode(n) {
+  // 추출 진행 중(실행 또는 일시정지 상태)에는 컵 수 변경 차단
+  if (isRunning || accElapsed > 0) {
+    toast('추출 중에는 컵 수를 변경할 수 없습니다. 초기화 후 변경해주세요.');
+    return;
+  }
   cupMode = n;
   localStorage.setItem('maekeo_cup_mode', String(n));
   applyCupTimings();
@@ -2059,29 +2100,43 @@ function rafLoop() { updateTimerUI(); timerRAF = requestAnimationFrame(rafLoop);
 function checkAlarms() {
   const elapsed = getElapsed();
 
-  // 불 줄이기 (컵수별 WARN_AT: 1컵 2분 / 2컵 3분)
+  // 종료 (최우선) — STOP_AT 도달 시 이전 단계 알람은 소리 없이 소비하고 종료 안내만
+  if (elapsed >= STOP_AT) {
+    warnFired = true; dangerFired = true; // 놓친 하위 단계 소비
+    document.getElementById('alertWarn').classList.remove('show');
+    document.getElementById('alertDanger').classList.add('show');
+    if (isRunning) {
+      accElapsed += Date.now() - startedAt;
+      isRunning = false;
+    }
+    cancelAnimationFrame(timerRAF); timerRAF = null;
+    clearInterval(timerInterval); timerInterval = null;
+    document.getElementById('startBtn').textContent = t('timerStart');
+    document.getElementById('stopBtn').style.display = 'none';
+    playBeep('danger'); flash('danger');
+    speak(t('voice7min'));
+    updateCupBtnState();
+    updateTimerUI();
+    setTimeout(() => showSaveModal('timer'), 1500);
+    return;
+  }
+
+  // 과추출 주의 — DANGER 도달 시, 놓친 WARN은 소리 없이 소비하고 과추출 안내만
+  if (elapsed >= DANGER_AT) {
+    if (!dangerFired) {
+      dangerFired = true; warnFired = true; // 놓친 WARN 소비
+      document.getElementById('alertDanger').classList.add('show');
+      playBeep('danger'); flash('danger');
+      toast(t('dangerTitle')); speak(t('voice6min'));
+    }
+    return;
+  }
+
+  // 불 줄이기
   if (elapsed >= WARN_AT && !warnFired) {
     warnFired = true; playBeep('warn'); flash('warn');
     document.getElementById('alertWarn').classList.add('show');
     toast(t('warnTitle')); speak(t('voiceReduce'));
-  }
-  // 과추출 주의 (컵수별 DANGER_AT: 1컵 3분30초 / 2컵 4분30초)
-  if (elapsed >= DANGER_AT && !dangerFired) {
-    dangerFired = true; playBeep('danger'); flash('danger');
-    document.getElementById('alertDanger').classList.add('show');
-    toast(t('dangerTitle')); speak(t('voice6min'));
-  }
-  // 종료 (컵수별 STOP_AT: 1컵 4분 / 2컵 5분)
-  if (elapsed >= STOP_AT) {
-    cancelAnimationFrame(timerRAF); timerRAF = null;
-    clearInterval(timerInterval); timerInterval = null;
-    isRunning = false;
-    document.getElementById('startBtn').textContent = t('timerStart');
-    document.getElementById('stopBtn').style.display = 'none';
-    playBeep('danger');
-    speak(t('voice7min'));
-    updateTimerUI();
-    setTimeout(() => showSaveModal('timer'), 1500);
   }
 }
 
@@ -2140,6 +2195,17 @@ function flash(type) {
   setTimeout(() => document.body.classList.remove(cls), type==='warn' ? 1700 : 2200);
 }
 
+function updateCupBtnState() {
+  const locked = isRunning || accElapsed > 0;
+  const b1 = document.getElementById('cup1Btn');
+  const b2 = document.getElementById('cup2Btn');
+  [b1, b2].forEach(b => {
+    if (!b) return;
+    b.style.opacity = locked ? '0.45' : '1';
+    b.style.cursor = locked ? 'not-allowed' : 'pointer';
+  });
+}
+
 function toggleTimer() {
   ensureAudio();
   if (window.speechSynthesis) {
@@ -2163,6 +2229,7 @@ function toggleTimer() {
   }
   // 추출 종료 버튼 — 타이머 시작되면 표시
   document.getElementById('stopBtn').style.display = accElapsed > 0 || isRunning ? 'flex' : 'none';
+  updateCupBtnState();
   updateTimerUI();
 }
 
@@ -2176,6 +2243,7 @@ function stopExtraction() {
   }
   document.getElementById('startBtn').textContent = '시작';
   document.getElementById('stopBtn').style.display = 'none';
+  updateCupBtnState();
   updateTimerUI();
   // 기록 저장 팝업
   setTimeout(() => showSaveModal('timer'), 400);
@@ -2191,6 +2259,7 @@ function resetTimer() {
   document.getElementById('alertWarn').classList.remove('show');
   document.getElementById('alertDanger').classList.remove('show');
   document.getElementById('ringFill').style.stroke = 'url(#rg)';
+  updateCupBtnState();
   renderStages(); updateTimerUI();
 }
 
@@ -2675,7 +2744,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.6.0';
+const CURRENT_VERSION = 'v2.7.0';
 
 async function checkVersionFromServer() {
   try {
