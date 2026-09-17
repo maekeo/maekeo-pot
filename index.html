@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.8.3</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.8.4</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -1057,6 +1057,27 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <div style="background:var(--fill);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7">
             💡 매커포트는 <b style="color:var(--label)">바스켓 봉의 길이</b>를 보일러통 바닥에서 일정 높이만큼 띄워 설계했습니다.<br><br>
             가열 시 보일러통 내부에 물이 조금 남도록 하여, <b style="color:var(--label)">물이 완전히 마르며 발생하는 과열·열 변형(눌음) 현상을 방지</b>하기 위함입니다.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 컵 내부 육각 너트 커피 맺힘 -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">💧</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">컵 내부 육각 너트 쪽에 커피가 맺혀요</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div style="margin-bottom:10px">
+            간헐적으로 컵 내부 육각 너트 쪽에 커피가 맺히는 경우가 있습니다. 이는 <b style="color:var(--label)">추출봉 내부에 남아 있던 이전 커피 잔여물</b>이 나오거나, 불 세기·원두 상태에 따라 <b style="color:var(--label)">압력추가 살짝 열렸다 닫히면서</b> 발생할 수 있습니다.
+          </div>
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7">
+            ✅ <b style="color:var(--label)">추출 결과에는 영향이 없으니</b> 신경 쓰지 않으셔도 됩니다.
           </div>
         </div>
       </div>
@@ -2911,7 +2932,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.8.3';
+const CURRENT_VERSION = 'v2.8.4';
 
 async function checkVersionFromServer() {
   try {
