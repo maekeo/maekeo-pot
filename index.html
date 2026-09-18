@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.8.7</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.8.8</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -1229,10 +1229,16 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 </div>
 
 <!-- 이미지 확대 라이트박스 -->
-<div id="lightbox" onclick="closeLightbox()" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:12px;overflow:auto;-webkit-overflow-scrolling:touch">
-  <img id="lightboxImg" src="" alt="확대 이미지" style="max-width:none;width:auto;min-width:100%;height:auto;border-radius:8px">
-  <button onclick="event.stopPropagation();closeLightbox()" aria-label="닫기" style="position:fixed;top:16px;right:16px;width:40px;height:40px;border:none;border-radius:20px;background:rgba(255,255,255,.15);color:#fff;font-size:22px;line-height:1;cursor:pointer">✕</button>
-  <div style="position:fixed;bottom:16px;left:0;right:0;text-align:center;color:rgba(255,255,255,.6);font-size:12px;pointer-events:none">두 손가락으로 확대 · 화면을 탭하면 닫힙니다</div>
+<div id="lightbox" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.92);overflow:hidden;touch-action:none">
+  <div id="lightboxStage" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden">
+    <img id="lightboxImg" src="" alt="확대 이미지" style="width:92%;max-width:600px;height:auto;transform-origin:center center;transition:transform .05s linear;user-select:none;-webkit-user-select:none;pointer-events:none">
+  </div>
+  <button onclick="closeLightbox()" aria-label="닫기" style="position:fixed;top:16px;right:16px;width:40px;height:40px;border:none;border-radius:20px;background:rgba(255,255,255,.15);color:#fff;font-size:22px;line-height:1;cursor:pointer;z-index:2">✕</button>
+  <div style="position:fixed;bottom:20px;left:0;right:0;display:flex;gap:12px;justify-content:center;z-index:2">
+    <button onclick="lbZoom(-1)" aria-label="축소" style="width:48px;height:48px;border:none;border-radius:24px;background:rgba(255,255,255,.18);color:#fff;font-size:24px;line-height:1;cursor:pointer">−</button>
+    <button onclick="lbZoomReset()" aria-label="원래대로" style="height:48px;padding:0 18px;border:none;border-radius:24px;background:rgba(255,255,255,.18);color:#fff;font-size:14px;cursor:pointer">원래대로</button>
+    <button onclick="lbZoom(1)" aria-label="확대" style="width:48px;height:48px;border:none;border-radius:24px;background:rgba(255,255,255,.18);color:#fff;font-size:24px;line-height:1;cursor:pointer">＋</button>
+  </div>
 </div>
 
 <!-- 부품 명칭 모달 -->
@@ -2584,12 +2590,18 @@ function openWeightModal() {
 function closeWeightModal() {
   document.getElementById('weightModal').classList.remove('show');
 }
+let _lbScale = 1, _lbX = 0, _lbY = 0;
+function _lbApply() {
+  const img = document.getElementById('lightboxImg');
+  if (img) img.style.transform = `translate(${_lbX}px, ${_lbY}px) scale(${_lbScale})`;
+}
 function openLightbox(src) {
   const lb = document.getElementById('lightbox');
   const img = document.getElementById('lightboxImg');
   if (!lb || !img) return;
   img.src = src;
-  lb.style.display = 'flex';
+  _lbScale = 1; _lbX = 0; _lbY = 0; _lbApply();
+  lb.style.display = 'block';
   document.body.style.overflow = 'hidden';
 }
 function closeLightbox() {
@@ -2598,6 +2610,56 @@ function closeLightbox() {
   lb.style.display = 'none';
   document.body.style.overflow = '';
 }
+function lbZoom(dir) {
+  _lbScale = Math.min(5, Math.max(1, _lbScale + dir * 0.5));
+  if (_lbScale === 1) { _lbX = 0; _lbY = 0; }
+  _lbApply();
+}
+function lbZoomReset() { _lbScale = 1; _lbX = 0; _lbY = 0; _lbApply(); }
+
+// 확대 상태에서 드래그·핀치로 이동/확대
+(function initLightboxGestures(){
+  document.addEventListener('DOMContentLoaded', () => {
+    const stage = document.getElementById('lightboxStage');
+    if (!stage) return;
+    let dragging = false, lastX = 0, lastY = 0;
+    let pinchStart = 0, pinchScale0 = 1;
+
+    const dist = (t) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+
+    stage.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 2) {
+        pinchStart = dist(e.touches); pinchScale0 = _lbScale;
+      } else if (e.touches.length === 1 && _lbScale > 1) {
+        dragging = true; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    stage.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 2 && pinchStart > 0) {
+        e.preventDefault();
+        const ratio = dist(e.touches) / pinchStart;
+        _lbScale = Math.min(5, Math.max(1, pinchScale0 * ratio));
+        if (_lbScale === 1) { _lbX = 0; _lbY = 0; }
+        _lbApply();
+      } else if (dragging && e.touches.length === 1) {
+        _lbX += e.touches[0].clientX - lastX;
+        _lbY += e.touches[0].clientY - lastY;
+        lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
+        _lbApply();
+      }
+    }, { passive: false });
+
+    stage.addEventListener('touchend', (e) => {
+      if (e.touches.length === 0) { dragging = false; pinchStart = 0; }
+    });
+
+    // 배경(이미지 밖) 탭하면 닫기 — 단, 확대 안 된 상태에서만
+    stage.addEventListener('click', (e) => {
+      if (e.target.id === 'lightboxStage' && _lbScale === 1) closeLightbox();
+    });
+  });
+})();
 
 function openPartsModal() {
   document.getElementById('partsModal').classList.add('show');
@@ -2991,7 +3053,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.8.7';
+const CURRENT_VERSION = 'v2.8.8';
 
 async function checkVersionFromServer() {
   try {
