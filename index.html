@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.8.5</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.8.6</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -609,6 +609,39 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <a href="https://smartstore.naver.com/maeco/products/12529911968" target="_blank" style="display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none">
             🛒 인덕터(플레이트) 구매하기
           </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 원목 손잡이 장착·관리 -->
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:10px">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">🪵</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">원목 손잡이 장착법 &amp; 관리법</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div style="font-weight:600;color:var(--label);margin-bottom:8px">🔧 장착법</div>
+          <img src="/Makkerpot_Walnut_Handle_Installation_Guide.png" alt="원목 손잡이 장착 가이드" style="width:100%;border-radius:12px;margin-bottom:16px">
+
+          <div style="font-weight:600;color:var(--label);margin-bottom:8px">🌰 호두나무 원목 손잡이 관리 안내</div>
+          <div style="margin-bottom:12px">
+            매커포트의 손잡이는 천연 호두나무 원목에 천연 오일을 도포하여 마감했습니다. 원목 고유의 색감과 질감은 사용할수록 자연스럽게 깊어지며, 올바르게 관리하면 오랫동안 아름다운 상태를 유지할 수 있습니다.
+          </div>
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.9">
+            • 사용 후에는 물에 오래 담가두지 말고, 부드러운 천으로 가볍게 닦아주세요.<br>
+            • 세척이 필요한 경우 젖은 천으로 닦은 뒤 물기를 완전히 제거하고 충분히 건조해 주세요.<br>
+            • 식기세척기 사용 및 장시간 물에 담가두는 것은 피해 주세요.<br>
+            • 강한 세제, 알코올, 표백제 등의 사용은 원목의 변색과 갈라짐을 유발할 수 있습니다.<br>
+            • 표면이 건조하거나 색이 옅어졌을 경우, <b style="color:var(--label)">식품용 우드 오일 또는 천연 오일</b>을 소량 도포하면 색감과 보호력 유지에 도움이 됩니다.<br>
+            • 원목 특성상 색상과 나뭇결은 제품마다 차이가 있을 수 있으며, 이는 천연 소재의 자연스러운 특징입니다.
+          </div>
+          <div style="margin-top:12px;font-size:13px;color:var(--label3);line-height:1.7">
+            ⚠️ 뜨거운 본체와 가까운 부분은 사용 직후 온도가 높을 수 있으므로, 충분히 식힌 후 관리해 주세요.
+          </div>
         </div>
       </div>
     </div>
@@ -2936,7 +2969,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.8.5';
+const CURRENT_VERSION = 'v2.8.6';
 
 async function checkVersionFromServer() {
   try {
