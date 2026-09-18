@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.8.6</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.8.7</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -625,7 +625,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div class="fix-content" style="display:none;padding:0 16px 18px">
         <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div style="font-weight:600;color:var(--label);margin-bottom:8px">🔧 장착법</div>
-          <img src="/Makkerpot_Walnut_Handle_Installation_Guide.png" alt="원목 손잡이 장착 가이드" style="width:100%;border-radius:12px;margin-bottom:16px">
+          <img src="/Makkerpot_Walnut_Handle_Installation_Guide.png" alt="원목 손잡이 장착 가이드" onclick="openLightbox(this.src)" style="width:100%;border-radius:12px;margin-bottom:16px;cursor:zoom-in">
 
           <div style="font-weight:600;color:var(--label);margin-bottom:8px">🌰 호두나무 원목 손잡이 관리 안내</div>
           <div style="margin-bottom:12px">
@@ -762,7 +762,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           </div>
           <div style="margin-top:14px">
             <div style="font-size:12px;color:var(--label3);margin-bottom:6px">📌 압력추 방향 참고 이미지</div>
-            <img src="/pressure-weight-direction.png" alt="압력추 방향 참고" style="width:100%;border-radius:12px">
+            <img src="/pressure-weight-direction.png" alt="압력추 방향 참고" onclick="openLightbox(this.src)" style="width:100%;border-radius:12px;cursor:zoom-in">
           </div>
         </div>
       </div>
@@ -1228,6 +1228,13 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   </div>
 </div>
 
+<!-- 이미지 확대 라이트박스 -->
+<div id="lightbox" onclick="closeLightbox()" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:12px;overflow:auto;-webkit-overflow-scrolling:touch">
+  <img id="lightboxImg" src="" alt="확대 이미지" style="max-width:none;width:auto;min-width:100%;height:auto;border-radius:8px">
+  <button onclick="event.stopPropagation();closeLightbox()" aria-label="닫기" style="position:fixed;top:16px;right:16px;width:40px;height:40px;border:none;border-radius:20px;background:rgba(255,255,255,.15);color:#fff;font-size:22px;line-height:1;cursor:pointer">✕</button>
+  <div style="position:fixed;bottom:16px;left:0;right:0;text-align:center;color:rgba(255,255,255,.6);font-size:12px;pointer-events:none">두 손가락으로 확대 · 화면을 탭하면 닫힙니다</div>
+</div>
+
 <!-- 부품 명칭 모달 -->
 <div class="modal-bg" id="partsModal">
   <div class="modal-sheet">
@@ -1238,7 +1245,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="font-size:13px;color:var(--label2);line-height:1.7;margin-bottom:14px;text-align:center">
       매커포트의 각 부품 명칭을 확인하세요.
     </div>
-    <img src="/maekeo-pot-diagram.png" alt="매커포트 부품 명칭" style="width:100%;border-radius:12px;margin-bottom:14px">
+    <img src="/maekeo-pot-diagram.png" alt="매커포트 부품 명칭" onclick="openLightbox(this.src)" style="width:100%;border-radius:12px;margin-bottom:14px;cursor:zoom-in">
     <div style="background:var(--fill);border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--label2);line-height:1.7">
       🏅 <b style="color:var(--label)">컵 · 쿨링팬 · 중앙 브릿지 · 보일러통</b>은 의료용 고급 소재인 <b style="color:var(--label)">스테인리스 316</b>으로 제작되었습니다.
     </div>
@@ -1258,7 +1265,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="font-size:13px;color:var(--label2);line-height:1.7;margin-bottom:14px;text-align:center">
       압력캡 내부의 <b style="color:var(--label)">압력추 방향</b>이 올바른지 확인해주세요.
     </div>
-    <img src="/pressure-weight-direction.png" alt="압력추 방향" style="width:100%;border-radius:12px;margin-bottom:20px">
+    <img src="/pressure-weight-direction.png" alt="압력추 방향" onclick="openLightbox(this.src)" style="width:100%;border-radius:12px;margin-bottom:20px;cursor:zoom-in">
     <div class="modal-btns">
       <button class="btn btn-primary" style="flex:1" onclick="closeWeightModal()">확인</button>
     </div>
@@ -2577,6 +2584,21 @@ function openWeightModal() {
 function closeWeightModal() {
   document.getElementById('weightModal').classList.remove('show');
 }
+function openLightbox(src) {
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightboxImg');
+  if (!lb || !img) return;
+  img.src = src;
+  lb.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  const lb = document.getElementById('lightbox');
+  if (!lb) return;
+  lb.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
 function openPartsModal() {
   document.getElementById('partsModal').classList.add('show');
 }
@@ -2969,7 +2991,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.8.6';
+const CURRENT_VERSION = 'v2.8.7';
 
 async function checkVersionFromServer() {
   try {
