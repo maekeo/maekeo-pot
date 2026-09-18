@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.8.8</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.8.9</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -625,7 +625,10 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div class="fix-content" style="display:none;padding:0 16px 18px">
         <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
           <div style="font-weight:600;color:var(--label);margin-bottom:8px">🔧 장착법</div>
-          <img src="/Makkerpot_Walnut_Handle_Installation_Guide.png" alt="원목 손잡이 장착 가이드" onclick="openLightbox(this.src)" style="width:100%;border-radius:12px;margin-bottom:16px;cursor:zoom-in">
+          <img src="/Makkerpot_Walnut_Handle_Installation_Guide.png" alt="원목 손잡이 장착 가이드" onclick="openLightbox(this.src)" style="width:100%;border-radius:12px;margin-bottom:12px;cursor:zoom-in">
+          <div style="background:var(--fill);border:1.5px solid var(--red);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13px;line-height:1.7">
+            ⚠️ <b style="color:var(--red)">주의</b> — 육각 렌치로 볼트를 <b style="color:var(--label)">너무 강하게 조이면 볼트 머리의 육각 홈이 뭉개질(이가 나갈) 수 있습니다.</b> 적당한 힘으로만 조여주세요.
+          </div>
 
           <div style="font-weight:600;color:var(--label);margin-bottom:8px">🌰 호두나무 원목 손잡이 관리 안내</div>
           <div style="margin-bottom:12px">
@@ -3053,7 +3056,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.8.8';
+const CURRENT_VERSION = 'v2.8.9';
 
 async function checkVersionFromServer() {
   try {
