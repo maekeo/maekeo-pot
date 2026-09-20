@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.9.4</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.9.5</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -673,7 +673,16 @@ body.flash-danger{animation:flashDanger .35s ease 6}
             • 추출 후 압력은 <b style="color:var(--label)">한 번에 완전히 열지 말고</b> 조금씩 해제하세요.
           </div>
 
-          <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="background:var(--fill);border-radius:10px;padding:14px;margin-bottom:14px;font-size:13px;line-height:1.9">
+            <div style="font-weight:600;color:var(--label);margin-bottom:6px">핵심 3단계</div>
+            <div>① <b style="color:var(--label)">준비</b> — 실링 교체 · 물 180g · 원두 20~24g 템핑</div>
+            <div>② <b style="color:var(--label)">추출</b> — 벤트밸브 잠금 확인 → 퀵커플러 연결 → 펌프 작동</div>
+            <div>③ <b style="color:var(--label)">종료</b> — 펌프 정지 → 압력 천천히 해제 → 본체 분리</div>
+          </div>
+
+          <button onclick="toggleBoilerSteps(this)" style="width:100%;padding:11px;border:1.5px solid var(--sep);border-radius:10px;background:transparent;color:var(--label2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:4px">전체 12단계 자세히 보기 ▼</button>
+
+          <div id="boilerFullSteps" style="display:none;flex-direction:column;gap:12px;margin-top:12px">
             <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span><span><b style="color:var(--label)">벤트밸브 실링 교체</b> — 기본 장착된 실링을 제거한 후, 동봉된 실리콘 실링으로 교체하여 사용해 주세요.</span></div>
             <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span><span><b style="color:var(--label)">벤트밸브 손잡이 체결</b> — 지나치게 강하게 조이지 말고, 필요 시 손으로 풀 수 있는 정도로 체결해 주세요.</span></div>
             <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span><span><b style="color:var(--label)">벤트밸브 위치 확인</b> — 보일러통 방향으로 밀기 = 잠금 / 손잡이 방향으로 당기기 = 압력 해제. 추출 전에는 반드시 잠금 상태인지 확인해 주세요.</span></div>
@@ -2643,6 +2652,14 @@ function _lbApply() {
   const img = document.getElementById('lightboxImg');
   if (img) img.style.transform = `translate(${_lbX}px, ${_lbY}px) scale(${_lbScale})`;
 }
+function toggleBoilerSteps(btn) {
+  const el = document.getElementById('boilerFullSteps');
+  if (!el) return;
+  const open = el.style.display === 'flex';
+  el.style.display = open ? 'none' : 'flex';
+  btn.textContent = open ? '전체 12단계 자세히 보기 ▼' : '접기 ▲';
+}
+
 function openLightbox(src) {
   const lb = document.getElementById('lightbox');
   const img = document.getElementById('lightboxImg');
@@ -3101,7 +3118,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.9.4';
+const CURRENT_VERSION = 'v2.9.5';
 
 async function checkVersionFromServer() {
   try {
