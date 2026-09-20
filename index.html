@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.9.5</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.9.7</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -665,6 +665,9 @@ body.flash-danger{animation:flashDanger .35s ease 6}
             <span style="font-size:14px;font-weight:700;color:var(--red)">가압보일러통 사용 영상 보기</span>
           </a>
 
+          <div style="font-weight:600;color:var(--label);margin-bottom:8px">📋 부품 명칭</div>
+          <img src="/maekeo-boiler-parts.png" alt="가압보일러통 부품 명칭" onclick="openLightbox(this.src)" style="width:100%;border-radius:12px;margin-bottom:16px;cursor:zoom-in">
+
           <div style="background:var(--fill);border:1.5px solid var(--red);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13px;line-height:1.7">
             ⚠️ <b style="color:var(--red)">안전 주의</b><br>
             • <b style="color:var(--label)">벤트밸브 손잡이</b>는 손으로 풀 수 있는 정도로만 체결하세요. 과도하게 조이면 압력 해제가 어려워집니다.<br>
@@ -699,6 +702,28 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 
           <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-top:14px;font-size:13px;line-height:1.7">
             💡 <b style="color:var(--label)">체결부 누수 참고</b> — 분쇄도·도징량·본체 체결 상태에 따라 추출 중 체결부에 소량의 커피가 흐를 수 있습니다. 본체를 충분히 체결하면 대부분 줄어들며, 소량의 흐름은 추출 결과와 제품 사용에 영향을 주지 않습니다.
+          </div>
+
+          <button onclick="togglePressureDesign(this)" style="width:100%;padding:11px;border:1.5px solid var(--sep);border-radius:10px;background:transparent;color:var(--label2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-top:14px">🎯 추출 압력 설계 (심화) ▼</button>
+          <div id="pressureDesign" style="display:none;margin-top:12px;font-size:13px;line-height:1.8">
+            <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-weight:600;color:var(--label)">
+              • 9bar 초과 압력 추출은 권장하지 않습니다.
+            </div>
+            <div style="margin-bottom:12px">
+              <div style="font-weight:600;color:var(--label);margin-bottom:4px">압력이 9bar를 초과할 때</div>
+              전동 펌프로 9bar를 초과할 경우, <b style="color:var(--label)">도징량·분쇄도를 조정</b>하거나 <b style="color:var(--label)">압력캡을 일부 개방</b>해 9bar를 넘지 않도록 유도하세요.
+            </div>
+            <div style="margin-bottom:12px">
+              <div style="font-weight:600;color:var(--label);margin-bottom:4px">8~9bar로 설계하려면</div>
+              마찬가지로 도징량과 분쇄도 조정으로 추출 압력을 맞추면 됩니다.
+            </div>
+            <div style="margin-bottom:12px">
+              <div style="font-weight:600;color:var(--label);margin-bottom:4px">압력이 오르지 않을 때</div>
+              도징량·분쇄도를 조정해도 압력이 오르지 않으면, <b style="color:var(--label)">매커포트 예비 압력 스프링으로 교체</b>하거나 스프링 길이를 조금 늘려 탄력을 높이는 방법이 있습니다.
+            </div>
+            <div style="background:var(--fill);border:1.5px solid var(--red);border-radius:10px;padding:12px 14px;line-height:1.7">
+              ⚠️ <b style="color:var(--red)">주의</b> — 예비 압력 스프링은 <b style="color:var(--label)">가열식 매커포트에는 절대 사용하지 마세요.</b>
+            </div>
           </div>
         </div>
       </div>
@@ -2652,6 +2677,14 @@ function _lbApply() {
   const img = document.getElementById('lightboxImg');
   if (img) img.style.transform = `translate(${_lbX}px, ${_lbY}px) scale(${_lbScale})`;
 }
+function togglePressureDesign(btn) {
+  const el = document.getElementById('pressureDesign');
+  if (!el) return;
+  const open = el.style.display === 'block';
+  el.style.display = open ? 'none' : 'block';
+  btn.textContent = open ? '🎯 추출 압력 설계 (심화) ▼' : '🎯 추출 압력 설계 (심화) ▲';
+}
+
 function toggleBoilerSteps(btn) {
   const el = document.getElementById('boilerFullSteps');
   if (!el) return;
@@ -3118,7 +3151,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.9.5';
+const CURRENT_VERSION = 'v2.9.7';
 
 async function checkVersionFromServer() {
   try {
