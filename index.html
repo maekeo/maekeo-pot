@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.9.3</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v2.9.4</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -644,6 +644,52 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           </div>
           <div style="margin-top:12px;font-size:13px;color:var(--label3);line-height:1.7">
             ⚠️ 뜨거운 본체와 가까운 부분은 사용 직후 온도가 높을 수 있으므로, 충분히 식힌 후 관리해 주세요.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 가압보일러통 사용 가이드 -->
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:10px">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">🫖</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">가압보일러통 사용 가이드</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);font-size:14px;transition:transform .2s">▼</span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <a href="https://youtu.be/arD6T-FYglI" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--bg2);border:1.5px solid var(--red);border-radius:12px;text-decoration:none;margin-bottom:16px">
+            <span style="font-size:16px">▶️</span>
+            <span style="font-size:14px;font-weight:700;color:var(--red)">가압보일러통 사용 영상 보기</span>
+          </a>
+
+          <div style="background:var(--fill);border:1.5px solid var(--red);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13px;line-height:1.7">
+            ⚠️ <b style="color:var(--red)">안전 주의</b><br>
+            • <b style="color:var(--label)">벤트밸브 손잡이</b>는 손으로 풀 수 있는 정도로만 체결하세요. 과도하게 조이면 압력 해제가 어려워집니다.<br>
+            • 추출 전 반드시 <b style="color:var(--label)">벤트밸브 잠금 상태</b>를 확인하세요.<br>
+            • 본체 체결 시 <b style="color:var(--label)">벤트밸브 손잡이를 잡고 돌리지 마세요.</b><br>
+            • 추출 후 압력은 <b style="color:var(--label)">한 번에 완전히 열지 말고</b> 조금씩 해제하세요.
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span><span><b style="color:var(--label)">벤트밸브 실링 교체</b> — 기본 장착된 실링을 제거한 후, 동봉된 실리콘 실링으로 교체하여 사용해 주세요.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span><span><b style="color:var(--label)">벤트밸브 손잡이 체결</b> — 지나치게 강하게 조이지 말고, 필요 시 손으로 풀 수 있는 정도로 체결해 주세요.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span><span><b style="color:var(--label)">벤트밸브 위치 확인</b> — 보일러통 방향으로 밀기 = 잠금 / 손잡이 방향으로 당기기 = 압력 해제. 추출 전에는 반드시 잠금 상태인지 확인해 주세요.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">4.</span><span><b style="color:var(--label)">퀵커플러 연결</b> — 퀵커플러를 뒤로 당긴 상태에서 플러그에 끝까지 삽입한 후 손을 놓아 체결합니다. 연결 후 가볍게 당겨 정상 체결을 확인해 주세요.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">5.</span><span><b style="color:var(--label)">물 주입</b> — 보일러통에 뜨거운 물을 약 180g 넣어 주세요. 물은 벤트밸브 바로 아래 높이를 넘지 않도록 합니다.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">6.</span><span><b style="color:var(--label)">가압전용 퍽스크린 장착</b> — 원두를 담기 전, 바스켓 바닥에 가압전용 퍽스크린을 먼저 장착해 주세요. 압력을 고르게 분산하고 채널링을 줄여줍니다.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">7.</span><span><b style="color:var(--label)">원두 준비</b> — 권장 도징량은 20~24g입니다. 원두를 고르게 분배한 후 충분히 템핑해 주세요.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">8.</span><span><b style="color:var(--label)">본체 체결</b> — 컨테이너 체결 시 벤트밸브 손잡이를 잡고 돌리지 마세요. 보일러통 본체를 잡고 충분히 체결해 주세요.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">9.</span><span><b style="color:var(--label)">추출 시작</b> — 벤트밸브가 잠금 상태인지 확인한 후 퀵커플러를 연결하고 펌프를 작동합니다.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">10.</span><span><b style="color:var(--label)">추출 종료</b> — 원하는 양이 추출되면 먼저 펌프 작동을 멈춘 후 퀵커플러를 분리해 주세요.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">11.</span><span><b style="color:var(--label)">압력 해제</b> — 추출 후 벤트밸브를 손잡이 방향으로 천천히 당기면서 내부 압력을 조금씩 해제해 주세요. 한 번에 완전히 열지 마세요.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">12.</span><span><b style="color:var(--label)">본체 분리</b> — 내부 압력이 완전히 해제된 것을 확인한 후 컨테이너를 분리해 주세요.</span></div>
+          </div>
+
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-top:14px;font-size:13px;line-height:1.7">
+            💡 <b style="color:var(--label)">체결부 누수 참고</b> — 분쇄도·도징량·본체 체결 상태에 따라 추출 중 체결부에 소량의 커피가 흐를 수 있습니다. 본체를 충분히 체결하면 대부분 줄어들며, 소량의 흐름은 추출 결과와 제품 사용에 영향을 주지 않습니다.
           </div>
         </div>
       </div>
@@ -3055,7 +3101,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v2.9.3';
+const CURRENT_VERSION = 'v2.9.4';
 
 async function checkVersionFromServer() {
   try {
