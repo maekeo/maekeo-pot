@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v3.0.2</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v3.0.3</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -681,6 +681,11 @@ body.flash-danger{animation:flashDanger .35s ease 6}
             <div>① <b style="color:var(--label)">준비</b> — 실링 교체 · 물 180g · 원두 20~24g 템핑</div>
             <div>② <b style="color:var(--label)">추출</b> — 벤트밸브 잠금 확인 → 퀵커플러 연결 → 펌프 작동</div>
             <div>③ <b style="color:var(--label)">종료</b> — 펌프 정지 → 압력 천천히 해제 → 본체 분리</div>
+          </div>
+
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px;line-height:1.7">
+            🔌 <b style="color:var(--label)">사용 전동 펌프</b><br>
+            샤오미 전동 펌프2를 사용하며, 펌프 설정에서 <b style="color:var(--label)">최대 압력을 9bar까지 세팅</b>하여 사용해 주세요.
           </div>
 
           <button onclick="toggleBoilerSteps(this)" style="width:100%;padding:11px;border:1.5px solid var(--sep);border-radius:10px;background:transparent;color:var(--label2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:4px">전체 12단계 자세히 보기 ▼</button>
@@ -3173,7 +3178,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.0.2';
+const CURRENT_VERSION = 'v3.0.3';
 
 async function checkVersionFromServer() {
   try {
