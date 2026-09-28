@@ -219,6 +219,14 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 .update-modal-btns{display:flex;gap:10px}
 .update-modal-later{flex:1;padding:12px;border:none;border-radius:12px;background:var(--fill);color:var(--label2);font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
 .update-modal-now{flex:2;padding:12px;border:none;border-radius:12px;background:var(--blue);color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer}
+
+/* ── 안내 박스 3단계 (위험 · 주의 · 정보) ── */
+.callout{background:var(--fill);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7;color:var(--label2)}
+.callout-hd{font-weight:700}
+.callout-danger{border:1.5px solid var(--red)}
+.callout-danger .callout-hd{color:var(--red)}
+.callout-warn{border:1.5px solid var(--orange)}
+.callout-warn .callout-hd{color:var(--orange)}
 </style>
 </head>
 <body>
@@ -258,10 +266,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="nav-inner">
     <!-- 1줄: 로고 + 원두/소모품 링크 -->
     <div style="display:flex;align-items:center;gap:8px">
-      <div style="display:flex;flex-direction:column;gap:1px">
-        <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v3.0.5</span>
-      </div>
+      <span class="nav-title">MAEKEO LAB</span>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
           <path d="M27.4 3.1c-.32-1.2-1.27-2.15-2.47-2.47C22.76.1 14 .1 14 .1s-8.76 0-10.93.53C1.87.95.92 1.9.6 3.1.07 5.27.07 10 .07 10s0 4.73.53 6.9c.32 1.2 1.27 2.15 2.47 2.47C5.24 19.9 14 19.9 14 19.9s8.76 0 10.93-.53c1.2-.32 2.15-1.27 2.47-2.47.53-2.17.53-6.9.53-6.9s0-4.73-.53-6.9z" fill="#FF0000"/>
@@ -269,15 +274,10 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         </svg>
       </a>
     </div>
-    <div style="display:flex;gap:6px;align-items:center">
-      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/776e7d77ad034cd8807d9f1e29b52ead?cp=1" target="_blank" style="font-size:12px;padding:6px 10px">매커 원두 구매</a>
-      <a class="nav-link" href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank" style="font-size:12px;padding:6px 10px">소모품</a>
-    </div>
-  </div>
-  <!-- 예약 버튼 (통합) -->
-  <div style="display:flex;gap:6px;padding:4px 16px 8px">
-    <button onclick="openReserveSelectModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer" id="navProduct">🛒 매커포트 예약</button>
-    <button onclick="openScheduleModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer">📅 예약발송일정</button>
+    <button onclick="openStoreModal()" class="nav-link" id="navStore" style="font-size:13px;padding:7px 14px;border:none;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:5px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.3"/><circle cx="18" cy="20" r="1.3"/><path d="M2.5 3.5h2.8l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1l1.7-6.8H6.3"/></svg>
+      스토어
+    </button>
   </div>
   <div class="seg-wrap" id="segWrap">
     <div class="segmented">
@@ -338,7 +338,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 
   <!-- 분석 버튼 -->
   <div class="btn-row" id="analyzeRow" style="display:none;flex-direction:column;gap:8px">
-    <div style="font-size:11px;color:var(--label3);text-align:center;line-height:1.5">분석을 누르면 선택한 사진이 외부 분석 서버로 전송됩니다.<br>커피 입자와 기준 동전만 나오도록 촬영해주세요.</div>
+    <div style="font-size:12px;color:var(--label3);text-align:center;line-height:1.5">분석을 누르면 선택한 사진이 외부 분석 서버로 전송됩니다.<br>커피 입자와 기준 동전만 나오도록 촬영해주세요.</div>
     <button class="btn btn-primary" onclick="startAnalysis()">분석 시작</button>
   </div>
 
@@ -467,7 +467,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         <button id="cup1Btn" onclick="setCupMode(1)" style="flex:1;padding:10px;border:1.5px solid var(--blue);border-radius:12px;background:var(--blue);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">☕ 1컵 <span style="font-weight:400;font-size:12px">3분 전후</span></button>
         <button id="cup2Btn" onclick="setCupMode(2)" style="flex:1;padding:10px;border:1.5px solid var(--sep);border-radius:12px;background:transparent;color:var(--label2);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">☕☕ 2컵 <span style="font-weight:400;font-size:12px">4분 전후</span></button>
       </div>
-      <div id="cupLockNote" style="display:none;padding:6px 16px 0;font-size:11px;color:var(--label3);text-align:center">추출 중에는 컵 수를 변경할 수 없습니다 · 초기화 후 변경 가능</div>
+      <div id="cupLockNote" style="display:none;padding:6px 16px 0;font-size:12px;color:var(--label3);text-align:center">추출 중에는 컵 수를 변경할 수 없습니다 · 초기화 후 변경 가능</div>
       <div class="timer-hero">
         <div class="ring-wrap">
           <svg class="timer-svg" viewBox="0 0 196 196">
@@ -542,9 +542,9 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 <div class="section" id="fixSection">
   <div class="gap"></div>
 
-  <!-- 처음 사용하시나요? -->
+  <!-- 바로가기 -->
   <div class="group">
-    <div class="group-hd">처음 사용하시나요?</div>
+    <div class="group-hd">바로가기</div>
 
     <!-- 소모품 링크 -->
     <a href="https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1" target="_blank"
@@ -578,6 +578,11 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       </div>
       <span style="font-size:18px;color:#03C75A">›</span>
     </a>
+  </div>
+
+  <!-- 매커포트 시작하기 -->
+  <div class="group">
+    <div class="group-hd">매커포트 시작하기</div>
 
     <!-- 부품 명칭 -->
     <button onclick="openPartsModal()" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:14px 16px;cursor:pointer;font-family:inherit;margin-bottom:10px">
@@ -602,142 +607,13 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <div style="margin-bottom:10px">
             매커포트는 <b style="color:var(--label)">스테인리스 316</b> 소재로 제작되어 자성이 없습니다. 따라서 인덕션에서는 <b style="color:var(--label)">별도의 인덕터(인덕션 플레이트)</b>를 사용해야 정상적으로 가열됩니다.
           </div>
-          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7">
+          <div class="callout">
             💡 <b style="color:var(--label)">왜 스테인리스 316인가요?</b><br>
             의료용으로도 쓰이는 고급 소재로, 가격은 비싸지만 <b style="color:var(--label)">내부 변형이나 녹에 매우 강해</b> 오랫동안 안심하고 사용할 수 있습니다.
           </div>
           <a href="https://smartstore.naver.com/maeco/products/12529911968" target="_blank" style="display:block;margin-top:12px;padding:12px;text-align:center;background:var(--blue-bg);color:var(--blue);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none">
             🛒 인덕터(플레이트) 구매하기
           </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- 원목 손잡이 장착·관리 -->
-    <div class="card" style="padding:0;overflow:hidden;margin-bottom:10px">
-      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
-        <span style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:20px">🪵</span>
-          <span style="font-size:15px;font-weight:600;color:var(--label)">원목 손잡이 장착법 &amp; 관리법</span>
-        </span>
-        <span class="fix-chevron" style="color:var(--label3);display:inline-flex;transition:transform .2s" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
-      </button>
-      <div class="fix-content" style="display:none;padding:0 16px 18px">
-        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
-          <div style="font-weight:600;color:var(--label);margin-bottom:8px">🔧 장착법</div>
-          <img src="/Makkerpot_Walnut_Handle_Installation_Guide.png" alt="원목 손잡이 장착 가이드" onclick="openLightbox(this.src)" style="width:100%;border-radius:12px;margin-bottom:12px;cursor:zoom-in">
-          <div style="background:var(--fill);border:1.5px solid var(--red);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13px;line-height:1.7">
-            ⚠️ <b style="color:var(--red)">주의</b> — 육각 렌치로 볼트를 <b style="color:var(--label)">너무 강하게 조이면 볼트 머리의 육각 홈이 뭉개질(이가 나갈) 수 있습니다.</b> 적당한 힘으로만 조여주세요.
-          </div>
-
-          <div style="font-weight:600;color:var(--label);margin-bottom:8px">🌰 호두나무 원목 손잡이 관리 안내</div>
-          <div style="margin-bottom:12px">
-            매커포트의 손잡이는 천연 호두나무 원목에 천연 오일을 도포하여 마감했습니다. 원목 고유의 색감과 질감은 사용할수록 자연스럽게 깊어지며, 올바르게 관리하면 오랫동안 아름다운 상태를 유지할 수 있습니다.
-          </div>
-          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.9">
-            • 사용 후에는 물에 오래 담가두지 말고, 부드러운 천으로 가볍게 닦아주세요.<br>
-            • 세척이 필요한 경우 젖은 천으로 닦은 뒤 물기를 완전히 제거하고 충분히 건조해 주세요.<br>
-            • 식기세척기 사용 및 장시간 물에 담가두는 것은 피해 주세요.<br>
-            • 강한 세제, 알코올, 표백제 등의 사용은 원목의 변색과 갈라짐을 유발할 수 있습니다.<br>
-            • 표면이 건조하거나 색이 옅어졌을 경우, <b style="color:var(--label)">식품용 우드 오일 또는 천연 오일</b>을 소량 도포하면 색감과 보호력 유지에 도움이 됩니다.<br>
-            • 원목 특성상 색상과 나뭇결은 제품마다 차이가 있을 수 있으며, 이는 천연 소재의 자연스러운 특징입니다.
-          </div>
-          <div style="margin-top:12px;font-size:13px;color:var(--label3);line-height:1.7">
-            ⚠️ 뜨거운 본체와 가까운 부분은 사용 직후 온도가 높을 수 있으므로, 충분히 식힌 후 관리해 주세요.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 가압보일러통 사용 가이드 -->
-    <div class="card" style="padding:0;overflow:hidden;margin-bottom:10px">
-      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
-        <span style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:20px">🫖</span>
-          <span style="font-size:15px;font-weight:600;color:var(--label)">가압보일러통 사용 가이드</span>
-        </span>
-        <span class="fix-chevron" style="color:var(--label3);display:inline-flex;transition:transform .2s" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
-      </button>
-      <div class="fix-content" style="display:none;padding:0 16px 18px">
-        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
-          <a href="https://youtu.be/arD6T-FYglI" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--bg2);border:1.5px solid var(--red);border-radius:12px;text-decoration:none;margin-bottom:16px">
-            <span style="font-size:16px">▶️</span>
-            <span style="font-size:14px;font-weight:700;color:var(--red)">가압보일러통 사용 영상 보기</span>
-          </a>
-
-          <div style="font-weight:600;color:var(--label);margin-bottom:8px">📋 부품 명칭</div>
-          <img src="/maekeo-boiler-parts.png" alt="가압보일러통 부품 명칭" onclick="openLightbox(this.src)" style="width:100%;border-radius:12px;margin-bottom:16px;cursor:zoom-in">
-
-          <div style="background:var(--fill);border:1.5px solid var(--red);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13px;line-height:1.7">
-            ⚠️ <b style="color:var(--red)">안전 주의</b><br>
-            • <b style="color:var(--label)">벤트밸브 손잡이</b>는 손으로 풀 수 있는 정도로만 체결하세요. 과도하게 조이면 압력 해제가 어려워집니다.<br>
-            • 추출 전 반드시 <b style="color:var(--label)">벤트밸브 잠금 상태</b>를 확인하세요.<br>
-            • 본체 체결 시 <b style="color:var(--label)">벤트밸브 손잡이를 잡고 돌리지 마세요.</b><br>
-            • 추출 후 압력은 <b style="color:var(--label)">한 번에 완전히 열지 말고</b> 조금씩 해제하세요.
-          </div>
-
-          <div style="background:var(--fill);border-radius:10px;padding:14px;margin-bottom:14px;font-size:13px;line-height:1.9">
-            <div style="font-weight:600;color:var(--label);margin-bottom:6px">핵심 3단계</div>
-            <div>① <b style="color:var(--label)">준비</b> — 실링 교체 · 물 180g · 원두 20~24g 템핑</div>
-            <div>② <b style="color:var(--label)">추출</b> — 벤트밸브 잠금 확인 → 퀵커플러 연결 → 펌프 작동</div>
-            <div>③ <b style="color:var(--label)">종료</b> — 펌프 정지 → 압력 천천히 해제 → 본체 분리</div>
-          </div>
-
-          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px;line-height:1.7">
-            🔌 <b style="color:var(--label)">사용 전동 펌프</b><br>
-            샤오미 전동 펌프2를 사용하며, 펌프 설정에서 <b style="color:var(--label)">최대 압력을 9bar까지 세팅</b>하여 사용해 주세요.
-          </div>
-
-          <button onclick="toggleBoilerSteps(this)" style="width:100%;padding:11px;border:1.5px solid var(--sep);border-radius:10px;background:transparent;color:var(--label2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:4px">전체 12단계 자세히 보기<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;margin-left:4px"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
-
-          <div id="boilerFullSteps" style="display:none;flex-direction:column;gap:12px;margin-top:12px">
-            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span><span><b style="color:var(--label)">벤트밸브 실링 교체</b> — 기본 장착된 실링을 제거한 후, 동봉된 실리콘 실링으로 교체하여 사용해 주세요.</span></div>
-            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span><span><b style="color:var(--label)">벤트밸브 손잡이 체결</b> — 지나치게 강하게 조이지 말고, 필요 시 손으로 풀 수 있는 정도로 체결해 주세요.</span></div>
-            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span><span><b style="color:var(--label)">벤트밸브 위치 확인</b> — 보일러통 방향으로 밀기 = 잠금 / 손잡이 방향으로 당기기 = 압력 해제. 추출 전에는 반드시 잠금 상태인지 확인해 주세요.</span></div>
-            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">4.</span><span><b style="color:var(--label)">퀵커플러 연결</b> — 퀵커플러를 뒤로 당긴 상태에서 플러그에 끝까지 삽입한 후 손을 놓아 체결합니다. 연결 후 가볍게 당겨 정상 체결을 확인해 주세요.</span></div>
-            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">5.</span><span><b style="color:var(--label)">물 주입</b> — 보일러통에 뜨거운 물을 약 180g 넣어 주세요. 물은 벤트밸브 바로 아래 높이를 넘지 않도록 합니다.</span></div>
-            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">6.</span><span><b style="color:var(--label)">가압전용 퍽스크린 장착</b> — 원두를 담기 전, 바스켓 바닥에 가압전용 퍽스크린을 먼저 장착해 주세요. 압력을 고르게 분산하고 채널링을 줄여줍니다.</span></div>
-            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">7.</span><span><b style="color:var(--label)">원두 준비</b> — 권장 도징량은 20~24g입니다. 원두를 고르게 분배한 후 충분히 템핑해 주세요.</span></div>
-            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">8.</span><span><b style="color:var(--label)">본체 체결</b> — 컨테이너 체결 시 벤트밸브 손잡이를 잡고 돌리지 마세요. 보일러통 본체를 잡고 충분히 체결해 주세요.</span></div>
-            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">9.</span><span><b style="color:var(--label)">추출 시작</b> — 벤트밸브가 잠금 상태인지 확인한 후 퀵커플러를 연결하고 펌프를 작동합니다.</span></div>
-            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">10.</span><span><b style="color:var(--label)">추출 종료</b> — 원하는 양이 추출되면 먼저 펌프 작동을 멈춘 후 퀵커플러를 분리해 주세요.</span></div>
-            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">11.</span><span><b style="color:var(--label)">압력 해제</b> — 추출 후 벤트밸브를 손잡이 방향으로 천천히 당기면서 내부 압력을 조금씩 해제해 주세요. 한 번에 완전히 열지 마세요.</span></div>
-            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">12.</span><span><b style="color:var(--label)">본체 분리</b> — 내부 압력이 완전히 해제된 것을 확인한 후 컨테이너를 분리해 주세요.</span></div>
-          </div>
-
-          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-top:14px;font-size:13px;line-height:1.7">
-            💡 <b style="color:var(--label)">체결부 누수 참고</b> — 분쇄도·도징량·본체 체결 상태에 따라 추출 중 체결부에 소량의 커피가 흐를 수 있습니다. 본체를 충분히 체결하면 대부분 줄어들며, 소량의 흐름은 추출 결과와 제품 사용에 영향을 주지 않습니다.
-          </div>
-
-          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:13px;line-height:1.8">
-            💡 <b style="color:var(--label)">물 온도와 맛</b><br>
-            주입하는 물 온도에 따라 추출 결과가 달라집니다.<br>
-            • 온도가 <b style="color:var(--label)">높을수록</b> — 바디감과 단맛이 강조됩니다.<br>
-            • 온도가 <b style="color:var(--label)">낮을수록</b> — 산미와 밝은 향이 살아납니다.<br>
-            원하는 맛의 방향에 따라 물 온도를 조절해 보세요.
-          </div>
-
-          <button onclick="togglePressureDesign(this)" style="width:100%;padding:11px;border:1.5px solid var(--sep);border-radius:10px;background:transparent;color:var(--label2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-top:14px">🎯 추출 압력 설계 (심화)<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;margin-left:4px"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
-          <div id="pressureDesign" style="display:none;margin-top:12px;font-size:13px;line-height:1.8">
-            <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-weight:600;color:var(--label)">
-              • 9bar 초과 압력 추출은 권장하지 않습니다.
-            </div>
-            <div style="margin-bottom:12px">
-              <div style="font-weight:600;color:var(--label);margin-bottom:4px">압력이 9bar를 초과할 때</div>
-              전동 펌프로 9bar를 초과할 경우, <b style="color:var(--label)">도징량·분쇄도를 조정</b>하거나 <b style="color:var(--label)">압력캡을 일부 개방</b>해 9bar를 넘지 않도록 유도하세요.
-            </div>
-            <div style="margin-bottom:12px">
-              <div style="font-weight:600;color:var(--label);margin-bottom:4px">8~9bar로 설계하려면</div>
-              마찬가지로 도징량과 분쇄도 조정으로 추출 압력을 맞추면 됩니다.
-            </div>
-            <div style="margin-bottom:12px">
-              <div style="font-weight:600;color:var(--label);margin-bottom:4px">압력이 오르지 않을 때</div>
-              도징량·분쇄도를 조정해도 압력이 오르지 않으면, <b style="color:var(--label)">매커포트 예비 압력 스프링으로 교체</b>하거나 스프링 길이를 조금 늘려 압력을 높이는 방법이 있습니다.
-            </div>
-            <div style="background:var(--fill);border:1.5px solid var(--red);border-radius:10px;padding:12px 14px;line-height:1.7">
-              ⚠️ <b style="color:var(--red)">주의</b> — 압력을 높이도록 길이를 조정한 스프링은 <b style="color:var(--label)">가열식 매커포트에 절대 사용하지 마세요.</b>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -787,6 +663,11 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- 세척 & 관리 -->
+  <div class="group">
+    <div class="group-hd">세척 &amp; 관리</div>
 
     <!-- STEP 2 -->
     <div class="card" style="padding:0;overflow:hidden">
@@ -820,8 +701,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span>
             <span>이후 <b>물 길들이기</b>를 한 번 진행한 뒤 사용해주세요.</span>
           </div>
-          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7">
-            ⚠️ <b style="color:var(--label)">주의</b> — 과탄산소다로 세척할 때는 반드시 <b style="color:var(--label)">환기</b>를 하면서 진행해주세요.
+          <div class="callout callout-warn">
+            ⚠️ <b class="callout-hd">주의</b> — 과탄산소다로 세척할 때는 반드시 <b style="color:var(--label)">환기</b>를 하면서 진행해주세요.
           </div>
 
           <div style="font-weight:600;color:var(--label);margin:16px 0 8px">🔘 실리콘 압력밸브 세척</div>
@@ -836,7 +717,140 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         </div>
       </div>
     </div>
+  </div>
 
+  <!-- 액세서리 -->
+  <div class="group">
+    <div class="group-hd">액세서리</div>
+
+    <!-- 원목 손잡이 장착·관리 -->
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:10px">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">🪵</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">원목 손잡이 장착법 &amp; 관리법</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);display:inline-flex;transition:transform .2s" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <div style="font-weight:600;color:var(--label);margin-bottom:8px">🔧 장착법</div>
+          <img src="/Makkerpot_Walnut_Handle_Installation_Guide.png" alt="원목 손잡이 장착 가이드" onclick="openLightbox(this.src)" style="width:100%;border-radius:12px;margin-bottom:12px;cursor:zoom-in">
+          <div class="callout callout-warn" style="margin-bottom:16px">
+            ⚠️ <b class="callout-hd">주의</b> — 육각 렌치로 볼트를 <b style="color:var(--label)">너무 강하게 조이면 볼트 머리의 육각 홈이 뭉개질(이가 나갈) 수 있습니다.</b> 적당한 힘으로만 조여주세요.
+          </div>
+
+          <div style="font-weight:600;color:var(--label);margin-bottom:8px">🌰 호두나무 원목 손잡이 관리 안내</div>
+          <div style="margin-bottom:12px">
+            매커포트의 손잡이는 천연 호두나무 원목에 천연 오일을 도포하여 마감했습니다. 원목 고유의 색감과 질감은 사용할수록 자연스럽게 깊어지며, 올바르게 관리하면 오랫동안 아름다운 상태를 유지할 수 있습니다.
+          </div>
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.9">
+            • 사용 후에는 물에 오래 담가두지 말고, 부드러운 천으로 가볍게 닦아주세요.<br>
+            • 세척이 필요한 경우 젖은 천으로 닦은 뒤 물기를 완전히 제거하고 충분히 건조해 주세요.<br>
+            • 식기세척기 사용 및 장시간 물에 담가두는 것은 피해 주세요.<br>
+            • 강한 세제, 알코올, 표백제 등의 사용은 원목의 변색과 갈라짐을 유발할 수 있습니다.<br>
+            • 표면이 건조하거나 색이 옅어졌을 경우, <b style="color:var(--label)">식품용 우드 오일 또는 천연 오일</b>을 소량 도포하면 색감과 보호력 유지에 도움이 됩니다.<br>
+            • 원목 특성상 색상과 나뭇결은 제품마다 차이가 있을 수 있으며, 이는 천연 소재의 자연스러운 특징입니다.
+          </div>
+          <div style="margin-top:12px;font-size:13px;color:var(--label3);line-height:1.7">
+            ⚠️ 뜨거운 본체와 가까운 부분은 사용 직후 온도가 높을 수 있으므로, 충분히 식힌 후 관리해 주세요.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 가압보일러통 사용 가이드 -->
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:10px">
+      <button onclick="toggleFixCard(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px;background:transparent;border:none;cursor:pointer;text-align:left">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">🫖</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">가압보일러통 사용 가이드</span>
+        </span>
+        <span class="fix-chevron" style="color:var(--label3);display:inline-flex;transition:transform .2s" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      </button>
+      <div class="fix-content" style="display:none;padding:0 16px 18px">
+        <div style="border-top:1px solid var(--sep);padding-top:14px;font-size:14px;color:var(--label2);line-height:1.8">
+          <a href="https://youtu.be/arD6T-FYglI" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--bg2);border:1.5px solid var(--red);border-radius:12px;text-decoration:none;margin-bottom:16px">
+            <span style="font-size:16px">▶️</span>
+            <span style="font-size:14px;font-weight:700;color:var(--red)">가압보일러통 사용 영상 보기</span>
+          </a>
+
+          <div style="font-weight:600;color:var(--label);margin-bottom:8px">📋 부품 명칭</div>
+          <img src="/maekeo-boiler-parts.png" alt="가압보일러통 부품 명칭" onclick="openLightbox(this.src)" style="width:100%;border-radius:12px;margin-bottom:16px;cursor:zoom-in">
+
+          <div class="callout callout-danger" style="margin-bottom:16px">
+            ⚠️ <b class="callout-hd">안전 주의</b><br>
+            • <b style="color:var(--label)">벤트밸브 손잡이</b>는 손으로 풀 수 있는 정도로만 체결하세요. 과도하게 조이면 압력 해제가 어려워집니다.<br>
+            • 추출 전 반드시 <b style="color:var(--label)">벤트밸브 잠금 상태</b>를 확인하세요.<br>
+            • 본체 체결 시 <b style="color:var(--label)">벤트밸브 손잡이를 잡고 돌리지 마세요.</b><br>
+            • 추출 후 압력은 <b style="color:var(--label)">한 번에 완전히 열지 말고</b> 조금씩 해제하세요.
+          </div>
+
+          <div style="background:var(--fill);border-radius:10px;padding:14px;margin-bottom:14px;font-size:13px;line-height:1.9">
+            <div style="font-weight:600;color:var(--label);margin-bottom:6px">핵심 3단계</div>
+            <div>① <b style="color:var(--label)">준비</b> — 실링 교체 · 물 180g · 원두 20~24g 템핑</div>
+            <div>② <b style="color:var(--label)">추출</b> — 벤트밸브 잠금 확인 → 퀵커플러 연결 → 펌프 작동</div>
+            <div>③ <b style="color:var(--label)">종료</b> — 펌프 정지 → 압력 천천히 해제 → 본체 분리</div>
+          </div>
+
+          <div class="callout" style="margin-bottom:14px">
+            🔌 <b style="color:var(--label)">사용 전동 펌프</b><br>
+            샤오미 전동 펌프2를 사용하며, 펌프 설정에서 <b style="color:var(--label)">최대 압력을 9bar까지 세팅</b>하여 사용해 주세요.
+          </div>
+
+          <button onclick="toggleBoilerSteps(this)" style="width:100%;padding:11px;border:1.5px solid var(--sep);border-radius:10px;background:transparent;color:var(--label2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:4px">전체 12단계 자세히 보기<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;margin-left:4px"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+
+          <div id="boilerFullSteps" style="display:none;flex-direction:column;gap:12px;margin-top:12px">
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span><span><b style="color:var(--label)">벤트밸브 실링 교체</b> — 기본 장착된 실링을 제거한 후, 동봉된 실리콘 실링으로 교체하여 사용해 주세요.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span><span><b style="color:var(--label)">벤트밸브 손잡이 체결</b> — 지나치게 강하게 조이지 말고, 필요 시 손으로 풀 수 있는 정도로 체결해 주세요.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span><span><b style="color:var(--label)">벤트밸브 위치 확인</b> — 보일러통 방향으로 밀기 = 잠금 / 손잡이 방향으로 당기기 = 압력 해제. 추출 전에는 반드시 잠금 상태인지 확인해 주세요.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">4.</span><span><b style="color:var(--label)">퀵커플러 연결</b> — 퀵커플러를 뒤로 당긴 상태에서 플러그에 끝까지 삽입한 후 손을 놓아 체결합니다. 연결 후 가볍게 당겨 정상 체결을 확인해 주세요.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">5.</span><span><b style="color:var(--label)">물 주입</b> — 보일러통에 뜨거운 물을 약 180g 넣어 주세요. 물은 벤트밸브 바로 아래 높이를 넘지 않도록 합니다.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">6.</span><span><b style="color:var(--label)">가압전용 퍽스크린 장착</b> — 원두를 담기 전, 바스켓 바닥에 가압전용 퍽스크린을 먼저 장착해 주세요. 압력을 고르게 분산하고 채널링을 줄여줍니다.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">7.</span><span><b style="color:var(--label)">원두 준비</b> — 권장 도징량은 20~24g입니다. 원두를 고르게 분배한 후 충분히 템핑해 주세요.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">8.</span><span><b style="color:var(--label)">본체 체결</b> — 컨테이너 체결 시 벤트밸브 손잡이를 잡고 돌리지 마세요. 보일러통 본체를 잡고 충분히 체결해 주세요.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">9.</span><span><b style="color:var(--label)">추출 시작</b> — 벤트밸브가 잠금 상태인지 확인한 후 퀵커플러를 연결하고 펌프를 작동합니다.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">10.</span><span><b style="color:var(--label)">추출 종료</b> — 원하는 양이 추출되면 먼저 펌프 작동을 멈춘 후 퀵커플러를 분리해 주세요.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">11.</span><span><b style="color:var(--label)">압력 해제</b> — 추출 후 벤트밸브를 손잡이 방향으로 천천히 당기면서 내부 압력을 조금씩 해제해 주세요. 한 번에 완전히 열지 마세요.</span></div>
+            <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">12.</span><span><b style="color:var(--label)">본체 분리</b> — 내부 압력이 완전히 해제된 것을 확인한 후 컨테이너를 분리해 주세요.</span></div>
+          </div>
+
+          <div class="callout" style="margin-top:14px">
+            💡 <b style="color:var(--label)">체결부 누수 참고</b> — 분쇄도·도징량·본체 체결 상태에 따라 추출 중 체결부에 소량의 커피가 흐를 수 있습니다. 본체를 충분히 체결하면 대부분 줄어들며, 소량의 흐름은 추출 결과와 제품 사용에 영향을 주지 않습니다.
+          </div>
+
+          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:13px;line-height:1.8">
+            💡 <b style="color:var(--label)">물 온도와 맛</b><br>
+            주입하는 물 온도에 따라 추출 결과가 달라집니다.<br>
+            • 온도가 <b style="color:var(--label)">높을수록</b> — 바디감과 단맛이 강조됩니다.<br>
+            • 온도가 <b style="color:var(--label)">낮을수록</b> — 산미와 밝은 향이 살아납니다.<br>
+            원하는 맛의 방향에 따라 물 온도를 조절해 보세요.
+          </div>
+
+          <button onclick="togglePressureDesign(this)" style="width:100%;padding:11px;border:1.5px solid var(--sep);border-radius:10px;background:transparent;color:var(--label2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-top:14px">🎯 추출 압력 설계 (심화)<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;margin-left:4px"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+          <div id="pressureDesign" style="display:none;margin-top:12px;font-size:13px;line-height:1.8">
+            <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-weight:600;color:var(--label)">
+              • 9bar 초과 압력 추출은 권장하지 않습니다.
+            </div>
+            <div style="margin-bottom:12px">
+              <div style="font-weight:600;color:var(--label);margin-bottom:4px">압력이 9bar를 초과할 때</div>
+              전동 펌프로 9bar를 초과할 경우, <b style="color:var(--label)">도징량·분쇄도를 조정</b>하거나 <b style="color:var(--label)">압력캡을 일부 개방</b>해 9bar를 넘지 않도록 유도하세요.
+            </div>
+            <div style="margin-bottom:12px">
+              <div style="font-weight:600;color:var(--label);margin-bottom:4px">8~9bar로 설계하려면</div>
+              마찬가지로 도징량과 분쇄도 조정으로 추출 압력을 맞추면 됩니다.
+            </div>
+            <div style="margin-bottom:12px">
+              <div style="font-weight:600;color:var(--label);margin-bottom:4px">압력이 오르지 않을 때</div>
+              도징량·분쇄도를 조정해도 압력이 오르지 않으면, <b style="color:var(--label)">매커포트 예비 압력 스프링으로 교체</b>하거나 스프링 길이를 조금 늘려 압력을 높이는 방법이 있습니다.
+            </div>
+            <div class="callout callout-danger">
+              ⚠️ <b class="callout-hd">위험</b> — 압력을 높이도록 길이를 조정한 스프링은 <b style="color:var(--label)">가열식 매커포트에 절대 사용하지 마세요.</b>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- 자주 발생하는 문제 -->
@@ -1085,7 +1099,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span>
             <span>강한 템핑보다는 약한 템핑 또는 디스트리뷰터만 사용해보세요.</span>
           </div>
-          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:13px;line-height:1.7">
+          <div class="callout" style="margin-top:12px">
             💡 일반 브랜드용 분쇄 원두는 <b style="color:var(--label)">에스프레소용 분쇄도</b>로 되어 있어, 사용 시 <b style="color:var(--label)">압력캡을 180~360도 개방</b>한 후 추출을 권장합니다.
           </div>
           <div style="margin-top:12px;font-size:13px;color:var(--label2)">
@@ -1176,7 +1190,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <div style="margin-bottom:10px">
             평소에 정상적으로 추출되다가 갑자기 추출이 빨라지는 경우, 압력 부품에 커피 찌꺼기나 오일이 쌓였을 수 있습니다.
           </div>
-          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7">
+          <div class="callout">
             💡 <b style="color:var(--label)">압력추 · 압력 스프링 · 추출봉 내부</b>를 <b style="color:var(--label)">과탄산소다</b>로 세척하면 해결됩니다.
           </div>
         </div>
@@ -1197,7 +1211,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <div style="margin-bottom:10px">
             보일러통에 물이 조금 남는 것은 <b style="color:var(--label)">고장이 아니라 의도된 설계</b>입니다.
           </div>
-          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7">
+          <div class="callout">
             💡 매커포트는 <b style="color:var(--label)">바스켓 봉의 길이</b>를 보일러통 바닥에서 일정 높이만큼 띄워 설계했습니다.<br><br>
             가열 시 보일러통 내부에 물이 조금 남도록 하여, <b style="color:var(--label)">물이 완전히 마르며 발생하는 과열·열 변형(눌음) 현상을 방지</b>하기 위함입니다.
           </div>
@@ -1219,7 +1233,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <div style="margin-bottom:10px">
             간헐적으로 컵 내부 육각 너트 쪽에 커피가 맺히는 경우가 있습니다. 이는 <b style="color:var(--label)">추출봉 내부에 남아 있던 이전 커피 잔여물</b>이 나오거나, 불 세기·원두 상태에 따라 <b style="color:var(--label)">압력추가 살짝 열렸다 닫히면서</b> 발생할 수 있습니다.
           </div>
-          <div style="background:var(--fill);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.7">
+          <div class="callout">
             ✅ <b style="color:var(--label)">추출 결과에는 영향이 없으니</b> 신경 쓰지 않으셔도 됩니다.
           </div>
         </div>
@@ -1241,6 +1255,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <span style="font-size:18px;color:var(--label3)">›</span>
     </a>
   </div>
+
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.1.0</div>
 
 </div><!-- /fixSection -->
 
@@ -1271,6 +1287,47 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeApiKeyModal()">취소</button>
       <button class="btn btn-primary" style="flex:2" onclick="saveApiKey()">저장 후 분석</button>
+    </div>
+  </div>
+</div>
+
+<!-- 스토어 모달 (원두·소모품·예약·발송일정 통합) -->
+<div class="modal-bg" id="storeModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:8px 0 16px">
+      <div style="font-size:20px;font-weight:700;color:var(--label)">매커 스토어</div>
+    </div>
+    <button onclick="closeStoreModal();openReserveSelectModal()" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:14px 16px;cursor:pointer;font-family:inherit;margin-bottom:8px;text-align:left">
+      <span style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:22px">🛒</span>
+        <span><span style="display:block;font-size:15px;font-weight:600;color:var(--label)">매커포트 예약</span><span style="display:block;font-size:12px;color:var(--label2);margin-top:2px">2컵 · 1컵 · 가압보일러통</span></span>
+      </span>
+      <span style="font-size:18px;color:var(--label3)">›</span>
+    </button>
+    <button onclick="closeStoreModal();openScheduleModal()" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:14px 16px;cursor:pointer;font-family:inherit;margin-bottom:8px;text-align:left">
+      <span style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:22px">📅</span>
+        <span><span style="display:block;font-size:15px;font-weight:600;color:var(--label)">예약 발송 일정</span><span style="display:block;font-size:12px;color:var(--label2);margin-top:2px">예약 상품별 발송 예정일</span></span>
+      </span>
+      <span style="font-size:18px;color:var(--label3)">›</span>
+    </button>
+    <button onclick="goStoreLink('https://smartstore.naver.com/maeco/category/776e7d77ad034cd8807d9f1e29b52ead?cp=1')" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:14px 16px;cursor:pointer;font-family:inherit;margin-bottom:8px;text-align:left">
+      <span style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:22px">🫘</span>
+        <span><span style="display:block;font-size:15px;font-weight:600;color:var(--label)">매커 원두 구매</span><span style="display:block;font-size:12px;color:var(--label2);margin-top:2px">스마트스토어</span></span>
+      </span>
+      <span style="font-size:18px;color:var(--label3)">›</span>
+    </button>
+    <button onclick="goStoreLink('https://smartstore.naver.com/maeco/category/66a46182ceea449f99b08df30c998d7a?cp=1')" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:14px 16px;cursor:pointer;font-family:inherit;margin-bottom:8px;text-align:left">
+      <span style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:22px">🔩</span>
+        <span><span style="display:block;font-size:15px;font-weight:600;color:var(--label)">소모품 구매</span><span style="display:block;font-size:12px;color:var(--label2);margin-top:2px">실링 · 스트레이너 · 부품</span></span>
+      </span>
+      <span style="font-size:18px;color:var(--label3)">›</span>
+    </button>
+    <div class="modal-btns" style="margin-top:12px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeStoreModal()">닫기</button>
     </div>
   </div>
 </div>
@@ -1433,7 +1490,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <span style="font-size:14px;color:var(--label)">가압보일러통(2차)</span>
           <span style="font-size:13px;font-weight:700;color:var(--label2)">일정 곧 안내 예정</span>
         </div>
-        <div style="font-size:11px;color:var(--label3);margin-top:6px;line-height:1.6">
+        <div style="font-size:12px;color:var(--label3);margin-top:6px;line-height:1.6">
           8월 일부·9월분 · 추석과 현지 국경절이 겹치면서 10월 발송 일정을 곧 안내드릴 예정입니다.
         </div>
       </div>
@@ -1494,7 +1551,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div style="font-size:12px;color:var(--blue);font-weight:600;margin-bottom:4px">⏰ 3차 예약 마감까지</div>
       <div style="font-size:26px;font-weight:800;color:var(--blue)" id="reserveDday">D-5</div>
       <div style="font-size:12px;color:var(--label2);margin-top:6px">9월 30일 마감 · 차수는 발송 순서를 의미합니다</div>
-      <div style="font-size:11px;color:var(--label3);margin-top:8px;line-height:1.5;border-top:1px solid var(--sep);padding-top:8px">잔여 수량 소진 시까지 예약이 연장되었습니다.<br>(잔여 수량 소진 시 자동 마감)</div>
+      <div style="font-size:12px;color:var(--label3);margin-top:8px;line-height:1.5;border-top:1px solid var(--sep);padding-top:8px">잔여 수량 소진 시까지 예약이 연장되었습니다.<br>(잔여 수량 소진 시 자동 마감)</div>
     </div>
     <div style="background:var(--fill);border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:center">
       <span style="font-size:13px;color:var(--label2)">📦 발송 예정</span>
@@ -2603,6 +2660,10 @@ function toast(msg) {
 }
 
 // ═══ 1차~4차 구매자 인증 ═══
+function openStoreModal() { document.getElementById('storeModal').classList.add('show'); }
+function closeStoreModal() { document.getElementById('storeModal').classList.remove('show'); }
+function goStoreLink(url) { window.open(url, '_blank'); closeStoreModal(); }
+
 function openReserveSelectModal() {
   document.getElementById('reserveSelectModal').classList.add('show');
 }
@@ -3177,7 +3238,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.0.5';
+const CURRENT_VERSION = 'v3.1.0';
 
 async function checkVersionFromServer() {
   try {
