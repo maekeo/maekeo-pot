@@ -260,7 +260,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="display:flex;align-items:center;gap:8px">
       <div style="display:flex;flex-direction:column;gap:1px">
         <span class="nav-title">MAEKEO LAB</span>
-        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v3.0.3</span>
+        <span style="font-size:10px;color:var(--label3);letter-spacing:.3px">v3.0.5</span>
       </div>
       <a href="https://www.youtube.com/@maeilcoffee" target="_blank" aria-label="MAEKEO 유튜브 채널" style="display:flex;align-items:center;text-decoration:none">
         <svg width="26" height="18" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
@@ -688,7 +688,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
             샤오미 전동 펌프2를 사용하며, 펌프 설정에서 <b style="color:var(--label)">최대 압력을 9bar까지 세팅</b>하여 사용해 주세요.
           </div>
 
-          <button onclick="toggleBoilerSteps(this)" style="width:100%;padding:11px;border:1.5px solid var(--sep);border-radius:10px;background:transparent;color:var(--label2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:4px">전체 12단계 자세히 보기 ▼</button>
+          <button onclick="toggleBoilerSteps(this)" style="width:100%;padding:11px;border:1.5px solid var(--sep);border-radius:10px;background:transparent;color:var(--label2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:4px">전체 12단계 자세히 보기<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;margin-left:4px"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
 
           <div id="boilerFullSteps" style="display:none;flex-direction:column;gap:12px;margin-top:12px">
             <div style="display:flex;gap:10px"><span style="color:var(--blue);font-weight:700;flex-shrink:0">1.</span><span><b style="color:var(--label)">벤트밸브 실링 교체</b> — 기본 장착된 실링을 제거한 후, 동봉된 실리콘 실링으로 교체하여 사용해 주세요.</span></div>
@@ -717,7 +717,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
             원하는 맛의 방향에 따라 물 온도를 조절해 보세요.
           </div>
 
-          <button onclick="togglePressureDesign(this)" style="width:100%;padding:11px;border:1.5px solid var(--sep);border-radius:10px;background:transparent;color:var(--label2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-top:14px">🎯 추출 압력 설계 (심화) ▼</button>
+          <button onclick="togglePressureDesign(this)" style="width:100%;padding:11px;border:1.5px solid var(--sep);border-radius:10px;background:transparent;color:var(--label2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-top:14px">🎯 추출 압력 설계 (심화)<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;margin-left:4px"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
           <div id="pressureDesign" style="display:none;margin-top:12px;font-size:13px;line-height:1.8">
             <div style="background:var(--fill);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-weight:600;color:var(--label)">
               • 9bar 초과 압력 추출은 권장하지 않습니다.
@@ -1425,10 +1425,6 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </div>
     <div style="background:var(--fill);border-radius:14px;padding:16px 18px;margin-bottom:20px">
       <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sep)">
-        <span style="font-size:14px;color:var(--label)">가압보일러통(1차)</span>
-        <span style="font-size:14px;font-weight:700;color:var(--blue)">9월 21일 발송 예정</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--sep)">
         <span style="font-size:14px;color:var(--label)">10월 매커포트</span>
         <span style="font-size:14px;font-weight:700;color:var(--blue)">10월 26~29일 예상</span>
       </div>
@@ -1646,7 +1642,7 @@ const I18N = {
   },
   en: {
     seg0: 'Grind AI', seg1: 'Timer', seg2: 'History',
-    navShop: 'Supplies', navProduct: 'Maekerpot Reserve',
+    navShop: 'Supplies', navProduct: 'MAEKEO POT Reserve',
     camTitle: 'Photo Guide',
     camSub: 'Place ground coffee on white paper and take a photo.\nAdding a coin improves accuracy.',
     camTip: 'Get as close as possible\nand tap to focus before shooting.',
@@ -1655,10 +1651,10 @@ const I18N = {
     btnSpeak: '🔊 Voice', btnSaveGrind: 'Save',
     scanLbl: 'Analyzing...',
     grindHd: 'Grind Size', measureHd: 'Measurements', aiHd: 'AI Advice',
-    levelLbl: 'Grind Level', mokaLbl: 'Maekerpot Fit',
+    levelLbl: 'Grind Level', mokaLbl: 'MAEKEO POT Fit',
     brewLbl: 'Best Brew', confLbl: 'Photo Quality',
     sizeHd: 'Avg Particle', uniHd: 'Uniformity',
-    rangeNote: 'Maekerpot Range (ref.)', rangeVal: '400 — 500 μm',
+    rangeNote: 'MAEKEO POT Range (ref.)', rangeVal: '400 — 500 μm',
     measureNote: 'Values are AI visual estimates. Use as a reference guide.',
     adviceCap: 'Barista Advice',
     confHigh: 'High', confMid: 'Medium', confLow: 'Low',
@@ -1701,7 +1697,7 @@ const I18N = {
     voice7min: 'Extraction time is over.',
     voiceStart: 'Extraction started.',
     voiceStartMsg: 'Starting heat.',
-    voiceOptimal: 'Perfect grind for Maekerpot.',
+    voiceOptimal: 'Perfect grind for MAEKEO POT.',
     voiceFine: 'Grind is slightly too fine. Adjust coarser.',
     voiceCoarse: 'Grind is slightly too coarse. Adjust finer.',
     voiceResult: (lv) => `Analysis complete. Grind level: ${lv}.`,
@@ -2629,7 +2625,7 @@ function openReserveInfoModal() {
   if (!el) return;
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const deadline = new Date(now.getFullYear(), 8, 30); // 9월 30일 (1컵 3차)
+  const deadline = new Date(2026, 8, 30); // 9월 30일 (1컵 3차)
   const diff = Math.round((deadline - today) / 86400000);
   if (diff > 0) {
     el.textContent = 'D-' + diff;
@@ -2659,7 +2655,7 @@ function updateBoilerCountdown() {
   if (!el) return;
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const deadline = new Date(now.getFullYear(), 8, 30); // 9월 30일
+  const deadline = new Date(2026, 8, 30); // 9월 30일
   const diff = Math.round((deadline - today) / 86400000);
   if (diff > 0) {
     el.textContent = 'D-' + diff;
@@ -2704,12 +2700,15 @@ function _lbApply() {
   const img = document.getElementById('lightboxImg');
   if (img) img.style.transform = `translate(${_lbX}px, ${_lbY}px) scale(${_lbScale})`;
 }
+const CHEV_DOWN = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;margin-left:4px"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+const CHEV_UP = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;margin-left:4px"><polyline points="18 15 12 9 6 15"></polyline></svg>';
+
 function togglePressureDesign(btn) {
   const el = document.getElementById('pressureDesign');
   if (!el) return;
   const open = el.style.display === 'block';
   el.style.display = open ? 'none' : 'block';
-  btn.textContent = open ? '🎯 추출 압력 설계 (심화) ▼' : '🎯 추출 압력 설계 (심화) ▲';
+  btn.innerHTML = '🎯 추출 압력 설계 (심화)' + (open ? CHEV_DOWN : CHEV_UP);
 }
 
 function toggleBoilerSteps(btn) {
@@ -2717,7 +2716,7 @@ function toggleBoilerSteps(btn) {
   if (!el) return;
   const open = el.style.display === 'flex';
   el.style.display = open ? 'none' : 'flex';
-  btn.textContent = open ? '전체 12단계 자세히 보기 ▼' : '접기 ▲';
+  btn.innerHTML = (open ? '전체 12단계 자세히 보기' + CHEV_DOWN : '접기' + CHEV_UP);
 }
 
 function openLightbox(src) {
@@ -2811,7 +2810,7 @@ function updatePreorderCountdown() {
   if (!el) return;
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const deadline = new Date(now.getFullYear(), 8, 30); // 9월 30일 (2컵)
+  const deadline = new Date(2026, 8, 30); // 9월 30일 (2컵)
   const diff = Math.round((deadline - today) / 86400000);
   if (diff > 0) {
     el.textContent = 'D-' + diff;
@@ -3178,7 +3177,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.0.3';
+const CURRENT_VERSION = 'v3.0.5';
 
 async function checkVersionFromServer() {
   try {
