@@ -279,6 +279,11 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       스토어
     </button>
   </div>
+  <!-- 예약 버튼 -->
+  <div style="display:flex;gap:6px;padding:4px 16px 8px">
+    <button onclick="openReserveSelectModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer" id="navProduct">🛒 매커포트 예약</button>
+    <button onclick="openScheduleModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer">📅 예약발송일정</button>
+  </div>
   <div class="seg-wrap" id="segWrap">
     <div class="segmented">
       <button class="seg-btn active" onclick="switchTab('grind',this)" id="seg0">분쇄분석AI</button>
@@ -1256,7 +1261,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.1.0</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.1.1</div>
 
 </div><!-- /fixSection -->
 
@@ -1298,20 +1303,6 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="text-align:center;padding:8px 0 16px">
       <div style="font-size:20px;font-weight:700;color:var(--label)">매커 스토어</div>
     </div>
-    <button onclick="closeStoreModal();openReserveSelectModal()" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:14px 16px;cursor:pointer;font-family:inherit;margin-bottom:8px;text-align:left">
-      <span style="display:flex;align-items:center;gap:12px">
-        <span style="font-size:22px">🛒</span>
-        <span><span style="display:block;font-size:15px;font-weight:600;color:var(--label)">매커포트 예약</span><span style="display:block;font-size:12px;color:var(--label2);margin-top:2px">2컵 · 1컵 · 가압보일러통</span></span>
-      </span>
-      <span style="font-size:18px;color:var(--label3)">›</span>
-    </button>
-    <button onclick="closeStoreModal();openScheduleModal()" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:14px 16px;cursor:pointer;font-family:inherit;margin-bottom:8px;text-align:left">
-      <span style="display:flex;align-items:center;gap:12px">
-        <span style="font-size:22px">📅</span>
-        <span><span style="display:block;font-size:15px;font-weight:600;color:var(--label)">예약 발송 일정</span><span style="display:block;font-size:12px;color:var(--label2);margin-top:2px">예약 상품별 발송 예정일</span></span>
-      </span>
-      <span style="font-size:18px;color:var(--label3)">›</span>
-    </button>
     <button onclick="goStoreLink('https://smartstore.naver.com/maeco/category/776e7d77ad034cd8807d9f1e29b52ead?cp=1')" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:14px 16px;cursor:pointer;font-family:inherit;margin-bottom:8px;text-align:left">
       <span style="display:flex;align-items:center;gap:12px">
         <span style="font-size:22px">🫘</span>
@@ -3238,7 +3229,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.1.0';
+const CURRENT_VERSION = 'v3.1.1';
 
 async function checkVersionFromServer() {
   try {
