@@ -1261,7 +1261,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.1.3</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.1.4</div>
 
 </div><!-- /fixSection -->
 
@@ -1366,11 +1366,6 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="text-align:center;padding:8px 0 4px">
       <div style="font-size:44px;margin-bottom:10px">🛒</div>
       <div style="font-size:19px;font-weight:700;color:var(--label);margin-bottom:16px">11월 발송 매커포트<br>프리오더 예약</div>
-    </div>
-    <div id="preorderCountdown" style="background:var(--blue-bg);border:1.5px solid var(--blue);border-radius:14px;padding:16px;margin-bottom:14px;text-align:center">
-      <div style="font-size:12px;color:var(--blue);font-weight:600;margin-bottom:4px">⏰ 예약 마감까지</div>
-      <div style="font-size:26px;font-weight:800;color:var(--blue)" id="preorderDday">D-5</div>
-      <div style="font-size:12px;color:var(--label2);margin-top:6px">마감 임박</div>
     </div>
     <div style="background:var(--fill);border:1.5px solid var(--orange);border-radius:12px;padding:12px 14px;margin-bottom:14px;text-align:center">
       <span style="font-size:13px;font-weight:700;color:var(--orange)">🔥 한정 수량 100개 · 조기 마감될 수 있습니다</span>
@@ -1506,11 +1501,6 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="font-size:14px;color:var(--label2);line-height:1.8;margin-bottom:14px">
       해당 가압보일러통은 <b style="color:var(--label)">주문자 생산 방식</b>으로 예약되는 상품입니다.
     </div>
-    <div id="boilerCountdown" style="background:var(--blue-bg);border:1.5px solid var(--blue);border-radius:14px;padding:16px;margin-bottom:12px;text-align:center">
-      <div style="font-size:12px;color:var(--blue);font-weight:600;margin-bottom:4px">⏰ 예약 마감까지</div>
-      <div style="font-size:26px;font-weight:800;color:var(--blue)" id="boilerDday">D-5</div>
-      <div style="font-size:12px;color:var(--label2);margin-top:6px">마감 임박</div>
-    </div>
     <div style="background:var(--fill);border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:center">
       <div style="font-size:13px;color:var(--label2)">📦 발송 예정</div>
       <div style="font-size:14px;font-weight:700;color:var(--label);margin-top:4px">10월말 예정</div>
@@ -1537,12 +1527,6 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </div>
     <div style="font-size:14px;color:var(--label2);line-height:1.8;margin-bottom:16px">
       해당 1컵 매커포트는 <b style="color:var(--label)">주문자 생산 방식</b>의 상품입니다.
-    </div>
-    <div id="reserveCountdown" style="background:var(--blue-bg);border:1.5px solid var(--blue);border-radius:14px;padding:16px;margin-bottom:12px;text-align:center">
-      <div style="font-size:12px;color:var(--blue);font-weight:600;margin-bottom:4px">⏰ 3차 예약 마감까지</div>
-      <div style="font-size:26px;font-weight:800;color:var(--blue)" id="reserveDday">D-5</div>
-      <div style="font-size:12px;color:var(--label2);margin-top:6px">마감 임박 · 차수는 발송 순서를 의미합니다</div>
-      <div style="font-size:12px;color:var(--label3);margin-top:8px;line-height:1.5;border-top:1px solid var(--sep);padding-top:8px">잔여 수량 소진 시까지 예약이 연장되었습니다.<br>(잔여 수량 소진 시 자동 마감)</div>
     </div>
     <div style="background:var(--fill);border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:center">
       <span style="font-size:13px;color:var(--label2)">📦 발송 예정</span>
@@ -3229,7 +3213,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.1.3';
+const CURRENT_VERSION = 'v3.1.4';
 
 async function checkVersionFromServer() {
   try {
