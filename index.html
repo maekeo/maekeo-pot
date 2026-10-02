@@ -783,6 +783,9 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <div style="font-weight:600;color:var(--label);margin-bottom:8px">📋 부품 명칭</div>
           <img src="/maekeo-boiler-parts.png" alt="가압보일러통 부품 명칭" onclick="openLightbox(this.src)" style="width:100%;border-radius:12px;margin-bottom:16px;cursor:zoom-in">
 
+          <div style="font-weight:600;color:var(--label);margin-bottom:8px">🔌 퀵커플러 어댑터 장착법</div>
+          <img src="/Quick%20Coupler%20Installation%20Guide.png" alt="퀵커플러 어댑터 장착법" onclick="openLightbox(this.src)" style="width:100%;border-radius:12px;margin-bottom:16px;cursor:zoom-in">
+
           <div class="callout callout-danger" style="margin-bottom:16px">
             ⚠️ <b class="callout-hd">안전 주의</b><br>
             • <b style="color:var(--label)">벤트밸브 손잡이</b>는 손으로 풀 수 있는 정도로만 체결하세요. 과도하게 조이면 압력 해제가 어려워집니다.<br>
@@ -1261,7 +1264,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.1.4</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.1.5</div>
 
 </div><!-- /fixSection -->
 
@@ -3213,7 +3216,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.1.4';
+const CURRENT_VERSION = 'v3.1.5';
 
 async function checkVersionFromServer() {
   try {
