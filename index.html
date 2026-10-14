@@ -1264,7 +1264,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.1.7</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.1.8</div>
 
 </div><!-- /fixSection -->
 
@@ -1370,12 +1370,16 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div style="font-size:44px;margin-bottom:10px">🛒</div>
       <div style="font-size:19px;font-weight:700;color:var(--label);margin-bottom:16px">11월 발송 매커포트<br>프리오더 예약</div>
     </div>
+    <div style="background:var(--fill);border-radius:14px;padding:14px 16px;margin-bottom:10px;text-align:center">
+      <span style="font-size:13px;color:var(--label2)">⏰ 예약 마감</span>
+      <span style="font-size:14px;font-weight:700;color:var(--label);margin-left:8px">10월 15일(목)</span>
+    </div>
     <div style="background:var(--fill);border:1.5px solid var(--orange);border-radius:12px;padding:12px 14px;margin-bottom:14px;text-align:center">
       <span style="font-size:13px;font-weight:700;color:var(--orange)">🔥 한정 수량 100개 · 조기 마감될 수 있습니다</span>
     </div>
     <div style="background:var(--fill);border-radius:14px;padding:14px 16px;margin-bottom:14px;text-align:center">
       <span style="font-size:13px;color:var(--label2)">📦 발송 예정</span>
-      <span style="font-size:14px;font-weight:700;color:var(--label);margin-left:8px">11월 2~3주차</span>
+      <span style="font-size:14px;font-weight:700;color:var(--label);margin-left:8px">11월말 예정</span>
     </div>
     <div style="background:var(--fill);border:1px solid var(--sep);border-radius:12px;padding:12px 14px;margin-bottom:20px;font-size:12px;color:var(--label2);line-height:1.6">
       ℹ️ <b style="color:var(--label)">12월 매커포트 예약분</b>의 경우, 이전 예약 물량과 연말 시즌이 겹쳐 발송 시점이 다소 늦어질 수 있습니다.
@@ -2857,7 +2861,7 @@ function updatePreorderCountdown() {
   if (!el) return;
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const deadline = new Date(2026, 9, 1); // 9월 30일 (2컵)
+  const deadline = new Date(2026, 9, 15); // 10월 15일 (2컵)
   const diff = Math.round((deadline - today) / 86400000);
   if (diff > 1) {
     el.textContent = 'D-' + (diff - 1);
@@ -3224,7 +3228,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.1.7';
+const CURRENT_VERSION = 'v3.1.8';
 
 async function checkVersionFromServer() {
   try {
