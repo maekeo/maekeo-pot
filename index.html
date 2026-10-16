@@ -1264,7 +1264,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.0</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.1</div>
 
 </div><!-- /fixSection -->
 
@@ -1368,22 +1368,22 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-handle"></div>
     <div style="text-align:center;padding:8px 0 4px">
       <div style="font-size:44px;margin-bottom:10px">🛒</div>
-      <div style="font-size:19px;font-weight:700;color:var(--label);margin-bottom:16px">11월 발송 매커포트<br>프리오더 예약</div>
+      <div style="font-size:19px;font-weight:700;color:var(--label);margin-bottom:16px">12월 발송 매커포트<br>프리오더 예약</div>
     </div>
     <div id="preorderCountdown" style="background:var(--fill);border:1.5px solid var(--red);border-radius:14px;padding:16px;margin-bottom:10px;text-align:center">
       <div style="font-size:12px;color:var(--red);font-weight:600;margin-bottom:4px">⏰ 예약 마감까지</div>
       <div id="preorderDday" style="font-size:30px;font-weight:800;color:var(--red);letter-spacing:.5px">D-1</div>
-      <div id="preorderDdaySub" style="font-size:13px;color:var(--label2);margin-top:4px">10월 15일(목) 마감</div>
+      <div id="preorderDdaySub" style="font-size:13px;color:var(--label2);margin-top:4px">10월 30일(금) 마감</div>
     </div>
     <div style="background:var(--fill);border:1.5px solid var(--orange);border-radius:12px;padding:12px 14px;margin-bottom:14px;text-align:center">
       <span style="font-size:13px;font-weight:700;color:var(--orange)">🔥 한정 수량 100개 · 조기 마감될 수 있습니다</span>
     </div>
     <div style="background:var(--fill);border-radius:14px;padding:14px 16px;margin-bottom:14px;text-align:center">
       <span style="font-size:13px;color:var(--label2)">📦 발송 예정</span>
-      <span style="font-size:14px;font-weight:700;color:var(--label);margin-left:8px">11월말 예정</span>
+      <span style="font-size:14px;font-weight:700;color:var(--label);margin-left:8px">12월말 예정</span>
     </div>
     <div style="background:var(--fill);border:1px solid var(--sep);border-radius:12px;padding:12px 14px;margin-bottom:20px;font-size:12px;color:var(--label2);line-height:1.6">
-      ℹ️ <b style="color:var(--label)">12월 매커포트 예약분</b>의 경우, 이전 예약 물량과 연말 시즌이 겹쳐 발송 시점이 다소 늦어질 수 있습니다.
+      ℹ️ 이전 예약 물량과 <b style="color:var(--label)">연말 시즌</b>이 겹쳐 발송 시점이 다소 늦어질 수 있습니다.
     </div>
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closePreorderModal()">취소</button>
@@ -2803,7 +2803,7 @@ function closePreorderModal() {
   document.getElementById('preorderModal').classList.remove('show');
 }
 function goToPreorderPage() {
-  window.open('https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000050', '_blank');
+  window.open('https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000052', '_blank');
   closePreorderModal();
 }
 function updatePreorderCountdown() {
@@ -2813,21 +2813,21 @@ function updatePreorderCountdown() {
   if (!el) return;
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const deadline = new Date(2026, 9, 15); // 10월 15일 (2컵)
+  const deadline = new Date(2026, 9, 30); // 10월 30일 (2컵)
   const diff = Math.round((deadline - today) / 86400000);
   if (diff > 1) {
     el.textContent = 'D-' + diff;
-    if (sub) sub.textContent = '10월 15일(목) 마감';
+    if (sub) sub.textContent = '10월 30일(금) 마감';
   } else if (diff === 1) {
     el.textContent = 'D-1';
-    if (sub) sub.textContent = '내일(10월 15일) 마감 · 서둘러 주세요';
+    if (sub) sub.textContent = '내일(10월 30일) 마감 · 서둘러 주세요';
   } else if (diff === 0) {
     el.textContent = 'D-DAY';
     if (sub) sub.textContent = '오늘 마감 · 마지막 기회입니다';
   } else {
     el.textContent = '예약 마감';
     el.style.color = 'var(--label2)';
-    if (sub) sub.textContent = '10월 15일(목) 예약이 마감되었습니다';
+    if (sub) sub.textContent = '10월 30일(금) 예약이 마감되었습니다';
     if (box) box.style.borderColor = 'var(--sep)';
   }
 }
@@ -3125,7 +3125,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.0';
+const CURRENT_VERSION = 'v3.2.1';
 
 async function checkVersionFromServer() {
   try {
