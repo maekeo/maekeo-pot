@@ -1271,7 +1271,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.7</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.8</div>
 
 </div><!-- /fixSection -->
 
@@ -2723,7 +2723,7 @@ function selectReserve(type) {
 const EVENTS = [
   { icon: '☕', title: '1주년 특별 한정판 매커포트 예약', desc: '100개 한정 · 마지막 한정판', url: '', verify: true },
   { icon: '🧰', title: '모카포트 용품세트 한정판 예약', desc: '🚚 11월 2~3주차 발송 · 세트별 50개 한정', url: '', sets: true },
-  { icon: '🫘', title: '원두 할인 이벤트', desc: '1주년 기념 원두 할인', url: '' },
+  { icon: '🫘', title: '갓 볶은 매커 원두 할인 이벤트', desc: '1주년 기념 원두 할인 · 스마트스토어', url: 'https://smartstore.naver.com/maeco/category/776e7d77ad034cd8807d9f1e29b52ead?cp=1' },
 ];
 function renderEventList() {
   const box = document.getElementById('eventList');
@@ -3384,7 +3384,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.7';
+const CURRENT_VERSION = 'v3.2.8';
 
 async function checkVersionFromServer() {
   try {
