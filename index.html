@@ -182,7 +182,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 .tab-item.active .tab-lbl{color:var(--blue)}
 
 /* TOAST */
-.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(6px);background:rgba(50,50,52,.94);backdrop-filter:blur(20px);color:#fff;font-size:14px;font-weight:500;padding:9px 18px;border-radius:18px;opacity:0;transition:all .22s;z-index:200;white-space:nowrap;pointer-events:none}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(6px);background:rgba(50,50,52,.94);backdrop-filter:blur(20px);color:#fff;font-size:14px;font-weight:500;padding:9px 18px;border-radius:18px;opacity:0;transition:all .22s;z-index:400;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 #fileInput,#camFileInput{display:none}
@@ -284,9 +284,9 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <button onclick="openReserveSelectModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer" id="navProduct">🛒 매커포트 예약</button>
     <button onclick="openScheduleModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer">📅 예약발송일정</button>
   </div>
-  <!-- 1주년 이벤트 배너 (위치 확인용 · 기능 없음) -->
+  <!-- 1주년 이벤트 배너 -->
   <div style="padding:0 16px 8px">
-    <div id="eventBanner" role="button" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-radius:12px;background:linear-gradient(90deg,#C9A24B,#E08A5B);color:#fff;cursor:pointer">
+    <div id="eventBanner" role="button" onclick="openEventModal()" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-radius:12px;background:linear-gradient(90deg,#C9A24B,#E08A5B);color:#fff;cursor:pointer">
       <span style="font-size:13px;font-weight:700;letter-spacing:-.2px">🎉 매커포트 1주년 기념 이벤트</span>
       <span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;opacity:.95">자세히 보기 <span style="font-size:16px;line-height:1">›</span></span>
     </div>
@@ -1329,6 +1329,22 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </button>
     <div class="modal-btns" style="margin-top:12px">
       <button class="btn btn-secondary" style="flex:1" onclick="closeStoreModal()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 1주년 기념 이벤트 모달 -->
+<div class="modal-bg" id="eventModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:8px 0 4px">
+      <div style="font-size:44px;margin-bottom:10px">🎉</div>
+      <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:6px">매커포트 1주년 기념 이벤트</div>
+      <div style="font-size:13px;color:var(--label2);margin-bottom:16px">함께해 주신 1년, 감사의 마음을 담았습니다.</div>
+    </div>
+    <div id="eventList"></div>
+    <div class="modal-btns" style="margin-top:12px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeEventModal()">닫기</button>
     </div>
   </div>
 </div>
@@ -2631,6 +2647,42 @@ function selectReserve(type) {
   if (type === 'preorder') openPreorderModal();
   else if (type === 'onecup') openReserveInfoModal();
   else if (type === 'boiler') openBoilerInfoModal();
+}
+
+// ═══ 1주년 기념 이벤트 ═══
+// url이 비어 있으면 '오픈 예정'으로 표시되고 눌러도 이동하지 않음
+const EVENTS = [
+  { icon: '☕', title: '1주년 특별 한정판 매커포트 예약', desc: '1주년을 기념한 한정판 매커포트', url: '' },
+  { icon: '🧰', title: '모카포트 용품세트 한정판 예약', desc: '모카포트 용품 한정판 세트', url: '' },
+  { icon: '🫘', title: '원두 할인 이벤트', desc: '1주년 기념 원두 할인', url: '' },
+];
+function renderEventList() {
+  const box = document.getElementById('eventList');
+  if (!box) return;
+  box.innerHTML = EVENTS.map((ev, i) => {
+    const open = !!ev.url;
+    const chip = open
+      ? '<span style="font-size:12px;font-weight:700;color:#fff;background:linear-gradient(90deg,#C9A24B,#E08A5B);padding:4px 10px;border-radius:999px;white-space:nowrap">참여하기</span>'
+      : '<span style="font-size:12px;font-weight:600;color:var(--label2);background:var(--fill);padding:4px 10px;border-radius:999px;white-space:nowrap">오픈 예정</span>';
+    return '<button onclick="goEvent(' + i + ')" style="width:100%;display:flex;align-items:center;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:14px;cursor:pointer;font-family:inherit;margin-bottom:8px;text-align:left">'
+      + '<span style="flex:none;width:44px;height:44px;border-radius:12px;background:var(--fill);display:flex;align-items:center;justify-content:center;font-size:22px">' + ev.icon + '</span>'
+      + '<span style="flex:1;min-width:0;word-break:keep-all">'
+      +   '<span style="display:block;font-size:11px;font-weight:700;color:#C9A24B;letter-spacing:.5px;margin-bottom:2px">EVENT ' + (i + 1) + '</span>'
+      +   '<span style="display:block;font-size:15px;font-weight:600;color:var(--label);line-height:1.35">' + escapeHtml(ev.title) + '</span>'
+      +   '<span style="display:block;font-size:12px;color:var(--label2);margin-top:2px">' + escapeHtml(ev.desc) + '</span>'
+      + '</span>' + chip + '</button>';
+  }).join('');
+}
+function openEventModal() {
+  renderEventList();
+  document.getElementById('eventModal').classList.add('show');
+}
+function closeEventModal() { document.getElementById('eventModal').classList.remove('show'); }
+function goEvent(i) {
+  const ev = EVENTS[i];
+  if (!ev || !ev.url) { toast('곧 오픈됩니다. 조금만 기다려 주세요!'); return; }
+  window.open(ev.url, '_blank');
+  closeEventModal();
 }
 
 function openReserveInfoModal() {
