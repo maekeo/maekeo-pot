@@ -1349,6 +1349,26 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   </div>
 </div>
 
+<!-- 1주년 한정판 · 기존 구매자 확인 모달 -->
+<div class="modal-bg" id="buyerVerifyModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:8px 0 4px">
+      <div style="font-size:44px;margin-bottom:10px">☕</div>
+      <div style="font-size:11px;font-weight:700;color:#C9A24B;letter-spacing:.5px;margin-bottom:4px">EVENT 1 · 기존 구매자 전용</div>
+      <div style="font-size:19px;font-weight:700;color:var(--label);margin-bottom:6px;word-break:keep-all">1주년 특별 한정판 매커포트 예약</div>
+      <div style="font-size:13px;color:var(--label2);margin-bottom:16px;line-height:1.5;word-break:keep-all">매커포트 주문 시 사용하신<br><b style="color:var(--label)">이메일 아이디(@ 앞부분)</b>를 입력해 주세요.</div>
+    </div>
+    <input class="modal-input" id="buyerIdInput" type="text" placeholder="예: maekeo (maekeo@naver.com)" maxlength="64" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="email" onkeydown="if(event.key==='Enter')submitBuyerVerify()">
+    <div id="buyerVerifyMsg" style="display:none;margin-bottom:10px"></div>
+    <div style="font-size:12px;color:var(--label3);margin-bottom:16px;line-height:1.5">🔒 입력하신 아이디는 구매 이력 확인에만 사용되며 저장되지 않습니다.</div>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeBuyerVerify()">취소</button>
+      <button class="btn btn-primary" style="flex:2" id="buyerVerifyBtn" onclick="submitBuyerVerify()">확인</button>
+    </div>
+  </div>
+</div>
+
 <!-- 매커포트 예약 선택 모달 -->
 <div class="modal-bg" id="reserveSelectModal">
   <div class="modal-sheet">
@@ -2652,7 +2672,7 @@ function selectReserve(type) {
 // ═══ 1주년 기념 이벤트 ═══
 // url이 비어 있으면 '오픈 예정'으로 표시되고 눌러도 이동하지 않음
 const EVENTS = [
-  { icon: '☕', title: '1주년 특별 한정판 매커포트 예약', desc: '1주년을 기념한 한정판 매커포트', url: '' },
+  { icon: '☕', title: '1주년 특별 한정판 매커포트 예약', desc: '기존 구매자 전용 한정판', url: '', verify: true },
   { icon: '🧰', title: '모카포트 용품세트 한정판 예약', desc: '모카포트 용품 한정판 세트', url: '' },
   { icon: '🫘', title: '원두 할인 이벤트', desc: '1주년 기념 원두 할인', url: '' },
 ];
@@ -2661,7 +2681,9 @@ function renderEventList() {
   if (!box) return;
   box.innerHTML = EVENTS.map((ev, i) => {
     const open = !!ev.url;
-    const chip = open
+    const chip = ev.verify
+      ? '<span style="font-size:12px;font-weight:700;color:#C9A24B;border:1.5px solid #C9A24B;padding:3px 9px;border-radius:999px;white-space:nowrap">구매자 전용</span>'
+      : open
       ? '<span style="font-size:12px;font-weight:700;color:#fff;background:linear-gradient(90deg,#C9A24B,#E08A5B);padding:4px 10px;border-radius:999px;white-space:nowrap">참여하기</span>'
       : '<span style="font-size:12px;font-weight:600;color:var(--label2);background:var(--fill);padding:4px 10px;border-radius:999px;white-space:nowrap">오픈 예정</span>';
     return '<button onclick="goEvent(' + i + ')" style="width:100%;display:flex;align-items:center;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:14px;cursor:pointer;font-family:inherit;margin-bottom:8px;text-align:left">'
@@ -2680,9 +2702,67 @@ function openEventModal() {
 function closeEventModal() { document.getElementById('eventModal').classList.remove('show'); }
 function goEvent(i) {
   const ev = EVENTS[i];
+  if (ev && ev.verify) { closeEventModal(); openBuyerVerify(); return; }
   if (!ev || !ev.url) { toast('곧 오픈됩니다. 조금만 기다려 주세요!'); return; }
   window.open(ev.url, '_blank');
   closeEventModal();
+}
+
+// ── 1주년 한정판: 기존 구매자 확인 (서버에서 HMAC 비교, 앱에는 고객 정보 없음) ──
+let _buyerUrl = '';
+let _buyerBusy = false;
+function openBuyerVerify() {
+  _buyerUrl = '';
+  const inp = document.getElementById('buyerIdInput');
+  inp.value = ''; inp.disabled = false;
+  setBuyerMsg('', '');
+  const btn = document.getElementById('buyerVerifyBtn');
+  btn.textContent = '확인'; btn.disabled = false;
+  document.getElementById('buyerVerifyModal').classList.add('show');
+  setTimeout(() => inp.focus(), 300);
+}
+function closeBuyerVerify() { document.getElementById('buyerVerifyModal').classList.remove('show'); }
+function setBuyerMsg(type, html) {
+  const el = document.getElementById('buyerVerifyMsg');
+  if (!type) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  el.className = type === 'ok' ? 'callout' : 'callout callout-warn';
+  el.style.display = 'block';
+  el.innerHTML = html;
+}
+async function submitBuyerVerify() {
+  if (_buyerUrl) { window.open(_buyerUrl, '_blank'); closeBuyerVerify(); return; }
+  if (_buyerBusy) return;
+  const inp = document.getElementById('buyerIdInput');
+  const id = inp.value.trim().split('@')[0];
+  if (id.length < 2) { setBuyerMsg('warn', '이메일 아이디(@ 앞부분)를 입력해 주세요.'); return; }
+  const btn = document.getElementById('buyerVerifyBtn');
+  _buyerBusy = true; btn.disabled = true; btn.textContent = '확인 중…';
+  try {
+    const res = await fetch('/.netlify/functions/verify-event', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id })
+    });
+    const data = await res.json();
+    if (data.ok && data.url) {
+      _buyerUrl = data.url;
+      inp.disabled = true;
+      setBuyerMsg('ok', '✅ <b>기존 구매자로 확인되었습니다.</b> 감사합니다!');
+      btn.textContent = '예약하러 가기 →';
+    } else if (data.reason === 'not_ready') {
+      setBuyerMsg('warn', '아직 예약 오픈 전입니다. 조금만 기다려 주세요!');
+      btn.textContent = '확인';
+    } else if (data.reason === 'too_many') {
+      setBuyerMsg('warn', '시도 횟수가 많습니다. 10분 후 다시 시도해 주세요.');
+      btn.textContent = '확인';
+    } else {
+      setBuyerMsg('warn', '확인되지 않았습니다. <b>매커포트 주문 시 사용하신 이메일</b>의 아이디인지 확인해 주세요.<br>계속 확인되지 않으면 <a href="mailto:maeilcoffees@gmail.com?subject=1주년 한정판 구매자 확인 문의" style="color:var(--blue);font-weight:600">문의하기</a>');
+      btn.textContent = '확인';
+    }
+  } catch (e) {
+    setBuyerMsg('warn', '네트워크 연결을 확인한 뒤 다시 시도해 주세요.');
+    btn.textContent = '확인';
+  } finally {
+    _buyerBusy = false; btn.disabled = false;
+  }
 }
 
 function openReserveInfoModal() {
