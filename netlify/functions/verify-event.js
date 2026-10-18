@@ -6,7 +6,9 @@ const crypto = require('crypto');
 const HASHES = new Set(require('./buyer-hashes.json'));
 
 // 한정판 예약 상품 링크 (비어 있으면 '준비 중' 응답)
-const LIMITED_URL = '';
+const LIMITED_URL = 'https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000053';
+// 예약 마감: 2026-10-31 23:59:59 (KST)
+const DEADLINE = Date.parse('2026-10-31T23:59:59+09:00');
 
 const HEADERS = {
   'Content-Type': 'application/json',
@@ -41,6 +43,8 @@ exports.handler = async (event) => {
 
   const key = process.env.BUYER_HASH_KEY;
   if (!key || HASHES.size === 0 || !LIMITED_URL) return reply({ ok: false, reason: 'not_ready' });
+
+  if (Date.now() > DEADLINE) return reply({ ok: false, reason: 'closed' });
 
   const ip = event.headers['x-nf-client-connection-ip'] || event.headers['x-forwarded-for'] || 'unknown';
   if (limited(ip)) return reply({ ok: false, reason: 'too_many' });
