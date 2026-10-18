@@ -1271,7 +1271,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.5</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.6</div>
 
 </div><!-- /fixSection -->
 
@@ -1345,6 +1345,35 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div id="eventList"></div>
     <div class="modal-btns" style="margin-top:12px">
       <button class="btn btn-secondary" style="flex:1" onclick="closeEventModal()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 1주년 이벤트 2 · 모카포트 용품세트 한정판 모달 -->
+<div class="modal-bg" id="setsModal">
+  <div class="modal-sheet" style="max-height:92vh;overflow-y:auto">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:8px 0 4px">
+      <div style="font-size:11px;font-weight:700;color:#C9A24B;letter-spacing:.5px;margin-bottom:4px">EVENT 2 · 1주년 한정판</div>
+      <div style="font-size:19px;font-weight:700;color:var(--label);margin-bottom:14px;word-break:keep-all">모카포트 용품세트 한정판 예약</div>
+    </div>
+    <div style="border-radius:14px;padding:16px;margin-bottom:10px;background:linear-gradient(135deg,#C9A24B,#E08A5B);color:#fff;text-align:center">
+      <div style="font-size:12px;font-weight:700;letter-spacing:2px;opacity:.9;margin-bottom:4px">ALL NEW</div>
+      <div style="font-size:18px;font-weight:800;margin-bottom:6px;word-break:keep-all">세트 구성품 전 품목 신규 제작</div>
+      <div style="font-size:12px;opacity:.95;word-break:keep-all">이번 한정판을 위해 새로 만든 용품으로만 구성했습니다.</div>
+    </div>
+    <div style="background:var(--fill);border:1.5px solid var(--blue);border-radius:12px;padding:14px;margin-bottom:10px;text-align:center">
+      <div style="font-size:12px;color:var(--label2);margin-bottom:2px">🚚 발송 예정</div>
+      <div style="font-size:20px;font-weight:800;color:var(--blue)">11월 2~3주차</div>
+    </div>
+    <div style="background:var(--fill);border:1.5px solid var(--orange);border-radius:12px;padding:12px 14px;margin-bottom:10px;text-align:center">
+      <div style="font-size:14px;font-weight:700;color:var(--orange)">🔥 세트별 50개 한정</div>
+      <div id="setsDeadline" style="font-size:13px;color:var(--label2);margin-top:2px">10월 31일(토)까지 예약</div>
+    </div>
+    <div class="callout" style="margin-bottom:16px;font-size:12px;line-height:1.6;word-break:keep-all">ℹ️ 한정 수량이 조기에 소진되면 상품 페이지에 <b>자동으로 품절</b> 표시됩니다.</div>
+    <div id="setButtons"></div>
+    <div class="modal-btns" style="margin-top:8px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeSetsModal()">닫기</button>
     </div>
   </div>
 </div>
@@ -2693,15 +2722,15 @@ function selectReserve(type) {
 // url이 비어 있으면 '오픈 예정'으로 표시되고 눌러도 이동하지 않음
 const EVENTS = [
   { icon: '☕', title: '1주년 특별 한정판 매커포트 예약', desc: '100개 한정 · 마지막 한정판', url: '', verify: true },
-  { icon: '🧰', title: '모카포트 용품세트 한정판 예약', desc: '모카포트 용품 한정판 세트', url: '' },
+  { icon: '🧰', title: '모카포트 용품세트 한정판 예약', desc: '전 품목 신규 제작 · 세트별 50개 한정', url: '', sets: true },
   { icon: '🫘', title: '원두 할인 이벤트', desc: '1주년 기념 원두 할인', url: '' },
 ];
 function renderEventList() {
   const box = document.getElementById('eventList');
   if (!box) return;
   box.innerHTML = EVENTS.map((ev, i) => {
-    const open = !!ev.url;
-    const chip = (ev.verify && isLimitedClosed())
+    const open = ev.sets ? hasSetLinks() : !!ev.url;
+    const chip = ((ev.verify || (ev.sets && open)) && isLimitedClosed())
       ? '<span style="font-size:12px;font-weight:600;color:var(--label2);background:var(--fill);padding:4px 10px;border-radius:999px;white-space:nowrap">예약 마감</span>'
       : ev.verify
       ? '<span style="font-size:12px;font-weight:700;color:#C9A24B;border:1.5px solid #C9A24B;padding:3px 9px;border-radius:999px;white-space:nowrap">구매자 전용</span>'
@@ -2725,6 +2754,7 @@ function closeEventModal() { document.getElementById('eventModal').classList.rem
 function goEvent(i) {
   const ev = EVENTS[i];
   if (ev && ev.verify) { closeEventModal(); openBuyerVerify(); return; }
+  if (ev && ev.sets && hasSetLinks()) { closeEventModal(); openSetsModal(); return; }
   if (!ev || !ev.url) { toast('곧 오픈됩니다. 조금만 기다려 주세요!'); return; }
   window.open(ev.url, '_blank');
   closeEventModal();
@@ -2807,6 +2837,44 @@ async function submitBuyerVerify() {
   } finally {
     _buyerBusy = false; btn.disabled = false;
   }
+}
+
+// ── 1주년 이벤트 2: 모카포트 용품세트 한정판 (중형·대형) ──
+// 링크가 하나도 없으면 목록에서 '오픈 예정'으로 표시
+const SET_LINKS = {
+  mid: 'https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000054',   // 중형 용품세트
+  large: 'https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000055', // 대형 용품세트
+};
+function hasSetLinks() { return !!(SET_LINKS.mid || SET_LINKS.large); }
+function renderSetButtons() {
+  const closed = isLimitedClosed();
+  const items = [
+    { key: 'mid', name: '중형 용품세트' },
+    { key: 'large', name: '대형 용품세트' },
+  ];
+  document.getElementById('setButtons').innerHTML = items.map(it => {
+    const url = SET_LINKS[it.key];
+    const on = !!url && !closed;
+    const right = closed ? '예약 마감' : (url ? '예약하기 ›' : '준비 중');
+    return '<button ' + (on ? 'onclick="goSetLink(\'' + it.key + '\')"' : 'disabled')
+      + ' style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;border-radius:14px;padding:16px;margin-bottom:8px;font-family:inherit;cursor:' + (on ? 'pointer' : 'default') + ';'
+      + (on ? 'background:var(--blue);border:0;color:#fff' : 'background:var(--fill);border:1.5px solid var(--sep);color:var(--label3)') + '">'
+      + '<span style="display:flex;flex-direction:column;align-items:flex-start;gap:2px"><span style="font-size:16px;font-weight:700">' + it.name + '</span>'
+      + '<span style="font-size:12px;opacity:.85">50개 한정</span></span>'
+      + '<span style="font-size:14px;font-weight:700;white-space:nowrap">' + right + '</span></button>';
+  }).join('');
+}
+function openSetsModal() {
+  renderSetButtons();
+  if (isLimitedClosed()) document.getElementById('setsDeadline').textContent = '예약이 마감되었습니다';
+  document.getElementById('setsModal').classList.add('show');
+}
+function closeSetsModal() { document.getElementById('setsModal').classList.remove('show'); }
+function goSetLink(key) {
+  const url = SET_LINKS[key];
+  if (!url || isLimitedClosed()) return;
+  window.open(url, '_blank');
+  closeSetsModal();
 }
 
 function openReserveInfoModal() {
@@ -3316,7 +3384,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.5';
+const CURRENT_VERSION = 'v3.2.6';
 
 async function checkVersionFromServer() {
   try {
