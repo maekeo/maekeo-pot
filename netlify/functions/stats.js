@@ -3,6 +3,26 @@
 const crypto = require('crypto');
 const { getStore, connectLambda } = require('@netlify/blobs');
 
+// 한글 자판(두벌식) 상태로 입력된 글자를 실제 누른 영문 키로 되돌림
+// 예: 'ㅡ먀ㄷ' 같은 입력도 영문 키 입력과 같은 것으로 비교
+const KEY = { 'ㄱ':'r','ㄲ':'r','ㄴ':'s','ㄷ':'e','ㄸ':'e','ㄹ':'f','ㅁ':'a','ㅂ':'q','ㅃ':'q','ㅅ':'t','ㅆ':'t','ㅇ':'d','ㅈ':'w','ㅉ':'w','ㅊ':'c','ㅋ':'z','ㅌ':'x','ㅍ':'v','ㅎ':'g',
+  'ㅏ':'k','ㅐ':'o','ㅑ':'i','ㅒ':'o','ㅓ':'j','ㅔ':'p','ㅕ':'u','ㅖ':'p','ㅗ':'h','ㅘ':'hk','ㅙ':'ho','ㅚ':'hl','ㅛ':'y','ㅜ':'n','ㅝ':'nj','ㅞ':'np','ㅟ':'nl','ㅠ':'b','ㅡ':'m','ㅢ':'ml','ㅣ':'l',
+  'ㄳ':'rt','ㄵ':'sw','ㄶ':'sg','ㄺ':'fr','ㄻ':'fa','ㄼ':'fq','ㄽ':'ft','ㄾ':'fx','ㄿ':'fv','ㅀ':'fg','ㅄ':'qt' };
+const L = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
+const V = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+const T = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+function toKeys(str) {
+  let out = '';
+  for (const ch of String(str).normalize('NFC')) {
+    const c = ch.charCodeAt(0);
+    if (c >= 0xAC00 && c <= 0xD7A3) {
+      const n = c - 0xAC00;
+      out += KEY[L[Math.floor(n / 588)]] + KEY[V[Math.floor((n % 588) / 28)]] + (T[n % 28] ? KEY[T[n % 28]] : '');
+    } else out += KEY[ch] || ch;
+  }
+  return out.replace(/\s+/g, '').toLowerCase();
+}
+
 const H = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' };
 
 function same(a, b) {
@@ -15,15 +35,15 @@ function kstDay(offset) {
 }
 
 exports.handler = async (event) => {
-  // 앞뒤 공백·줄바꿈이 섞여 등록되는 경우가 있어 양쪽 모두 정리 후 비교
-  const pass = (process.env.STATS_PASSWORD || '').normalize('NFC').trim();
+  // 공백 제거, 대소문자 무시, 한글 자판으로 입력된 값도 같은 키로 인정
+  const pass = toKeys(process.env.STATS_PASSWORD || '');
   if (!pass) return { statusCode: 503, headers: H, body: JSON.stringify({ error: 'not_configured' }) };
   let given = event.headers['x-stats-pass'] || '';
   try { given = decodeURIComponent(given); } catch (e) {}
-  if (!same(given.normalize('NFC').trim(), pass)) {
+  if (!same(toKeys(given), pass)) {
     await new Promise(r => setTimeout(r, 600));
     // 임시 진단: 글자 수만 알려줌 (내용은 노출하지 않음)
-    const g = given.normalize('NFC').trim();
+    const g = toKeys(given);
     return { statusCode: 401, headers: H, body: JSON.stringify({ error: 'unauthorized', diag: { given: g.length, set: pass.length, givenAscii: /^[\x21-\x7e]*$/.test(g), setAscii: /^[\x21-\x7e]*$/.test(pass), deploy: process.env.CONTEXT || '' } }) };
   }
 
