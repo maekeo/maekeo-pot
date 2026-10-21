@@ -139,7 +139,10 @@ async function load(fromLogin) {
   $('loginErr').textContent = '';
   try {
     const res = await fetch('/.netlify/functions/stats?days=' + $('days').value, { headers: { 'x-stats-pass': encodeURIComponent(PW) }, cache: 'no-store' });
-    if (res.status === 401) { showLogin('비밀번호가 맞지 않습니다.'); return; }
+    if (res.status === 401) {
+      let dg = ''; try { const j = await res.json(); if (j.diag) dg = ' (입력 ' + j.diag.given + '자 / 등록 ' + j.diag.set + '자' + (j.diag.setAscii ? '' : ', 등록값에 영문·숫자 외 문자 포함') + (j.diag.givenAscii ? '' : ', 입력값에 영문·숫자 외 문자 포함') + ')'; } catch (e) {}
+      showLogin('비밀번호가 맞지 않습니다.' + dg); return;
+    }
     if (res.status === 503) { showLogin('Netlify에 STATS_PASSWORD 환경변수가 아직 등록되지 않았습니다.'); return; }
     if (!res.ok) throw new Error(res.status);
     const data = await res.json();
