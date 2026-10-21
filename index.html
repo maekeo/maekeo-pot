@@ -1271,7 +1271,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.13</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.14</div>
 
 </div><!-- /fixSection -->
 
@@ -1806,6 +1806,7 @@ function t(key, ...args) {
 
 // ═══ TAB ═══
 function switchTab(tab, segBtn, tabBtn) {
+  track('tab', tab, true);
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   const sectionMap = { grind: 'grindSection', timer: 'timerSection', history: 'historySection', fix: 'fixSection' };
   document.getElementById(sectionMap[tab]).classList.add('active');
@@ -2687,6 +2688,42 @@ function resetTimer() {
   renderStages(); updateTimerUI();
 }
 
+// ═══ 익명 사용 통계 (개인정보 없음 · 기기별 무작위 번호만 사용) ═══
+const _trk = (() => {
+  let aid = '', dv = 'other', mode = 'web', off = false;
+  try {
+    off = localStorage.getItem('maekeo_no_track') === '1';
+    aid = localStorage.getItem('maekeo_aid') || '';
+    if (!/^[a-z0-9]{8,16}$/.test(aid)) {
+      aid = Array.from(crypto.getRandomValues(new Uint8Array(6)), b => (b % 36).toString(36)).join('') + Date.now().toString(36).slice(-4);
+      localStorage.setItem('maekeo_aid', aid);
+    }
+  } catch (e) { aid = 'anon' + Math.random().toString(36).slice(2, 8); }
+  const ua = navigator.userAgent || '';
+  if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) dv = 'ios';
+  else if (/Android/.test(ua)) dv = 'android';
+  else if (!/Mobi/.test(ua)) dv = 'pc';
+  try { if (window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches) mode = 'app'; } catch (e) {}
+  return { aid, dv, mode, off };
+})();
+function track(t, d, once) {
+  try {
+    if (_trk.off || location.protocol === 'file:') return;
+    if (once) {
+      const k = 'maekeo_trk_' + t + '_' + (d || '-');
+      if (sessionStorage.getItem(k)) return;
+      sessionStorage.setItem(k, '1');
+    }
+    const body = JSON.stringify({ t, d: d || '-', dv: _trk.dv, m: _trk.mode, a: _trk.aid });
+    const url = '/.netlify/functions/track';
+    if (!(navigator.sendBeacon && navigator.sendBeacon(url, new Blob([body], { type: 'application/json' })))) {
+      fetch(url, { method: 'POST', body, keepalive: true, headers: { 'Content-Type': 'application/json' } }).catch(() => {});
+    }
+  } catch (e) {}
+}
+window.addEventListener('load', () => track('visit', '-', true));
+window.addEventListener('appinstalled', () => track('install', 'android'));
+
 // ═══ TOAST ═══
 function toast(msg) {
   const t = document.getElementById('toast');
@@ -2695,9 +2732,9 @@ function toast(msg) {
 }
 
 // ═══ 스토어 · 예약 모달 ═══
-function openStoreModal() { document.getElementById('storeModal').classList.add('show'); }
+function openStoreModal() { track('store', 'open'); document.getElementById('storeModal').classList.add('show'); }
 function closeStoreModal() { document.getElementById('storeModal').classList.remove('show'); }
-function goStoreLink(url) { window.open(url, '_blank'); closeStoreModal(); }
+function goStoreLink(url) { track('store', url.includes('776e7d77') ? 'beans' : 'parts'); window.open(url, '_blank'); closeStoreModal(); }
 
 function openReserveSelectModal() {
   document.getElementById('reserveSelectModal').classList.add('show');
@@ -2706,6 +2743,7 @@ function closeReserveSelectModal() {
   document.getElementById('reserveSelectModal').classList.remove('show');
 }
 function selectReserve(type) {
+  track('reserve', type);
   closeReserveSelectModal();
   if (type === 'preorder') openPreorderModal();
   else if (type === 'onecup') openReserveInfoModal();
@@ -2741,15 +2779,18 @@ function renderEventList() {
   }).join('');
 }
 function openEventModal() {
+  track('banner', 'event');
   renderEventList();
   document.getElementById('eventModal').classList.add('show');
 }
 function closeEventModal() { document.getElementById('eventModal').classList.remove('show'); }
 function goEvent(i) {
   const ev = EVENTS[i];
+  track('ev', ['limited', 'sets', 'beans'][i]);
   if (ev && ev.verify) { closeEventModal(); openBuyerVerify(); return; }
   if (ev && ev.sets && hasSetLinks()) { closeEventModal(); openSetsModal(); return; }
   if (!ev || !ev.url) { toast('곧 오픈됩니다. 조금만 기다려 주세요!'); return; }
+  track('go', 'beans');
   window.open(ev.url, '_blank');
   closeEventModal();
 }
@@ -2794,7 +2835,7 @@ function openBuyerInquiry() {
   location.href = 'mailto:' + BUYER_INQUIRY_EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 }
 async function submitBuyerVerify() {
-  if (_buyerUrl) { window.open(_buyerUrl, '_blank'); closeBuyerVerify(); return; }
+  if (_buyerUrl) { track('go', 'limited'); window.open(_buyerUrl, '_blank'); closeBuyerVerify(); return; }
   if (_buyerBusy || isLimitedClosed()) return;
   const inp = document.getElementById('buyerIdInput');
   const id = inp.value.trim().split('@')[0];
@@ -2808,6 +2849,7 @@ async function submitBuyerVerify() {
     const data = await res.json();
     if (data.ok && data.url) {
       _buyerUrl = data.url;
+      track('verify', 'ok');
       inp.disabled = true;
       setBuyerMsg('ok', '✅ <b>기존 구매자로 확인되었습니다.</b> 감사합니다!');
       btn.textContent = '예약하러 가기 →';
@@ -2821,6 +2863,7 @@ async function submitBuyerVerify() {
       setBuyerMsg('warn', '시도 횟수가 많습니다. 10분 후 다시 시도해 주세요.');
       btn.textContent = '확인';
     } else {
+      track('verify', 'fail');
       setBuyerMsg('warn', '확인되지 않았습니다. <b>매커포트 주문 시 사용하신 이메일</b>의 아이디인지 확인해 주세요.<br>계속 확인되지 않으면 <b>주문자 성함과 전화번호</b>를 대표 이메일로 보내 주세요. 확인 후 안내드립니다.'
         + '<button onclick="openBuyerInquiry()" style="width:100%;margin-top:10px;padding:11px;border:0;border-radius:10px;background:var(--blue);color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">📧 대표 이메일로 구매자 확인 문의</button>');
       btn.textContent = '확인';
@@ -2867,6 +2910,7 @@ function closeSetsModal() { document.getElementById('setsModal').classList.remov
 function goSetLink(key) {
   const url = SET_LINKS[key];
   if (!url || isLimitedClosed()) return;
+  track('go', key === 'mid' ? 'setmid' : 'setlarge');
   window.open(url, '_blank');
   closeSetsModal();
 }
@@ -3378,7 +3422,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.13';
+const CURRENT_VERSION = 'v3.2.14';
 
 async function checkVersionFromServer() {
   try {

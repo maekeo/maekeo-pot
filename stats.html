@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>매커랩 통계</title>
+<style>
+:root{--bg:#f2f2f7;--card:#fff;--label:#1c1c1e;--label2:#6e6e73;--label3:#aeaeb2;--sep:#e5e5ea;--fill:#f2f2f7;--blue:#007aff;--bar:#007aff;--bar2:#9cc8ff;--red:#ff3b30}
+@media (prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--label:#f2f2f7;--label2:#98989f;--label3:#636366;--sep:#38383a;--fill:#2c2c2e;--blue:#0a84ff;--bar:#0a84ff;--bar2:#1f4f8a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--label);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;line-height:1.5}
+main{max-width:720px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:22px;margin:0 0 2px}
+.sub{font-size:13px;color:var(--label2);margin:0 0 16px}
+.card{background:var(--card);border-radius:14px;padding:16px;margin-bottom:12px}
+h2{font-size:15px;margin:0 0 4px}
+.hint{font-size:12px;color:var(--label2);margin:0 0 12px}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+@media(min-width:560px){.tiles{grid-template-columns:repeat(4,1fr)}}
+.tile{background:var(--card);border-radius:14px;padding:14px}
+.tile .k{font-size:12px;color:var(--label2)}
+.tile .v{font-size:26px;font-weight:800;letter-spacing:-.5px;margin-top:2px;font-variant-numeric:tabular-nums}
+.tile .s{font-size:12px;color:var(--label2)}
+input,select,button{font:inherit;font-size:15px}
+input,select{border:1px solid var(--sep);background:var(--fill);color:var(--label);border-radius:10px;padding:10px 12px}
+button{border:0;border-radius:10px;padding:10px 16px;background:var(--blue);color:#fff;font-weight:600;cursor:pointer}
+button.sec{background:var(--fill);color:var(--blue)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chart{display:flex;align-items:flex-end;gap:2px;height:160px;border-bottom:1px solid var(--sep);position:relative}
+.col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;cursor:default}
+.col .b{background:var(--bar2);border-radius:4px 4px 0 0;min-height:0;position:relative}
+.col .b .a{position:absolute;left:0;right:0;bottom:0;background:var(--bar);border-radius:4px 4px 0 0}
+.col:hover .b{outline:2px solid var(--label3);outline-offset:1px}
+.xlab{display:flex;gap:2px;margin-top:4px}
+.xlab span{flex:1;text-align:center;font-size:11px;color:var(--label2);overflow:visible;white-space:nowrap;width:0}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--label2);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+#tip{position:fixed;pointer-events:none;background:var(--card);color:var(--label);border:1px solid var(--sep);border-radius:10px;padding:8px 10px;font-size:12px;box-shadow:0 6px 20px rgba(0,0,0,.15);display:none;z-index:10;white-space:nowrap}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{padding:8px 4px;border-bottom:1px solid var(--sep);text-align:left}
+th{font-size:12px;color:var(--label2);font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.meter{height:6px;background:var(--fill);border-radius:99px;overflow:hidden;margin-top:4px}
+.meter i{display:block;height:100%;background:var(--bar);border-radius:99px}
+.err{color:var(--red);font-size:13px;margin-top:8px}
+.muted{color:var(--label2);font-size:12px}
+details summary{cursor:pointer;font-size:13px;color:var(--blue);margin-top:10px}
+</style>
+</head>
+<body>
+<main>
+  <h1>매커랩 통계</h1>
+  <p class="sub">익명 사용 통계 · 이름·전화번호·IP는 수집하지 않습니다</p>
+
+  <div id="login" class="card">
+    <h2>관리자 비밀번호</h2>
+    <p class="hint">Netlify 환경변수 STATS_PASSWORD 에 등록한 비밀번호</p>
+    <div class="row">
+      <input id="pw" type="password" placeholder="비밀번호" autocomplete="current-password" style="flex:1;min-width:180px">
+      <button onclick="login()">보기</button>
+    </div>
+    <div id="loginErr" class="err"></div>
+  </div>
+
+  <div id="dash" style="display:none">
+    <div class="row" style="margin-bottom:12px">
+      <select id="days" onchange="load()">
+        <option value="7">최근 7일</option>
+        <option value="14" selected>최근 14일</option>
+        <option value="30">최근 30일</option>
+        <option value="60">최근 60일</option>
+      </select>
+      <button class="sec" onclick="load()">새로고침</button>
+      <span id="range" class="muted"></span>
+    </div>
+
+    <div class="tiles">
+      <div class="tile"><div class="k">방문자</div><div class="v" id="kVisitors">-</div><div class="s">기간 내 고유 기기</div></div>
+      <div class="tile"><div class="k">앱으로 실행</div><div class="v" id="kApp">-</div><div class="s">홈 화면 설치 사용자</div></div>
+      <div class="tile"><div class="k">앱 실행 비율</div><div class="v" id="kAppPct">-</div><div class="s">방문자 중</div></div>
+      <div class="tile"><div class="k">오늘 방문자</div><div class="v" id="kToday">-</div><div class="s" id="kTodayApp"></div></div>
+    </div>
+
+    <div class="card">
+      <h2>일별 방문자</h2>
+      <p class="hint">막대 전체 = 방문자, 진한 부분 = 그중 홈 화면 앱으로 실행</p>
+      <div class="chart" id="chart"></div>
+      <div class="xlab" id="xlab"></div>
+      <div class="legend"><span><i style="background:var(--bar2)"></i>방문자</span><span><i style="background:var(--bar)"></i>앱으로 실행</span></div>
+      <details><summary>표로 보기</summary><table id="dailyTable"></table></details>
+    </div>
+
+    <div class="card">
+      <h2>1주년 이벤트 흐름</h2>
+      <p class="hint">배너를 누른 뒤 실제 예약 페이지로 이동하기까지 (클릭 수)</p>
+      <table id="funnel"></table>
+    </div>
+
+    <div class="card">
+      <h2>예약 · 스토어 클릭</h2>
+      <table id="clicks"></table>
+    </div>
+
+    <div class="card">
+      <h2>많이 쓰는 탭</h2>
+      <p class="hint">세션당 탭별 1회 집계 (첫 화면 분쇄분석AI는 다른 탭에서 돌아올 때만 집계)</p>
+      <table id="tabs"></table>
+    </div>
+
+    <div class="card">
+      <h2>기기</h2>
+      <table id="devices"></table>
+    </div>
+
+    <div class="card">
+      <h2>이 기기 집계 제외</h2>
+      <p class="hint">사장님이 테스트로 여는 방문이 통계에 섞이지 않게 합니다. 같은 브라우저에서 매커랩을 열 때 적용됩니다.</p>
+      <div class="row"><button class="sec" id="optBtn" onclick="toggleOpt()"></button><span class="muted" id="optState"></span></div>
+    </div>
+  </div>
+</main>
+<div id="tip"></div>
+<script>
+let PW = '';
+try { PW = sessionStorage.getItem('maekeo_stats_pw') || ''; } catch (e) {}
+const $ = id => document.getElementById(id);
+const fmt = n => (n || 0).toLocaleString('ko-KR');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function login() {
+  PW = $('pw').value.trim();
+  if (!PW) return;
+  load(true);
+}
+$('pw').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+
+async function load(fromLogin) {
+  $('loginErr').textContent = '';
+  try {
+    const res = await fetch('/.netlify/functions/stats?days=' + $('days').value, { headers: { 'x-stats-pass': PW }, cache: 'no-store' });
+    if (res.status === 401) { showLogin('비밀번호가 맞지 않습니다.'); return; }
+    if (res.status === 503) { showLogin('Netlify에 STATS_PASSWORD 환경변수가 아직 등록되지 않았습니다.'); return; }
+    if (!res.ok) throw new Error(res.status);
+    const data = await res.json();
+    try { sessionStorage.setItem('maekeo_stats_pw', PW); } catch (e) {}
+    $('login').style.display = 'none'; $('dash').style.display = 'block';
+    render(data);
+  } catch (e) {
+    if (fromLogin || $('dash').style.display === 'none') showLogin('불러오지 못했습니다. 잠시 후 다시 시도해 주세요.');
+  }
+}
+function showLogin(msg) {
+  $('dash').style.display = 'none'; $('login').style.display = 'block'; $('loginErr').textContent = msg;
+  try { sessionStorage.removeItem('maekeo_stats_pw'); } catch (e) {}
+}
+
+function rows(el, head, list) {
+  const max = Math.max(1, ...list.map(r => r[1]));
+  $(el).innerHTML = '<tr><th>' + head[0] + '</th><th class="n">' + head[1] + '</th></tr>' +
+    list.map(r => '<tr><td>' + esc(r[0]) + (r[2] ? '<div class="muted">' + esc(r[2]) + '</div>' : '') +
+      '<div class="meter"><i style="width:' + (r[1] / max * 100).toFixed(1) + '%"></i></div></td><td class="n">' + fmt(r[1]) + '</td></tr>').join('');
+}
+
+function render(d) {
+  const c = d.counts || {};
+  const g = k => c[k] || 0;
+  $('range').textContent = d.from + ' ~ ' + d.to;
+  $('kVisitors').textContent = fmt(d.visitors);
+  $('kApp').textContent = fmt(d.appUsers);
+  $('kAppPct').textContent = d.visitors ? Math.round(d.appUsers / d.visitors * 100) + '%' : '-';
+  const today = d.daily[d.daily.length - 1] || {};
+  $('kToday').textContent = fmt(today.visitors);
+  $('kTodayApp').textContent = '앱 실행 ' + fmt(today.appVisitors);
+
+  // 일별 차트
+  const max = Math.max(1, ...d.daily.map(x => x.visitors));
+  $('chart').innerHTML = d.daily.map(x => {
+    const h = x.visitors / max * 100, ah = x.visitors ? x.appVisitors / x.visitors * 100 : 0;
+    return '<div class="col" data-t="' + esc(x.date) + '|' + x.visitors + '|' + x.appVisitors + '|' + x.visits + '">' +
+      '<div class="b" style="height:' + h + '%"><div class="a" style="height:' + ah + '%"></div></div></div>';
+  }).join('');
+  const step = Math.ceil(d.daily.length / 5);
+  $('xlab').innerHTML = d.daily.map((x, i) => '<span>' + (i % step === 0 && d.daily.length - 1 - i >= step / 2 || i === d.daily.length - 1 ? x.date.slice(5).replace('-', '/') : '') + '</span>').join('');
+  $('dailyTable').innerHTML = '<tr><th>날짜</th><th class="n">방문자</th><th class="n">앱 실행</th><th class="n">방문 수</th></tr>' +
+    d.daily.slice().reverse().map(x => '<tr><td>' + x.date + '</td><td class="n">' + fmt(x.visitors) + '</td><td class="n">' + fmt(x.appVisitors) + '</td><td class="n">' + fmt(x.visits) + '</td></tr>').join('');
+
+  rows('funnel', ['단계', '클릭'], [
+    ['① 1주년 배너 클릭', g('banner:event')],
+    ['② 한정판 2컵 매커포트 카드', g('ev:limited')],
+    ['③ 구매자 확인 성공', g('verify:ok'), '실패 ' + fmt(g('verify:fail')) + '회'],
+    ['④ 한정판 예약 페이지 이동', g('go:limited')],
+    ['② 용품세트 카드', g('ev:sets')],
+    ['③ 중형 세트 예약 이동', g('go:setmid')],
+    ['③ 대형 세트 예약 이동', g('go:setlarge')],
+    ['② 원두 할인 → 스토어 이동', g('go:beans')],
+  ]);
+  rows('clicks', ['항목', '클릭'], [
+    ['매커포트 예약 → 2컵', g('reserve:preorder')],
+    ['매커포트 예약 → 1컵', g('reserve:onecup')],
+    ['매커포트 예약 → 가압보일러통', g('reserve:boiler')],
+    ['스토어 열기', g('store:open')],
+    ['스토어 → 원두', g('store:beans')],
+    ['스토어 → 소모품', g('store:parts')],
+    ['안드로이드 새 설치', g('install:android'), '아이폰은 설치 순간을 알 수 없어 집계되지 않음'],
+  ]);
+  rows('tabs', ['탭', '세션'], [
+    ['분쇄분석AI', g('tab:grind')], ['타이머', g('tab:timer')], ['기록', g('tab:history')], ['가이드', g('tab:fix')],
+  ].sort((a, b) => b[1] - a[1]));
+  const dv = d.device || {};
+  rows('devices', ['기기', '방문자'], [
+    ['아이폰·아이패드', dv.ios || 0], ['안드로이드', dv.android || 0], ['PC', dv.pc || 0], ['기타', dv.other || 0],
+  ]);
+}
+
+// 차트 툴팁
+const tip = $('tip');
+$('chart').addEventListener('mousemove', e => {
+  const col = e.target.closest('.col'); if (!col) { tip.style.display = 'none'; return; }
+  const [date, v, a, n] = col.dataset.t.split('|');
+  tip.innerHTML = '<b>' + date + '</b><br>방문자 ' + fmt(+v) + '<br>앱으로 실행 ' + fmt(+a) + '<br>방문 수 ' + fmt(+n);
+  tip.style.display = 'block';
+  tip.style.left = Math.min(e.clientX + 12, innerWidth - tip.offsetWidth - 8) + 'px';
+  tip.style.top = (e.clientY + 12) + 'px';
+});
+$('chart').addEventListener('mouseleave', () => tip.style.display = 'none');
+$('chart').addEventListener('click', e => { const ev = new MouseEvent('mousemove', e); $('chart').dispatchEvent(ev); });
+
+// 이 기기 집계 제외
+function optState() {
+  let off = false; try { off = localStorage.getItem('maekeo_no_track') === '1'; } catch (e) {}
+  $('optBtn').textContent = off ? '다시 집계하기' : '이 기기 집계에서 제외';
+  $('optState').textContent = off ? '현재: 제외됨' : '현재: 집계 중';
+}
+function toggleOpt() {
+  try {
+    if (localStorage.getItem('maekeo_no_track') === '1') localStorage.removeItem('maekeo_no_track');
+    else localStorage.setItem('maekeo_no_track', '1');
+  } catch (e) {}
+  optState();
+}
+optState();
+if (PW) load();
+</script>
+</body>
+</html>

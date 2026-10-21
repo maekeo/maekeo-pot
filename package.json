@@ -1,5 +1,8 @@
 {
   "name": "maekeo-lab",
   "version": "1.0.0",
-  "description": "MAEKEO LAB - 커피 분쇄도 분석 및 타이머"
+  "description": "MAEKEO LAB - 커피 분쇄도 분석 및 타이머",
+  "dependencies": {
+    "@netlify/blobs": "^8.2.0"
+  }
 }
