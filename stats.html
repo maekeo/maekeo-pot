@@ -57,7 +57,7 @@ details summary{cursor:pointer;font-size:13px;color:var(--blue);margin-top:10px}
     <h2>관리자 비밀번호</h2>
     <p class="hint">Netlify 환경변수 STATS_PASSWORD 에 등록한 비밀번호</p>
     <div class="row">
-      <input id="pw" type="password" placeholder="비밀번호" autocomplete="current-password" style="flex:1;min-width:180px">
+      <input id="pw" type="password" placeholder="비밀번호" autocomplete="off" autocapitalize="off" spellcheck="false" style="flex:1;min-width:180px">
       <button onclick="login()">보기</button>
     </div>
     <div id="loginErr" class="err"></div>
@@ -138,7 +138,7 @@ $('pw').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
 async function load(fromLogin) {
   $('loginErr').textContent = '';
   try {
-    const res = await fetch('/.netlify/functions/stats?days=' + $('days').value, { headers: { 'x-stats-pass': PW }, cache: 'no-store' });
+    const res = await fetch('/.netlify/functions/stats?days=' + $('days').value, { headers: { 'x-stats-pass': encodeURIComponent(PW) }, cache: 'no-store' });
     if (res.status === 401) { showLogin('비밀번호가 맞지 않습니다.'); return; }
     if (res.status === 503) { showLogin('Netlify에 STATS_PASSWORD 환경변수가 아직 등록되지 않았습니다.'); return; }
     if (!res.ok) throw new Error(res.status);

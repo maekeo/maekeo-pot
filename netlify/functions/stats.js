@@ -15,9 +15,12 @@ function kstDay(offset) {
 }
 
 exports.handler = async (event) => {
-  const pass = process.env.STATS_PASSWORD;
+  // 앞뒤 공백·줄바꿈이 섞여 등록되는 경우가 있어 양쪽 모두 정리 후 비교
+  const pass = (process.env.STATS_PASSWORD || '').normalize('NFC').trim();
   if (!pass) return { statusCode: 503, headers: H, body: JSON.stringify({ error: 'not_configured' }) };
-  if (!same(event.headers['x-stats-pass'] || '', pass)) {
+  let given = event.headers['x-stats-pass'] || '';
+  try { given = decodeURIComponent(given); } catch (e) {}
+  if (!same(given.normalize('NFC').trim(), pass)) {
     await new Promise(r => setTimeout(r, 600));
     return { statusCode: 401, headers: H, body: JSON.stringify({ error: 'unauthorized' }) };
   }
