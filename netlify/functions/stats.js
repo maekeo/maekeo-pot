@@ -42,9 +42,7 @@ exports.handler = async (event) => {
   try { given = decodeURIComponent(given); } catch (e) {}
   if (!same(toKeys(given), pass)) {
     await new Promise(r => setTimeout(r, 600));
-    // 임시 진단: 글자 수만 알려줌 (내용은 노출하지 않음)
-    const g = toKeys(given);
-    return { statusCode: 401, headers: H, body: JSON.stringify({ error: 'unauthorized', diag: { given: g.length, set: pass.length, givenAscii: /^[\x21-\x7e]*$/.test(g), setAscii: /^[\x21-\x7e]*$/.test(pass), deploy: process.env.CONTEXT || '' } }) };
+    return { statusCode: 401, headers: H, body: JSON.stringify({ error: 'unauthorized' }) };
   }
 
   const days = Math.min(Math.max(parseInt((event.queryStringParameters || {}).days, 10) || 14, 1), 60);
