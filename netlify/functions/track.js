@@ -14,6 +14,7 @@ const RULES = {
   reserve: /^(preorder|onecup|boiler)$/,
   store:   /^(open|beans|parts)$/,
   install: /^android$/,
+  guide:   /^[ol]-[a-z0-9]{1,8}$/,  // 가이드: o-항목 펼침 / l-링크·버튼 클릭 (문구 해시)
 };
 const DEVICES = /^(ios|android|pc|other)$/;
 const MODES = /^(app|web)$/;

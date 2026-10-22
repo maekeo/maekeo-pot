@@ -125,6 +125,18 @@ details summary{cursor:pointer;font-size:13px;color:var(--blue);margin-top:10px}
     </div>
 
     <div class="card">
+      <h2>가이드 · 많이 펼쳐 본 항목</h2>
+      <p class="hint">세션당 항목별 1회 집계. 고객이 어떤 내용을 가장 궁금해하는지 보여 줍니다.</p>
+      <table id="guideOpen"></table>
+    </div>
+
+    <div class="card">
+      <h2>가이드 · 많이 누른 링크·버튼</h2>
+      <p class="hint">영상 보기, 구매하기, 문의 등 가이드 안의 링크 클릭 수</p>
+      <table id="guideLink"></table>
+    </div>
+
+    <div class="card">
       <h2>많이 쓰는 탭</h2>
       <p class="hint">세션당 탭별 1회 집계 (첫 화면 타이머는 다른 탭에서 돌아올 때만 집계)</p>
       <table id="tabs"></table>
@@ -244,10 +256,46 @@ function render(d) {
   else $('sources').innerHTML = '<tr><td class="muted">아직 집계된 방문이 없습니다.</td></tr>';
   renderLinks(d.links || [], d.source || {});
 
+  renderGuide(c);
+
   const dv = d.device || {};
   rows('devices', ['기기', '방문자'], [
     ['아이폰·아이패드', dv.ios || 0], ['안드로이드', dv.android || 0], ['PC', dv.pc || 0], ['기타', dv.other || 0],
   ]);
+}
+
+// 가이드 통계: 앱(index.html)의 가이드 문구로 키 → 이름을 되찾음
+function guideKey(text) {
+  const str = String(text || '').replace(/\s+/g, ' ').trim();
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+  return h.toString(36);
+}
+let _guideNames = null;
+async function guideNames() {
+  if (_guideNames) return _guideNames;
+  const names = {};
+  try {
+    const html = await fetch('/index.html', { cache: 'no-store' }).then(r => r.text());
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const sec = doc.getElementById('fixSection');
+    sec.querySelectorAll('button').forEach(b => {
+      const label = b.textContent.replace(/\s+/g, ' ').trim();
+      if ((b.getAttribute('onclick') || '').includes('toggleFixCard')) names['o-' + guideKey(b.textContent)] = label;
+      else names['l-' + guideKey(b.textContent)] = label;
+    });
+    sec.querySelectorAll('a[href]').forEach(a => { names['l-' + guideKey(a.textContent)] = a.textContent.replace(/\s+/g, ' ').trim(); });
+  } catch (e) {}
+  return (_guideNames = names);
+}
+async function renderGuide(c) {
+  const names = await guideNames();
+  const pick = pre => Object.entries(c).filter(([k]) => k.startsWith('guide:' + pre))
+    .map(([k, v]) => { const key = k.slice(6); const nm = names[key]; return [nm ? (nm.length > 40 ? nm.slice(0, 40) + '…' : nm) : '(바뀌었거나 삭제된 항목)', v]; })
+    .sort((a, b) => b[1] - a[1]).slice(0, 15);
+  const o = pick('o-'), l = pick('l-');
+  if (o.length) rows('guideOpen', ['항목', '열람'], o); else $('guideOpen').innerHTML = '<tr><td class="muted">아직 집계된 열람이 없습니다.</td></tr>';
+  if (l.length) rows('guideLink', ['링크·버튼', '클릭'], l); else $('guideLink').innerHTML = '<tr><td class="muted">아직 집계된 클릭이 없습니다.</td></tr>';
 }
 
 // 전용 링크

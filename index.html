@@ -1334,7 +1334,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.19</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.20</div>
 
 </div><!-- /fixSection -->
 
@@ -2980,6 +2980,11 @@ function detectSource() {
 }
 window.addEventListener('load', () => track('visit', detectSource(), true));
 window.addEventListener('appinstalled', () => track('install', 'android'));
+document.addEventListener('click', (e) => {
+  const el = e.target.closest && e.target.closest('#fixSection a[href], #fixSection button');
+  if (!el || (el.getAttribute('onclick') || '').includes('toggleFixCard')) return;
+  track('guide', 'l-' + guideKey(el.textContent));
+}, true);
 
 // ═══ TOAST ═══
 function toast(msg) {
@@ -3388,10 +3393,18 @@ function updatePreorderCountdown() {
 
 
 // ═══ 문제해결 아코디언 ═══
+// 가이드 통계용 짧은 키 (문구 → FNV-1a 해시). stats.html이 같은 방식으로 이름을 되찾음
+function guideKey(text) {
+  const str = String(text || '').replace(/\s+/g, ' ').trim();
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+  return h.toString(36);
+}
 function toggleFixCard(btn) {
   const content = btn.nextElementSibling;
   const chevron = btn.querySelector('.fix-chevron');
   const isOpen = content.style.display === 'block';
+  if (!isOpen) track('guide', 'o-' + guideKey(btn.textContent), true);
   content.style.display = isOpen ? 'none' : 'block';
   chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
 }
@@ -3684,7 +3697,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.19';
+const CURRENT_VERSION = 'v3.2.20';
 
 async function checkVersionFromServer() {
   try {
