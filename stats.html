@@ -40,7 +40,7 @@ button.sec{background:var(--fill);color:var(--blue)}
 table{width:100%;border-collapse:collapse;font-size:14px}
 td,th{padding:8px 4px;border-bottom:1px solid var(--sep);text-align:left}
 th{font-size:12px;color:var(--label2);font-weight:600}
-td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;padding-left:10px}
 .meter{height:6px;background:var(--fill);border-radius:99px;overflow:hidden;margin-top:4px}
 .meter i{display:block;height:100%;background:var(--bar);border-radius:99px}
 .err{color:var(--red);font-size:13px;margin-top:8px}
@@ -80,6 +80,28 @@ details summary{cursor:pointer;font-size:13px;color:var(--blue);margin-top:10px}
       <div class="tile"><div class="k">앱으로 실행</div><div class="v" id="kApp">-</div><div class="s">홈 화면 설치 사용자</div></div>
       <div class="tile"><div class="k">앱 실행 비율</div><div class="v" id="kAppPct">-</div><div class="s">방문자 중</div></div>
       <div class="tile"><div class="k">오늘 방문자</div><div class="v" id="kToday">-</div><div class="s" id="kTodayApp"></div></div>
+    </div>
+
+    <div class="card">
+      <h2>유입 경로</h2>
+      <p class="hint">방문자(고유 기기) 기준. 영상·게시글별로 보려면 아래에서 전용 링크를 만들어 쓰세요.</p>
+      <table id="sources"></table>
+    </div>
+
+    <div class="card">
+      <h2>전용 링크 만들기</h2>
+      <p class="hint">유튜브 영상 설명란·고정 댓글, 카페 게시글 등에 이 링크를 넣으면 어디서 들어왔는지 구분됩니다.</p>
+      <div class="row" style="margin-bottom:8px">
+        <select id="linkType">
+          <option>유튜브 영상</option><option>유튜브 쇼츠</option><option>유튜브 커뮤니티</option>
+          <option>네이버 카페</option><option>블로그</option><option>인스타그램</option>
+          <option>카카오톡</option><option>스토어</option><option>제품 동봉 QR</option><option>기타</option>
+        </select>
+        <input id="linkLabel" placeholder="예: 1주년 한정판 공개 영상" maxlength="40" style="flex:1;min-width:180px">
+        <button onclick="createLink()">만들기</button>
+      </div>
+      <div id="linkMsg" class="muted"></div>
+      <table id="links" style="margin-top:8px"></table>
     </div>
 
     <div class="card">
@@ -207,10 +229,65 @@ function render(d) {
   rows('tabs', ['탭', '세션'], [
     ['분쇄분석AI', g('tab:grind')], ['타이머', g('tab:timer')], ['기록', g('tab:history')], ['가이드', g('tab:fix')],
   ].sort((a, b) => b[1] - a[1]));
+  // 유입 경로
+  const SRC = { 'direct': '직접 접속 (주소 입력·즐겨찾기 등)', 'app': '홈 화면 앱으로 실행', '-': '구분 전 (경로 집계 이전 방문)',
+    'r-youtube': '유튜브 (영상 구분 없음)', 'r-naver-cafe': '네이버 카페', 'r-naver-blog': '네이버 블로그', 'r-naver': '네이버 (검색·앱)',
+    'r-smartstore': '스마트스토어', 'r-maekeo-store': '매커 스토어', 'r-instagram': '인스타그램', 'r-kakao': '카카오톡',
+    'r-facebook': '페이스북', 'r-google': '구글', 'r-daum': '다음', 'r-wadiz': '와디즈', 'r-other': '기타 사이트' };
+  const linkMap = {}; (d.links || []).forEach(l => linkMap['c-' + l.code] = l);
+  const src = Object.entries(d.source || {}).map(([k, v]) => {
+    if (linkMap[k]) return ['🔗 ' + linkMap[k].label, v, linkMap[k].type];
+    if (k.startsWith('c-')) return ['🔗 삭제된 링크 (' + k.slice(2) + ')', v];
+    return [SRC[k] || k, v];
+  }).sort((a, b) => b[1] - a[1]);
+  if (src.length) rows('sources', ['경로', '방문자'], src);
+  else $('sources').innerHTML = '<tr><td class="muted">아직 집계된 방문이 없습니다.</td></tr>';
+  renderLinks(d.links || [], d.source || {});
+
   const dv = d.device || {};
   rows('devices', ['기기', '방문자'], [
     ['아이폰·아이패드', dv.ios || 0], ['안드로이드', dv.android || 0], ['PC', dv.pc || 0], ['기타', dv.other || 0],
   ]);
+}
+
+// 전용 링크
+const SITE = location.origin;
+function renderLinks(links, source) {
+  if (!links.length) { $('links').innerHTML = '<tr><td class="muted">아직 만든 링크가 없습니다.</td></tr>'; return; }
+  $('links').innerHTML = '<tr><th>링크</th><th class="n">방문자</th></tr>' + links.map(l => {
+    const url = SITE + '/?s=' + l.code;
+    return '<tr><td><b>' + esc(l.label) + '</b> <span class="muted">' + esc(l.type || '') + ' · ' + esc(l.created || '') + '</span>' +
+      '<div class="row" style="margin-top:4px"><code style="font-size:12px;word-break:break-all">' + esc(url) + '</code></div>' +
+      '<div class="row" style="margin-top:6px"><button class="sec" style="padding:6px 10px;font-size:13px" onclick="copyLink(\'' + url + '\')">복사</button>' +
+      '<button class="sec" style="padding:6px 10px;font-size:13px;color:var(--red)" onclick="deleteLink(\'' + l.code + '\')">삭제</button></div></td>' +
+      '<td class="n">' + fmt(source['c-' + l.code] || 0) + '</td></tr>';
+  }).join('');
+}
+async function api(body) {
+  const res = await fetch('/.netlify/functions/stats', { method: 'POST', headers: { 'x-stats-pass': encodeURIComponent(PW), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  if (!res.ok) throw new Error(res.status);
+  return res.json();
+}
+async function createLink() {
+  const label = $('linkLabel').value.trim();
+  if (!label) { $('linkMsg').textContent = '링크 이름을 입력해 주세요.'; return; }
+  try {
+    const r = await api({ action: 'createLink', label, type: $('linkType').value });
+    const url = SITE + '/?s=' + r.code;
+    $('linkLabel').value = '';
+    $('linkMsg').innerHTML = '✅ 만들었습니다: <b>' + esc(url) + '</b>';
+    copyLink(url);
+    load();
+  } catch (e) { $('linkMsg').textContent = '만들지 못했습니다. 다시 시도해 주세요.'; }
+}
+async function deleteLink(code) {
+  if (!confirm('이 링크를 목록에서 삭제할까요? (이미 쓰인 링크로 들어온 방문은 "삭제된 링크"로 남습니다)')) return;
+  try { await api({ action: 'deleteLink', code }); load(); } catch (e) { alert('삭제하지 못했습니다.'); }
+}
+function copyLink(url) {
+  (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(
+    () => { $('linkMsg').innerHTML = '📋 복사했습니다: <b>' + esc(url) + '</b>'; },
+    () => { prompt('아래 링크를 복사하세요', url); });
 }
 
 // 차트 툴팁

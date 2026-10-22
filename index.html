@@ -1271,7 +1271,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.15</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.16</div>
 
 </div><!-- /fixSection -->
 
@@ -2710,7 +2710,7 @@ function track(t, d, once) {
   try {
     if (_trk.off || location.protocol === 'file:') return;
     if (once) {
-      const k = 'maekeo_trk_' + t + '_' + (d || '-');
+      const k = 'maekeo_trk_' + t + (t === 'visit' ? '' : '_' + (d || '-'));
       if (sessionStorage.getItem(k)) return;
       sessionStorage.setItem(k, '1');
     }
@@ -2721,7 +2721,45 @@ function track(t, d, once) {
     }
   } catch (e) {}
 }
-window.addEventListener('load', () => track('visit', '-', true));
+// 유입 경로: 전용 링크(?s=코드) > 이전 사이트(referrer) > 앱 내 브라우저 > 홈 화면 앱 > 직접
+function detectSource() {
+  try {
+    const params = new URLSearchParams(location.search);
+    const code = (params.get('s') || '').toLowerCase();
+    if (/^[a-z0-9]{3,12}$/.test(code)) {
+      params.delete('s');
+      const q = params.toString();
+      history.replaceState(null, '', location.pathname + (q ? '?' + q : '') + location.hash);
+      return 'c-' + code;
+    }
+    const ref = document.referrer || '';
+    let host = '';
+    try { host = ref ? new URL(ref).hostname : ''; } catch (e) {}
+    if (ref.startsWith('android-app://com.google.android.youtube')) return 'r-youtube';
+    if (host && host !== location.hostname) {
+      if (/(^|\.)(youtube\.com|youtu\.be)$/.test(host)) return 'r-youtube';
+      if (/smartstore\.naver\.com$/.test(host)) return 'r-smartstore';
+      if (/cafe\.naver\.com$/.test(host)) return 'r-naver-cafe';
+      if (/blog\.naver\.com$/.test(host)) return 'r-naver-blog';
+      if (/naver\.com$/.test(host)) return 'r-naver';
+      if (/maekeo\.kr$|godomall\.com$/.test(host)) return 'r-maekeo-store';
+      if (/instagram\.com$/.test(host)) return 'r-instagram';
+      if (/kakao\.com$|kakao\.co\.kr$/.test(host)) return 'r-kakao';
+      if (/facebook\.com$/.test(host)) return 'r-facebook';
+      if (/google\./.test(host)) return 'r-google';
+      if (/daum\.net$/.test(host)) return 'r-daum';
+      if (/wadiz\.kr$/.test(host)) return 'r-wadiz';
+      return 'r-other';
+    }
+    const ua = navigator.userAgent || '';
+    if (/KAKAOTALK/i.test(ua)) return 'r-kakao';
+    if (/Instagram/i.test(ua)) return 'r-instagram';
+    if (/FBAN|FBAV/i.test(ua)) return 'r-facebook';
+    if (/NAVER\(inapp/i.test(ua)) return 'r-naver';
+    return _trk.mode === 'app' ? 'app' : 'direct';
+  } catch (e) { return 'direct'; }
+}
+window.addEventListener('load', () => track('visit', detectSource(), true));
 window.addEventListener('appinstalled', () => track('install', 'android'));
 
 // ═══ TOAST ═══
@@ -3422,7 +3460,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.15';
+const CURRENT_VERSION = 'v3.2.16';
 
 async function checkVersionFromServer() {
   try {

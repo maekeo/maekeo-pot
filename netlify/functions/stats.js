@@ -45,14 +45,34 @@ exports.handler = async (event) => {
     return { statusCode: 401, headers: H, body: JSON.stringify({ error: 'unauthorized' }) };
   }
 
-  const days = Math.min(Math.max(parseInt((event.queryStringParameters || {}).days, 10) || 14, 1), 60);
   connectLambda(event);
   const store = getStore('stats');
+
+  // 전용 유입 링크 만들기 / 삭제
+  if (event.httpMethod === 'POST') {
+    let b = {};
+    try { b = JSON.parse(event.body || '{}'); } catch (e) {}
+    if (b.action === 'createLink') {
+      const label = String(b.label || '').trim().slice(0, 40);
+      const type = String(b.type || '기타').trim().slice(0, 12);
+      if (!label) return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'label' }) };
+      const code = crypto.randomBytes(4).toString('hex').slice(0, 6);
+      await store.setJSON('links/' + code, { label, type, created: kstDay(0) });
+      return { statusCode: 200, headers: H, body: JSON.stringify({ code }) };
+    }
+    if (b.action === 'deleteLink' && /^[a-z0-9]{3,12}$/.test(String(b.code || ''))) {
+      await store.delete('links/' + b.code);
+      return { statusCode: 200, headers: H, body: '{}' };
+    }
+    return { statusCode: 400, headers: H, body: '{}' };
+  }
+
+  const days = Math.min(Math.max(parseInt((event.queryStringParameters || {}).days, 10) || 14, 1), 60);
   const dates = Array.from({ length: days }, (_, i) => kstDay(i)).reverse();
 
   const lists = await Promise.all(dates.map(day => store.list({ prefix: day + '/' }).then(r => r.blobs.map(b => b.key))));
 
-  const all = { visitors: new Set(), appUsers: new Set(), device: {}, counts: {} };
+  const all = { visitors: new Set(), appUsers: new Set(), device: {}, counts: {}, source: {} };
   const daily = dates.map((day, i) => {
     const v = new Set(), app = new Set();
     let visits = 0;
@@ -63,6 +83,8 @@ exports.handler = async (event) => {
         if (mode === 'app') { app.add(aid); all.appUsers.add(aid); }
         all.device[device] = all.device[device] || new Set();
         all.device[device].add(aid);
+        all.source[detail] = all.source[detail] || new Set();
+        all.source[detail].add(aid);
       } else {
         const k = type + ':' + detail;
         all.counts[k] = (all.counts[k] || 0) + 1;
@@ -73,13 +95,22 @@ exports.handler = async (event) => {
 
   const device = {};
   for (const [k, s] of Object.entries(all.device)) device[k] = s.size;
+  const source = {};
+  for (const [k, s] of Object.entries(all.source)) source[k] = s.size;
+
+  // 전용 링크 목록
+  const linkKeys = (await store.list({ prefix: 'links/' })).blobs.map(b => b.key);
+  const links = (await Promise.all(linkKeys.map(async k => {
+    const v = await store.get(k, { type: 'json' });
+    return v ? { code: k.slice(6), ...v } : null;
+  }))).filter(Boolean).sort((a, b) => (b.created || '').localeCompare(a.created || ''));
 
   return {
     statusCode: 200, headers: H,
     body: JSON.stringify({
       days, from: dates[0], to: dates[dates.length - 1],
       visitors: all.visitors.size, appUsers: all.appUsers.size,
-      device, counts: all.counts, daily,
+      device, source, links, counts: all.counts, daily,
     }),
   };
 };
