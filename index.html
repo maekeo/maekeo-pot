@@ -293,8 +293,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   </div>
   <div class="seg-wrap" id="segWrap">
     <div class="segmented">
-      <button class="seg-btn active" onclick="switchTab('grind',this)" id="seg0">분쇄분석AI</button>
-      <button class="seg-btn" onclick="switchTab('timer',this)" id="seg1">타이머</button>
+      <button class="seg-btn" onclick="switchTab('grind',this)" id="seg0">분쇄분석AI</button>
+      <button class="seg-btn active" onclick="switchTab('timer',this)" id="seg1">타이머</button>
       <button class="seg-btn" onclick="switchTab('history',this)" id="seg2">기록</button>
       <button class="seg-btn" onclick="switchTab('fix',this)" id="seg3">가이드</button>
     </div>
@@ -302,7 +302,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 </div>
 
 <!-- ═══ 분쇄분석AI ═══ -->
-<div class="section active" id="grindSection">
+<div class="section" id="grindSection">
   <div class="gap"></div>
 
   <!-- 카메라 -->
@@ -452,7 +452,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 </div>
 
 <!-- ═══ 타이머 ═══ -->
-<div class="section" id="timerSection">
+<div class="section active" id="timerSection">
   <div class="gap-sm"></div>
 
   <!-- 화면 켜기 경고 -->
@@ -1271,7 +1271,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.14</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.15</div>
 
 </div><!-- /fixSection -->
 
@@ -3422,7 +3422,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.14';
+const CURRENT_VERSION = 'v3.2.15';
 
 async function checkVersionFromServer() {
   try {
@@ -3532,9 +3532,8 @@ function applyLang() {
 
 
   // Tab bar
-  document.querySelectorAll('.tab-lbl')[0].textContent = t('seg0');
-  document.querySelectorAll('.tab-lbl')[1].textContent = t('seg1');
-  document.querySelectorAll('.tab-lbl')[2].textContent = t('seg2');
+  // (하단 탭바가 없을 수 있으므로 있는 것만 반영)
+  document.querySelectorAll('.tab-lbl').forEach((el, i) => { if (i < 3) el.textContent = t('seg' + i); });
 
   // Grind section
   document.querySelector('.cam-ph-title').textContent = t('camTitle');
@@ -3617,7 +3616,7 @@ function applyLang() {
 }
 
 initTimer();
-applyLang();
+try { applyLang(); } catch (e) { console.warn('applyLang', e); }
 // 저장된 컵 모드 UI 반영
 if (cupMode === 2) setCupMode(2);
 // 앱 열릴 때마다 버전 체크
