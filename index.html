@@ -1334,7 +1334,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.18</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.19</div>
 
 </div><!-- /fixSection -->
 
@@ -2561,7 +2561,17 @@ function updateTip(elapsed) {
 }
 
 // 10초 전 음성 예고
-let preWarnFired = false, preDangerFired = false;
+let preWarnFired = false, preDangerFired = false, minuteSpoken = 0;
+function minuteMsg(m) { return currentLang === 'en' ? m + (m === 1 ? ' minute' : ' minutes') + ' passed.' : m + '분이 지났습니다.'; }
+// 1분마다 경과 안내 (불 줄이기와 같은 시각이면 함께 안내, 종료 시각은 종료 안내만)
+function checkMinuteVoice(elapsed) {
+  const m = Math.floor(elapsed / 60);
+  if (m < 1 || m <= minuteSpoken || elapsed >= STOP_AT) return;
+  minuteSpoken = m;
+  if (elapsed - m * 60 > 2) return;            // 백그라운드 복귀 등으로 지난 안내는 생략
+  if (m * 60 === WARN_AT) return;              // 불 줄이기 안내에서 함께 말함
+  speak(minuteMsg(m));
+}
 function preAlertOn() { try { return localStorage.getItem('maekeo_prealert') !== '0'; } catch (e) { return true; } }
 function togglePreAlert() {
   const on = !preAlertOn();
@@ -2709,6 +2719,7 @@ function rafLoop() { updateTimerUI(); timerRAF = requestAnimationFrame(rafLoop);
 function checkAlarms() {
   const elapsed = getElapsed();
   checkPreAlerts(elapsed);
+  checkMinuteVoice(elapsed);
 
   // 종료 (최우선) — STOP_AT 도달 시 이전 단계 알람은 소리 없이 소비하고 종료 안내만
   if (elapsed >= STOP_AT) {
@@ -2748,7 +2759,8 @@ function checkAlarms() {
   if (elapsed >= WARN_AT && !warnFired) {
     warnFired = true; playBeep('warn'); flash('warn');
     document.getElementById('alertWarn').classList.add('show');
-    toast(t('warnTitle')); speak(t('voiceReduce'));
+    toast(t('warnTitle'));
+    speak((WARN_AT % 60 === 0 ? minuteMsg(WARN_AT / 60) + ' ' : '') + t('voiceReduce'));
   }
 }
 
@@ -2885,7 +2897,7 @@ function resetTimer() {
   clearInterval(timerInterval); timerInterval = null;
   isRunning=false; startedAt=null; accElapsed=0;
   warnFired=false; dangerFired=false; timerEnded=false;
-  preWarnFired=false; preDangerFired=false; _lastBrewNo=0;
+  preWarnFired=false; preDangerFired=false; minuteSpoken=0; _lastBrewNo=0;
   document.getElementById('startBtn').textContent = t('timerStart');
   document.getElementById('stopBtn').style.display = 'none';
   document.getElementById('alertWarn').classList.remove('show');
@@ -3672,7 +3684,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.18';
+const CURRENT_VERSION = 'v3.2.19';
 
 async function checkVersionFromServer() {
   try {
