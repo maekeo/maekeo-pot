@@ -108,6 +108,47 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;-webkit-font-smoothin
 
 /* TIMER */
 .timer-card{background:var(--bg2);border-radius:12px;overflow:hidden}
+/* ═══ 프리미엄 타이머 (에스프레소 다크 카드) ═══ */
+.tp-card{position:relative;border-radius:24px;padding:16px 16px 14px;color:#F5EDE3;
+  background:radial-gradient(130% 85% at 50% 0%,#3b2c21 0%,#211814 52%,#140f0c 100%);
+  box-shadow:0 12px 32px rgba(45,28,16,.28),inset 0 0 0 1px rgba(255,236,210,.07);overflow:hidden}
+.tp-seg{display:flex;gap:4px;background:rgba(255,255,255,.07);border-radius:14px;padding:4px}
+.tp-seg button{flex:1;border:0;background:transparent;color:rgba(245,237,227,.62);font-family:inherit;font-size:14px;font-weight:700;
+  padding:9px 6px;border-radius:10px;cursor:pointer;transition:background .2s,color .2s;letter-spacing:-.2px}
+.tp-seg button span{font-weight:500;font-size:12px;opacity:.85;margin-left:4px}
+.tp-seg button.on{background:linear-gradient(180deg,#EACD88,#C9A24B);color:#1d1510;box-shadow:0 2px 10px rgba(201,162,75,.35)}
+.tp-lock{display:none;padding:8px 0 0;font-size:12px;color:rgba(245,237,227,.5);text-align:center}
+.tp-hero{display:flex;flex-direction:column;align-items:center;padding:18px 0 6px}
+.tp-ring{position:relative;width:248px;height:248px;margin-bottom:14px}
+.tp-ring svg{width:248px;height:248px;transform:rotate(-90deg);overflow:visible}
+.tp-ring .ring-bg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:7}
+.tp-ring .ring-fill{fill:none;stroke-width:7;stroke-linecap:round;stroke-dasharray:653;stroke-dashoffset:653;
+  transition:stroke-dashoffset 1s linear,stroke .35s ease;filter:drop-shadow(0 0 6px rgba(226,190,110,.35))}
+.tp-ring .tick{stroke:rgba(245,237,227,.16);stroke-width:1.2}
+.tp-ring .tick.major{stroke:rgba(245,237,227,.38);stroke-width:1.6}
+.tp-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.tp-center .timer-digits{font-size:62px;font-weight:200;color:#FFF7EC;letter-spacing:-2.5px;line-height:1;font-variant-numeric:tabular-nums}
+.tp-center .timer-sub{font-size:13px;color:rgba(245,237,227,.5);margin-top:6px;letter-spacing:.5px}
+.tp-hero .stage-name{color:#FFF7EC;font-size:20px}
+.tp-hero .stage-desc{color:rgba(245,237,227,.66);font-size:14px}
+.tp-rec{margin-top:8px;font-size:12px;font-weight:600;color:#E3C27A;letter-spacing:-.1px}
+.tp-hero .prog-dot{background:rgba(255,255,255,.14)}
+.tp-hero .prog-dot.active{background:#E3C27A}
+.tp-hero .prog-dot.done{background:rgba(245,237,227,.4)}
+.tp-legend{display:flex;justify-content:center;gap:14px;margin-top:12px;font-size:12px;color:rgba(245,237,227,.6)}
+.tp-legend i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:1px}
+.tp-btns{display:flex;gap:8px;margin-top:14px}
+.tp-btns .tp-start{flex:2;height:54px;border:0;border-radius:16px;font-family:inherit;font-size:17px;font-weight:700;letter-spacing:-.3px;cursor:pointer;
+  background:linear-gradient(180deg,#EED193,#C9A24B);color:#1d1510;box-shadow:0 6px 16px rgba(201,162,75,.3);display:flex;align-items:center;justify-content:center}
+.tp-btns .tp-start:active{transform:scale(.98)}
+.tp-btns .tp-stop{flex:1;height:54px;border:1px solid rgba(255,120,110,.5);border-radius:16px;background:rgba(255,59,48,.1);color:#FF8A80;
+  font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;align-items:center;justify-content:center}
+.tp-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)}
+.tp-foot .screen-warn-text{font-size:12px;color:rgba(245,237,227,.55);line-height:1.4}
+.tp-foot .screen-warn-text strong{color:#E3C27A;font-weight:600}
+.tp-reset{border:0;background:none;color:rgba(245,237,227,.55);font-family:inherit;font-size:13px;cursor:pointer;padding:6px 4px;white-space:nowrap;text-decoration:underline;text-underline-offset:3px}
+@media (prefers-color-scheme:dark){.tp-card{box-shadow:inset 0 0 0 1px rgba(255,236,210,.09)}}
+
 .timer-hero{display:flex;flex-direction:column;align-items:center;padding:28px 20px 20px}
 .ring-wrap{position:relative;display:inline-flex;align-items:center;justify-content:center;margin-bottom:22px}
 .timer-svg{width:196px;height:196px;transform:rotate(-90deg)}
@@ -455,12 +496,6 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 <div class="section active" id="timerSection">
   <div class="gap-sm"></div>
 
-  <!-- 화면 켜기 경고 -->
-  <div class="screen-warn">
-    <span style="font-size:16px">⚠️</span>
-    <span class="screen-warn-text"><strong>화면을 끄지 마세요.</strong> 화면이 꺼지면 알람이 울리지 않을 수 있습니다.</span>
-  </div>
-
   <!-- 알람 배너 -->
   <div class="alert warn" id="alertWarn">
     <div class="alert-title">불을 줄이세요 — 압력 안정화</div>
@@ -468,50 +503,54 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   </div>
   <div class="alert danger" id="alertDanger">
     <div class="alert-title">추출 시간 초과 — 과추출 주의</div>
-    <div class="alert-body">6분을 넘었습니다. 고압 추출이 길어지면 크레마가 무너지고 쓴맛이 강해집니다. 다음엔 초반 불을 더 강하게 올리세요.</div>
+    <div class="alert-body">권장 시간을 넘었습니다. 고압 추출이 길어지면 크레마가 무너지고 쓴맛이 강해집니다.</div>
   </div>
 
-  <!-- 타이머 카드 -->
-  <div class="group" style="margin-top:6px">
-    <div class="timer-card">
-      <!-- 컵수 선택 -->
-      <div style="display:flex;gap:8px;padding:16px 16px 0">
-        <button id="cup1Btn" onclick="setCupMode(1)" style="flex:1;padding:10px;border:1.5px solid var(--blue);border-radius:12px;background:var(--blue);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">☕ 1컵 <span style="font-weight:400;font-size:12px">3분 전후</span></button>
-        <button id="cup2Btn" onclick="setCupMode(2)" style="flex:1;padding:10px;border:1.5px solid var(--sep);border-radius:12px;background:transparent;color:var(--label2);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">☕☕ 2컵 <span style="font-weight:400;font-size:12px">4분 전후</span></button>
+  <!-- 타이머 카드 (프리미엄) -->
+  <div class="group" style="margin-top:6px;padding:0 16px">
+    <div class="tp-card">
+      <div class="tp-seg">
+        <button id="cup1Btn" class="on" onclick="setCupMode(1)">1컵<span>3분 전후</span></button>
+        <button id="cup2Btn" onclick="setCupMode(2)">2컵<span>4분 전후</span></button>
       </div>
-      <div id="cupLockNote" style="display:none;padding:6px 16px 0;font-size:12px;color:var(--label3);text-align:center">추출 중에는 컵 수를 변경할 수 없습니다 · 초기화 후 변경 가능</div>
-      <div class="timer-hero">
-        <div class="ring-wrap">
-          <svg class="timer-svg" viewBox="0 0 196 196">
+      <div id="cupLockNote" class="tp-lock">추출 중에는 컵 수를 변경할 수 없습니다 · 초기화 후 변경 가능</div>
+      <div class="tp-hero">
+        <div class="tp-ring">
+          <svg viewBox="0 0 248 248">
             <defs>
-              <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#007AFF"/>
-                <stop offset="100%" stop-color="#5AC8FA"/>
+              <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#F3DB9E"/>
+                <stop offset="55%" stop-color="#D4AA55"/>
+                <stop offset="100%" stop-color="#B9773C"/>
               </linearGradient>
             </defs>
-            <circle class="ring-bg" cx="98" cy="98" r="85"/>
-            <circle class="ring-fill" id="ringFill" cx="98" cy="98" r="85"/>
+            <g id="ringTicks"></g>
+            <circle class="ring-bg" cx="124" cy="124" r="104"/>
+            <circle class="ring-fill" id="ringFill" cx="124" cy="124" r="104" style="stroke:url(#rg)"/>
+            <g id="ringMarks"></g>
           </svg>
-          <div class="timer-center">
+          <div class="tp-center">
             <div class="timer-digits" id="timerDisplay">0:00</div>
-            <div class="timer-sub" id="timerSub">/ 6:00</div>
+            <div class="timer-sub" id="timerSub">/ 4:00</div>
           </div>
         </div>
         <div class="stage-name" id="stageName">시작 준비</div>
         <div class="stage-desc" id="stageDesc">버튼을 눌러 추출을 시작하세요</div>
-        <div style="margin-top:8px;font-size:12px;font-weight:600;color:var(--green);letter-spacing:-0.1px" id="timerRecommendText">권장 추출 시간 3분 전후 (1컵)</div>
+        <div class="tp-rec" id="timerRecommendText">권장 추출 시간 3분 전후 (1컵)</div>
+        <div class="tp-legend"><span><i style="background:#FF9F0A"></i><span id="lgWarn">2:00</span> 불 줄이기</span><span><i style="background:#FF453A"></i><span id="lgDanger">3:30</span> 과추출 주의</span></div>
         <div class="prog-dots">
           <div class="prog-dot" id="dot0"></div>
           <div class="prog-dot" id="dot1"></div>
           <div class="prog-dot" id="dot2"></div>
         </div>
       </div>
-      <div class="timer-btns">
-        <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()" style="flex:2">시작</button>
-        <button class="btn btn-secondary" id="stopBtn" onclick="stopExtraction()" style="display:none;color:var(--red);flex:1">추출 종료</button>
+      <div class="tp-btns">
+        <button class="tp-start" id="startBtn" onclick="toggleTimer()">시작</button>
+        <button class="tp-stop" id="stopBtn" onclick="stopExtraction()" style="display:none">추출 종료</button>
       </div>
-      <div style="text-align:center;margin-top:10px">
-        <button onclick="confirmReset()" style="border:none;background:none;color:var(--label3);font-family:inherit;font-size:13px;cursor:pointer;padding:6px 12px;text-decoration:underline;text-underline-offset:3px">초기화</button>
+      <div class="tp-foot">
+        <span class="screen-warn-text"><strong>화면을 끄지 마세요.</strong> 화면이 꺼지면 알람이 울리지 않을 수 있습니다.</span>
+        <button class="tp-reset" onclick="confirmReset()">초기화</button>
       </div>
     </div>
   </div>
@@ -1697,7 +1736,7 @@ const I18N = {
     warnTitle: '불을 줄이세요 — 압력 안정화',
     warnBody: '중약불로 낮춰 7bar 압력을 안정적으로 유지하세요.',
     dangerTitle: '추출 시간 초과 — 과추출 주의',
-    dangerBody: '6분을 넘었습니다. 고압 추출이 길어지면 크레마가 무너지고 쓴맛이 강해집니다.',
+    dangerBody: '권장 시간을 넘었습니다. 고압 추출이 길어지면 크레마가 무너지고 쓴맛이 강해집니다.',
     elapsedLbl: '총 경과 시간', dosingLbl: '권장 도징량', dosingVal: '20g ~ 23g',
     waterLbl: '물 사용량', waterVal: '1컵 110~130ml · 2컵 150~170ml',
     tl0name: '중강불 가열', tl0time: '0:00 — 3:00 · 압력 생성 대기',
@@ -1761,7 +1800,7 @@ const I18N = {
     warnTitle: 'Reduce Heat — Stabilize Pressure',
     warnBody: '3 min passed. Lower to medium-low heat to maintain 7bar pressure.',
     dangerTitle: 'Over-Extraction Warning',
-    dangerBody: 'Exceeded 6 minutes. Long extraction destroys crema and causes bitterness.',
+    dangerBody: 'Past the recommended time. Long extraction destroys crema and causes bitterness.',
     elapsedLbl: 'Elapsed Time', dosingLbl: 'Recommended Dose', dosingVal: '20g ~ 23g',
     waterLbl: 'Water Amount', waterVal: '1 cup 110~130ml · 2 cups 150~170ml',
     tl0name: 'Medium-High Heat', tl0time: '0:00 — 3:00 · Building pressure',
@@ -2357,7 +2396,7 @@ function saveAndAnalyze() {
 }
 
 // ═══ TIMER ═══
-const RING_C = 534;
+const RING_C = 653; // 2π × 104
 // 컵수 모드: 1컵 = 3분 전후 권장, 2컵 = 4분 전후 권장
 let cupMode = parseInt(localStorage.getItem('maekeo_cup_mode') || '1');
 let WARN_AT = 180, DANGER_AT = 300, STOP_AT = 420;
@@ -2374,7 +2413,7 @@ function applyCupTimings() {
   }
 }
 
-function setCupMode(n) {
+function setCupMode(n, silent) {
   // 추출 진행 중(실행 또는 일시정지 상태)에는 컵 수 변경 차단
   if (isRunning || accElapsed > 0) {
     toast('추출 중에는 컵 수를 변경할 수 없습니다. 초기화 후 변경해주세요.');
@@ -2385,18 +2424,11 @@ function setCupMode(n) {
   applyCupTimings();
   const b1 = document.getElementById('cup1Btn');
   const b2 = document.getElementById('cup2Btn');
-  if (b1 && b2) {
-    if (n === 1) {
-      b1.style.background = 'var(--blue)'; b1.style.color = '#fff'; b1.style.borderColor = 'var(--blue)';
-      b2.style.background = 'transparent'; b2.style.color = 'var(--label2)'; b2.style.borderColor = 'var(--sep)';
-    } else {
-      b2.style.background = 'var(--blue)'; b2.style.color = '#fff'; b2.style.borderColor = 'var(--blue)';
-      b1.style.background = 'transparent'; b1.style.color = 'var(--label2)'; b1.style.borderColor = 'var(--sep)';
-    }
-  }
+  if (b1 && b2) { b1.classList.toggle('on', n === 1); b2.classList.toggle('on', n === 2); }
+  renderRingMarks();
   const recEl = document.getElementById('timerRecommendText');
   if (recEl) recEl.textContent = n === 1 ? '권장 추출 시간 3분 전후 (1컵)' : '권장 추출 시간 4분 전후 (2컵)';
-  toast(n === 1 ? '☕ 1컵 모드 — 3분 전후 추출 권장' : '☕☕ 2컵 모드 — 4분 전후 추출 권장');
+  if (!silent) toast(n === 1 ? '☕ 1컵 모드 — 3분 전후 추출 권장' : '☕☕ 2컵 모드 — 4분 전후 추출 권장');
   renderStages();
   updateTimerUI();
 }
@@ -2411,7 +2443,35 @@ function getElapsed() {
   return Math.floor((accElapsed + (Date.now() - startedAt)) / 1000);
 }
 
-function initTimer() { renderStages(); updateTimerUI(); }
+// 링 바깥 눈금 + 불 줄이기/과추출 지점 표시
+function renderRingMarks() {
+  const ticks = document.getElementById('ringTicks'), marks = document.getElementById('ringMarks');
+  if (!ticks || !marks) return;
+  const C = 124, NS = 'http://www.w3.org/2000/svg';
+  if (!ticks.childNodes.length) {
+    for (let i = 0; i < 60; i++) {
+      const a = i / 60 * Math.PI * 2, major = i % 5 === 0;
+      const r1 = 114, r2 = major ? 121 : 118;
+      const l = document.createElementNS(NS, 'line');
+      l.setAttribute('x1', C + r1 * Math.cos(a)); l.setAttribute('y1', C + r1 * Math.sin(a));
+      l.setAttribute('x2', C + r2 * Math.cos(a)); l.setAttribute('y2', C + r2 * Math.sin(a));
+      l.setAttribute('class', 'tick' + (major ? ' major' : ''));
+      ticks.appendChild(l);
+    }
+  }
+  marks.innerHTML = '';
+  [[WARN_AT, '#FF9F0A'], [DANGER_AT, '#FF453A']].forEach(([sec, col]) => {
+    const a = sec / STOP_AT * Math.PI * 2;
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', C + 104 * Math.cos(a)); c.setAttribute('cy', C + 104 * Math.sin(a));
+    c.setAttribute('r', 5); c.setAttribute('fill', col); c.setAttribute('stroke', '#1b1411'); c.setAttribute('stroke-width', 2.5);
+    marks.appendChild(c);
+  });
+  const w = document.getElementById('lgWarn'), d = document.getElementById('lgDanger');
+  if (w) w.textContent = fmt(WARN_AT);
+  if (d) d.textContent = fmt(DANGER_AT);
+}
+function initTimer() { renderStages(); renderRingMarks(); updateTimerUI(); }
 
 function renderStages() {
   const warnStr = fmt(WARN_AT);
@@ -2466,7 +2526,7 @@ function saveRecords(records) {
 function updateTimerUI() {
   const elapsed = getElapsed();
   let nm, dc;
-  if      (elapsed===0)       { nm=t('timerStageName0'); dc=(cupMode===1?'☕ 1컵 — 3분 전후 추출 권장':'☕☕ 2컵 — 4분 전후 추출 권장'); }
+  if      (elapsed===0)       { nm=t('timerStageName0'); dc=(currentLang==='en'?'Press the button to start brewing':'버튼을 눌러 추출을 시작하세요'); }
   else if (elapsed<WARN_AT)   { nm=t('tl0name'); dc=`${t('tl0time')} — ${fmt(WARN_AT-elapsed)}`; }
   else if (elapsed<DANGER_AT) { nm=t('tl1name'); dc=`${fmt(elapsed)} ${t('elapsedLbl')}`; }
   else                        { nm=t('tl2name'); dc=`${fmt(elapsed)} ${t('elapsedLbl')}`; }
@@ -2491,7 +2551,7 @@ function updateTimerUI() {
     if(!row) return;
     row.className='tl-row '+s;
     dot.className='tl-dot '+(s==='current'?'current':s==='done'?'done':'');
-    b.textContent = s==='done' ? t('confHigh') : s==='current' ? t('timerPause') : t('timerStart');
+    b.textContent = currentLang==='en' ? (s==='done' ? 'Done' : s==='current' ? 'Now' : '') : (s==='done' ? '완료' : s==='current' ? '진행 중' : '');
     b.className='tl-badge '+(s==='done'?'done':s==='current'?'current':'');
   };
   if      (elapsed===0)       { upd(0,'upcoming');upd(1,'upcoming');upd(2,'upcoming');upd(3,'upcoming'); }
@@ -3656,7 +3716,7 @@ function applyLang() {
 initTimer();
 try { applyLang(); } catch (e) { console.warn('applyLang', e); }
 // 저장된 컵 모드 UI 반영
-if (cupMode === 2) setCupMode(2);
+if (cupMode === 2) setCupMode(2, true);
 // 앱 열릴 때마다 버전 체크
 setTimeout(checkVersionFromServer, 1500);
 // 추출 시간대 패턴 체크
