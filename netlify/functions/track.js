@@ -14,7 +14,9 @@ const RULES = {
   reserve: /^(preorder|onecup|boiler)$/,
   store:   /^(open|beans|parts)$/,
   install: /^android$/,
-  guide:   /^[ol]-[a-z0-9]{1,8}$/,  // 가이드: o-항목 펼침 / l-링크·버튼 클릭 (문구 해시)
+  guide:   /^[ol]-[a-z0-9]{1,8}$/,
+  brew:    /^[a-z0-9]{2,12}_[0-9.]{1,6}_[12]_[0-9]{2,3}_[gob]$/,  // 그라인더_설정_컵_추출초_맛평가(g좋음/o보통/b아쉬움)
+  gset:    /^[a-z0-9]{2,12}_[0-9.]{1,6}_[0-9]{2,4}$/,             // 그라인더_설정_실측μm (분쇄분석AI)  // 가이드: o-항목 펼침 / l-링크·버튼 클릭 (문구 해시)
 };
 const DEVICES = /^(ios|android|pc|other)$/;
 const MODES = /^(app|web)$/;

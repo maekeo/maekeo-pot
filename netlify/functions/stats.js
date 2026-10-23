@@ -72,12 +72,13 @@ exports.handler = async (event) => {
 
   const lists = await Promise.all(dates.map(day => store.list({ prefix: day + '/' }).then(r => r.blobs.map(b => b.key))));
 
-  const all = { visitors: new Set(), appUsers: new Set(), device: {}, counts: {}, source: {} };
+  const all = { visitors: new Set(), appUsers: new Set(), device: {}, counts: {}, source: {}, brews: [], gsets: [] };
   const daily = dates.map((day, i) => {
     const v = new Set(), app = new Set();
     let visits = 0;
     for (const key of lists[i]) {
       const [, type, detail, device, mode, aid] = key.split('/');
+      if (type === 'brew' || type === 'gset') { (type === 'brew' ? all.brews : all.gsets).push(detail); continue; }
       if (type === 'visit') {
         visits++; v.add(aid); all.visitors.add(aid);
         if (mode === 'app') { app.add(aid); all.appUsers.add(aid); }
@@ -98,6 +99,30 @@ exports.handler = async (event) => {
   const source = {};
   for (const [k, s] of Object.entries(all.source)) source[k] = s.size;
 
+  // 그라인더별 매커포트 설정 집계
+  const median = arr => { const a = arr.slice().sort((x, y) => x - y); const n = a.length; return n ? (n % 2 ? a[(n - 1) / 2] : (a[n / 2 - 1] + a[n / 2]) / 2) : null; };
+  const gb = {};
+  for (const d of all.brews) {
+    const [g, setting, cups, sec, rate] = d.split('_');
+    const k = g + '_' + cups;
+    const o = gb[k] = gb[k] || { grinder: g, cups: +cups, n: 0, good: 0, settings: {}, goodSecs: [] };
+    o.n++;
+    if (rate === 'g') { o.good++; o.settings[setting] = (o.settings[setting] || 0) + 1; o.goodSecs.push(+sec); }
+  }
+  const grinders = Object.values(gb).map(o => ({
+    grinder: o.grinder, cups: o.cups, n: o.n, good: o.good,
+    topSettings: Object.entries(o.settings).sort((a, b) => b[1] - a[1]).slice(0, 3),
+    goodMedianSec: median(o.goodSecs),
+  })).sort((a, b) => b.n - a.n);
+  const gs = {};
+  for (const d of all.gsets) {
+    const [g, setting, um] = d.split('_');
+    const k = g + '_' + setting;
+    (gs[k] = gs[k] || { grinder: g, setting, ums: [] }).ums.push(+um);
+  }
+  const grindMeasure = Object.values(gs).map(o => ({ grinder: o.grinder, setting: o.setting, n: o.ums.length, medianUm: Math.round(median(o.ums)) }))
+    .sort((a, b) => a.grinder.localeCompare(b.grinder) || parseFloat(a.setting) - parseFloat(b.setting));
+
   // 전용 링크 목록
   const linkKeys = (await store.list({ prefix: 'links/' })).blobs.map(b => b.key);
   const links = (await Promise.all(linkKeys.map(async k => {
@@ -110,7 +135,7 @@ exports.handler = async (event) => {
     body: JSON.stringify({
       days, from: dates[0], to: dates[dates.length - 1],
       visitors: all.visitors.size, appUsers: all.appUsers.size,
-      device, source, links, counts: all.counts, daily,
+      device, source, links, grinders, grindMeasure, counts: all.counts, daily,
     }),
   };
 };

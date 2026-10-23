@@ -223,6 +223,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 .modal-desc{font-size:13px;color:var(--label2);line-height:1.5;margin-bottom:12px}
 .modal-desc a{color:var(--blue);text-decoration:none}
 .modal-desc strong{color:var(--label);font-weight:600}
+.rate-btn{flex:1;height:38px;border:1px solid var(--sep);border-radius:10px;background:var(--bg2);color:var(--label2);font-family:inherit;font-size:13px;cursor:pointer;padding:0 4px}
+.rate-btn.on{border-color:var(--blue);background:var(--blue);color:#fff;font-weight:600}
 .modal-input{width:100%;height:50px;background:var(--fill);border:1px solid var(--sep);border-radius:12px;padding:0 16px;font-family:inherit;font-size:15px;color:var(--label);outline:none;margin-bottom:10px;-webkit-appearance:none}
 .modal-input:focus{border-color:var(--blue)}
 .modal-input::placeholder{color:var(--label3)}
@@ -1343,10 +1345,24 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 <!-- Tab Bar -->
 <!-- 기록 저장 모달 -->
 <div class="modal-bg" id="saveModal">
-  <div class="modal-sheet">
+  <div class="modal-sheet" style="max-height:92vh;overflow-y:auto">
     <div class="modal-handle"></div>
     <div class="modal-title" id="saveModalTitle">기록 저장</div>
     <div class="modal-desc" id="saveModalDesc"></div>
+    <div id="grinderBox" style="background:var(--fill);border-radius:12px;padding:12px;margin-bottom:10px">
+      <div style="font-size:13px;font-weight:600;color:var(--label);margin-bottom:8px">☕ 내 그라인더 설정 <span style="font-weight:400;color:var(--label2)">(선택)</span></div>
+      <div style="display:flex;gap:8px">
+        <select id="grinderSel" onchange="onGrinderChange()" style="flex:1.4;min-width:0;height:44px;border:1px solid var(--sep);border-radius:10px;background:var(--bg2);color:var(--label);font-family:inherit;font-size:14px;padding:0 8px"></select>
+        <input id="grindSetting" type="text" inputmode="decimal" maxlength="6" placeholder="클릭·눈금" style="flex:1;min-width:0;height:44px;border:1px solid var(--sep);border-radius:10px;background:var(--bg2);color:var(--label);font-family:inherit;font-size:15px;padding:0 10px">
+      </div>
+      <input id="grinderOther" type="text" maxlength="30" placeholder="그라인더 이름" style="display:none;width:100%;margin-top:8px;height:44px;border:1px solid var(--sep);border-radius:10px;background:var(--bg2);color:var(--label);font-family:inherit;font-size:14px;padding:0 10px">
+      <div id="rateRow" style="display:flex;gap:6px;margin-top:10px">
+        <button type="button" class="rate-btn" data-r="g" onclick="setRate('g')">😋 좋았어요</button>
+        <button type="button" class="rate-btn" data-r="o" onclick="setRate('o')">🙂 보통</button>
+        <button type="button" class="rate-btn" data-r="b" onclick="setRate('b')">😕 아쉬워요</button>
+      </div>
+      <div style="font-size:11px;color:var(--label3);margin-top:8px;line-height:1.5">그라인더·설정값·맛 평가는 이름 없이 익명으로 모아, 그라인더별 매커포트 추천 설정을 만드는 데 쓰입니다.</div>
+    </div>
     <input class="modal-input" id="memoInput" type="text" placeholder="메모 입력 (선택)" maxlength="100">
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" id="saveCancelBtn" onclick="closeSaveModal()">취소</button>
@@ -2529,7 +2545,8 @@ function renderTimerInfo() {
     const cups = r.cups ? r.cups + '컵 · ' : '';
     const brewing = (isRunning || accElapsed > 0) && !timerEnded;
     const memo = (!brewing && r.memo) ? '<span style="flex-basis:100%">“' + escapeHtml(r.memo.length > 24 ? r.memo.slice(0, 24) + '…' : r.memo) + '”</span>' : '';
-    prevEl.innerHTML = '지난번 <b>' + escapeHtml(cups + r.extractTime) + ' 종료</b>' + (brewing ? '' : ' <span>' + escapeHtml(when) + '</span>') + memo;
+    const gl = r.grinder ? ' · ' + escapeHtml(grinderLabel(r)) : '';
+    prevEl.innerHTML = '지난번 <b>' + escapeHtml(cups + r.extractTime) + ' 종료</b>' + gl + (brewing ? '' : ' <span>' + escapeHtml(when) + '</span>') + memo;
     prevEl.style.display = 'flex';
   } else prevEl.style.display = 'none';
   const st = getBrewStats();
@@ -3482,6 +3499,53 @@ function checkBrewTimePattern() {
 }
 let _saveType = 'grind';
 
+// ═══ 내 그라인더 설정 ═══
+const GRINDERS = [
+  ['x54', '말코닉 X54'], ['c40', '커맨단테 C40'],
+  ['kultra', '1Zpresso K-Ultra'], ['jultra', '1Zpresso J-Ultra'], ['zp6', '1Zpresso ZP6'], ['jxpro', '1Zpresso JX-Pro'], ['q2', '1Zpresso Q2'],
+  ['c2', '타임모어 C2'], ['c3', '타임모어 C3'], ['s3', '타임모어 S3'],
+  ['k6', '킨그라인더 K6'], ['k4', '킨그라인더 K4'],
+  ['encoreesp', '바라짜 엔코 ESP'], ['encore', '바라짜 엔코'],
+  ['ode2', '펠로우 오드 Gen2'], ['opus', '펠로우 오푸스'],
+  ['sgp', '브레빌 스마트 그라인더 프로'], ['niche', '니체 제로'], ['nextg', '칼리타 넥스트G'],
+  ['other', '기타 (직접 입력)'],
+];
+const GRINDER_NAME = Object.fromEntries(GRINDERS);
+let _rate = '';
+function setRate(r) {
+  _rate = _rate === r ? '' : r;
+  document.querySelectorAll('.rate-btn').forEach(b => b.classList.toggle('on', b.dataset.r === _rate));
+}
+function onGrinderChange() {
+  document.getElementById('grinderOther').style.display = document.getElementById('grinderSel').value === 'other' ? 'block' : 'none';
+}
+function prepGrinderBox(type) {
+  const sel = document.getElementById('grinderSel');
+  if (!sel.options.length) {
+    sel.innerHTML = '<option value="">그라인더 선택</option>' + GRINDERS.map(([k, n]) => `<option value="${k}">${n}</option>`).join('');
+  }
+  let last = {};
+  try { last = JSON.parse(localStorage.getItem('maekeo_grinder') || '{}') || {}; } catch (e) {}
+  sel.value = GRINDER_NAME[last.id] ? last.id : '';
+  document.getElementById('grindSetting').value = last.setting || '';
+  document.getElementById('grinderOther').value = last.other || '';
+  onGrinderChange();
+  _rate = ''; setRate('');
+  document.getElementById('rateRow').style.display = type === 'timer' ? 'flex' : 'none';
+}
+function readGrinderBox() {
+  const id = document.getElementById('grinderSel').value;
+  const setting = (document.getElementById('grindSetting').value || '').trim().replace(/[^0-9.]/g, '').slice(0, 6);
+  const other = (document.getElementById('grinderOther').value || '').trim().slice(0, 30);
+  if (id) { try { localStorage.setItem('maekeo_grinder', JSON.stringify({ id, setting, other })); } catch (e) {} }
+  return { id, setting, other };
+}
+function grinderLabel(r) {
+  if (!r.grinder) return '';
+  const name = r.grinder === 'other' ? (r.grinderName || '기타 그라인더') : (GRINDER_NAME[r.grinder] || r.grinder);
+  return name + (r.grindSetting ? ' · ' + r.grindSetting : '');
+}
+
 function showSaveModal(type) {
   _saveType = type;
 
@@ -3504,8 +3568,8 @@ function showSaveModal(type) {
   }
 
   document.getElementById('memoInput').value = '';
+  prepGrinderBox(type);
   document.getElementById('saveModal').classList.add('show');
-  setTimeout(() => document.getElementById('memoInput').focus(), 350);
 }
 
 function closeSaveModal() {
@@ -3518,6 +3582,12 @@ function saveRecord() {
   const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 
   const record = { id: Date.now(), date: dateStr, memo, type: _saveType };
+  const gb = readGrinderBox();
+  if (gb.id) {
+    record.grinder = gb.id;
+    if (gb.setting) record.grindSetting = gb.setting;
+    if (gb.id === 'other' && gb.other) record.grinderName = gb.other;
+  }
 
   if (_saveType === 'grind' && window._lastGrindResult) {
     const r = window._lastGrindResult;
@@ -3526,9 +3596,19 @@ function saveRecord() {
     record.uniformity  = r.uniformity;
     record.mokaFit     = r.mokaFit;
     record.advice      = r.advice;
+    // 익명 통계: 그라인더 설정 → 분쇄분석AI 실측 입자 크기
+    if (gb.id && gb.id !== 'other' && gb.setting && typeof r.particleSize === 'number' && r.particleSize >= 50 && r.particleSize <= 2000) {
+      track('gset', [gb.id, gb.setting, Math.round(r.particleSize)].join('_'));
+    }
   } else if (_saveType === 'timer') {
     record.extractTime = fmt(getElapsed());
     record.cups = cupMode;
+    if (_rate) record.result = _rate;
+    // 익명 통계: 그라인더·설정·컵·추출초·맛 평가 (목록에 있는 그라인더 + 설정값이 있을 때만)
+    const sec = getElapsed();
+    if (gb.id && gb.id !== 'other' && gb.setting && _rate && sec >= 60 && sec <= 900) {
+      track('brew', [gb.id, gb.setting, cupMode, sec, _rate].join('_'));
+    }
   }
 
   const records = loadRecords();
@@ -3592,6 +3672,7 @@ function renderHistory() {
           <span style="font-size:15px;color:var(--blue)">${escapeHtml(r.extractTime || '')}</span>
         </div>
       `}
+      ${r.grinder ? `<div style="padding:10px 16px;border-bottom:.5px solid var(--sep);display:flex;justify-content:space-between;gap:10px"><span style="font-size:13px;color:var(--label2)">☕ ${escapeHtml(grinderLabel(r))}</span>${r.result ? `<span style="font-size:13px">${r.result === 'g' ? '😋 좋았어요' : r.result === 'o' ? '🙂 보통' : '😕 아쉬워요'}</span>` : ''}</div>` : ''}
       ${r.memo ? `<div style="padding:10px 16px;font-size:13px;color:var(--label2)">📝 ${escapeHtml(r.memo)}</div>` : ''}
     </div>
   `;
