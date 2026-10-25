@@ -1336,7 +1336,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.25</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.26</div>
 
 </div><!-- /fixSection -->
 
@@ -1545,7 +1545,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div id="preorderCountdown" style="background:var(--fill);border:1.5px solid var(--red);border-radius:14px;padding:16px;margin-bottom:10px;text-align:center">
       <div style="font-size:12px;color:var(--red);font-weight:600;margin-bottom:4px">⏰ 예약 마감까지</div>
       <div id="preorderDday" style="font-size:30px;font-weight:800;color:var(--red);letter-spacing:.5px">D-1</div>
-      <div id="preorderDdaySub" style="font-size:13px;color:var(--label2);margin-top:4px">10월 30일(금) 마감</div>
+      <div id="preorderDdaySub" style="font-size:13px;color:var(--label2);margin-top:4px">10월 31일(토) 마감</div>
     </div>
     <div style="background:var(--fill);border:1.5px solid var(--orange);border-radius:12px;padding:12px 14px;margin-bottom:14px;text-align:center">
       <span style="font-size:13px;font-weight:700;color:var(--orange)">🔥 한정 수량 100개 · 조기 마감될 수 있습니다</span>
@@ -3034,7 +3034,7 @@ function selectReserve(type) {
 // url이 비어 있으면 '오픈 예정'으로 표시되고 눌러도 이동하지 않음
 const EVENTS = [
   { key: 'limited', icon: '☕', title: '1주년 특별 한정판 2컵 매커포트 예약', desc: '100개 한정 · 마지막 한정판', url: '', verify: true },
-  { key: 'preorder', icon: '📦', title: '2컵 매커포트 올해 마지막 프리오더', desc: '12월말 발송 · 10월 30일 마감', url: 'https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000052', preorder: true },
+  { key: 'preorder', icon: '📦', title: '2컵 매커포트 올해 마지막 프리오더', desc: '12월말 발송 · 10월 31일 마감', url: 'https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000052', preorder: true },
   { key: 'sets', icon: '🧰', title: '모카포트 용품세트 한정판 예약', desc: '🚚 11월 2~3주차 발송 · 세트별 50개 한정', url: '', sets: true },
   { key: 'beans', icon: '🫘', title: '갓 볶은 매커 원두 할인 이벤트', desc: '1주년 기념 원두 할인 · 스마트스토어', url: 'https://smartstore.naver.com/maeco/category/776e7d77ad034cd8807d9f1e29b52ead?cp=1' },
 ];
@@ -3082,7 +3082,7 @@ function goEvent(i) {
 let _buyerUrl = '';
 let _buyerBusy = false;
 const LIMITED_DEADLINE = new Date(2026, 9, 31, 23, 59, 59); // 10월 31일 마감
-const PREORDER_DEADLINE = new Date(2026, 9, 30, 23, 59, 59); // 2컵 프리오더 10월 30일 마감
+const PREORDER_DEADLINE = new Date(2026, 9, 31, 23, 59, 59); // 2컵 프리오더 10월 31일 마감
 function isPreorderClosed() { return Date.now() > PREORDER_DEADLINE.getTime(); }
 function isLimitedClosed() { return Date.now() > LIMITED_DEADLINE.getTime(); }
 function openBuyerVerify() {
@@ -3396,21 +3396,21 @@ function updatePreorderCountdown() {
   if (!el) return;
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const deadline = new Date(2026, 9, 30); // 10월 30일 (2컵)
+  const deadline = new Date(2026, 9, 31); // 10월 31일 (2컵)
   const diff = Math.round((deadline - today) / 86400000);
   if (diff > 1) {
     el.textContent = 'D-' + diff;
-    if (sub) sub.textContent = '10월 30일(금) 마감';
+    if (sub) sub.textContent = '10월 31일(토) 마감';
   } else if (diff === 1) {
     el.textContent = 'D-1';
-    if (sub) sub.textContent = '내일(10월 30일) 마감 · 서둘러 주세요';
+    if (sub) sub.textContent = '내일(10월 31일) 마감 · 서둘러 주세요';
   } else if (diff === 0) {
     el.textContent = 'D-DAY';
     if (sub) sub.textContent = '오늘 마감 · 마지막 기회입니다';
   } else {
     el.textContent = '예약 마감';
     el.style.color = 'var(--label2)';
-    if (sub) sub.textContent = '10월 30일(금) 예약이 마감되었습니다';
+    if (sub) sub.textContent = '10월 31일(토) 예약이 마감되었습니다';
     if (box) box.style.borderColor = 'var(--sep)';
   }
 }
@@ -3790,7 +3790,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.25';
+const CURRENT_VERSION = 'v3.2.26';
 
 async function checkVersionFromServer() {
   try {
