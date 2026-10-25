@@ -8,9 +8,9 @@ const RULES = {
   visit:   /^(-|direct|app|c-[a-z0-9]{3,12}|r-[a-z0-9-]{2,20})$/,  // 유입 경로: 전용링크(c-코드)·사이트(r-이름)·직접·앱
   tab:     /^(grind|timer|history|fix)$/,
   banner:  /^event$/,
-  ev:      /^(limited|sets|beans)$/,
+  ev:      /^(limited|preorder|sets|beans)$/,
   verify:  /^(ok|fail)$/,
-  go:      /^(limited|setmid|setlarge|beans)$/,
+  go:      /^(limited|preorder|setmid|setlarge|beans)$/,
   reserve: /^(preorder|onecup|boiler)$/,
   store:   /^(open|beans|parts)$/,
   install: /^android$/,

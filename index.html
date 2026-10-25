@@ -1336,7 +1336,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.24</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.25</div>
 
 </div><!-- /fixSection -->
 
@@ -1433,7 +1433,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   <div class="modal-sheet" style="max-height:92vh;overflow-y:auto">
     <div class="modal-handle"></div>
     <div style="text-align:center;padding:8px 0 4px">
-      <div style="font-size:11px;font-weight:700;color:#C9A24B;letter-spacing:.5px;margin-bottom:4px">EVENT 2 · 1주년 한정판</div>
+      <div style="font-size:11px;font-weight:700;color:#C9A24B;letter-spacing:.5px;margin-bottom:4px">EVENT 3 · 1주년 한정판</div>
       <div style="font-size:19px;font-weight:700;color:var(--label);margin-bottom:14px;word-break:keep-all">모카포트 용품세트 한정판 예약</div>
     </div>
     <div style="border-radius:14px;padding:16px;margin-bottom:10px;background:linear-gradient(135deg,#C9A24B,#E08A5B);color:#fff;text-align:center">
@@ -1539,7 +1539,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-handle"></div>
     <div style="text-align:center;padding:8px 0 4px">
       <div style="font-size:44px;margin-bottom:10px">🛒</div>
-      <div style="font-size:19px;font-weight:700;color:var(--label);margin-bottom:16px">12월 발송 매커포트<br>프리오더 예약</div>
+      <div style="display:inline-block;font-size:12px;font-weight:700;color:#fff;background:linear-gradient(90deg,#C9A24B,#E08A5B);padding:4px 12px;border-radius:999px;margin-bottom:8px">올해 마지막 프리오더</div>
+      <div style="font-size:19px;font-weight:700;color:var(--label);margin-bottom:16px">12월 발송 2컵 매커포트<br>프리오더 예약</div>
     </div>
     <div id="preorderCountdown" style="background:var(--fill);border:1.5px solid var(--red);border-radius:14px;padding:16px;margin-bottom:10px;text-align:center">
       <div style="font-size:12px;color:var(--red);font-weight:600;margin-bottom:4px">⏰ 예약 마감까지</div>
@@ -3032,16 +3033,18 @@ function selectReserve(type) {
 // ═══ 1주년 기념 이벤트 ═══
 // url이 비어 있으면 '오픈 예정'으로 표시되고 눌러도 이동하지 않음
 const EVENTS = [
-  { icon: '☕', title: '1주년 특별 한정판 2컵 매커포트 예약', desc: '100개 한정 · 마지막 한정판', url: '', verify: true },
-  { icon: '🧰', title: '모카포트 용품세트 한정판 예약', desc: '🚚 11월 2~3주차 발송 · 세트별 50개 한정', url: '', sets: true },
-  { icon: '🫘', title: '갓 볶은 매커 원두 할인 이벤트', desc: '1주년 기념 원두 할인 · 스마트스토어', url: 'https://smartstore.naver.com/maeco/category/776e7d77ad034cd8807d9f1e29b52ead?cp=1' },
+  { key: 'limited', icon: '☕', title: '1주년 특별 한정판 2컵 매커포트 예약', desc: '100개 한정 · 마지막 한정판', url: '', verify: true },
+  { key: 'preorder', icon: '📦', title: '2컵 매커포트 올해 마지막 프리오더', desc: '12월말 발송 · 10월 30일 마감', url: 'https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000052', preorder: true },
+  { key: 'sets', icon: '🧰', title: '모카포트 용품세트 한정판 예약', desc: '🚚 11월 2~3주차 발송 · 세트별 50개 한정', url: '', sets: true },
+  { key: 'beans', icon: '🫘', title: '갓 볶은 매커 원두 할인 이벤트', desc: '1주년 기념 원두 할인 · 스마트스토어', url: 'https://smartstore.naver.com/maeco/category/776e7d77ad034cd8807d9f1e29b52ead?cp=1' },
 ];
 function renderEventList() {
   const box = document.getElementById('eventList');
   if (!box) return;
   box.innerHTML = EVENTS.map((ev, i) => {
     const open = ev.sets ? hasSetLinks() : !!ev.url;
-    const chip = ((ev.verify || (ev.sets && open)) && isLimitedClosed())
+    const closed = ev.preorder ? isPreorderClosed() : isLimitedClosed();
+    const chip = ((ev.verify || ev.preorder || (ev.sets && open)) && closed)
       ? '<span style="font-size:12px;font-weight:600;color:var(--label2);background:var(--fill);padding:4px 10px;border-radius:999px;white-space:nowrap">예약 마감</span>'
       : ev.verify
       ? '<span style="font-size:12px;font-weight:700;color:#C9A24B;border:1.5px solid #C9A24B;padding:3px 9px;border-radius:999px;white-space:nowrap">구매자 전용</span>'
@@ -3065,8 +3068,9 @@ function openEventModal() {
 function closeEventModal() { document.getElementById('eventModal').classList.remove('show'); }
 function goEvent(i) {
   const ev = EVENTS[i];
-  track('ev', ['limited', 'sets', 'beans'][i]);
+  if (ev) track('ev', ev.key);
   if (ev && ev.verify) { closeEventModal(); openBuyerVerify(); return; }
+  if (ev && ev.preorder) { closeEventModal(); openPreorderModal(); return; }
   if (ev && ev.sets && hasSetLinks()) { closeEventModal(); openSetsModal(); return; }
   if (!ev || !ev.url) { toast('곧 오픈됩니다. 조금만 기다려 주세요!'); return; }
   track('go', 'beans');
@@ -3078,6 +3082,8 @@ function goEvent(i) {
 let _buyerUrl = '';
 let _buyerBusy = false;
 const LIMITED_DEADLINE = new Date(2026, 9, 31, 23, 59, 59); // 10월 31일 마감
+const PREORDER_DEADLINE = new Date(2026, 9, 30, 23, 59, 59); // 2컵 프리오더 10월 30일 마감
+function isPreorderClosed() { return Date.now() > PREORDER_DEADLINE.getTime(); }
 function isLimitedClosed() { return Date.now() > LIMITED_DEADLINE.getTime(); }
 function openBuyerVerify() {
   _buyerUrl = '';
@@ -3379,6 +3385,7 @@ function closePreorderModal() {
   document.getElementById('preorderModal').classList.remove('show');
 }
 function goToPreorderPage() {
+  track('go', 'preorder');
   window.open('https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000052', '_blank');
   closePreorderModal();
 }
@@ -3783,7 +3790,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.24';
+const CURRENT_VERSION = 'v3.2.25';
 
 async function checkVersionFromServer() {
   try {
