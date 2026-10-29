@@ -1336,7 +1336,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.29</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.30</div>
 
 </div><!-- /fixSection -->
 
@@ -1520,10 +1520,20 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       </span>
       <span style="font-size:18px;color:var(--label3)">›</span>
     </button>
-    <button onclick="selectReserve('boiler')" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:16px;cursor:pointer;font-family:inherit;margin-bottom:20px">
+    <button onclick="selectReserve('boiler')" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:16px;cursor:pointer;font-family:inherit;margin-bottom:8px">
       <span style="display:flex;align-items:center;gap:10px">
         <span style="font-size:22px">🔩</span>
         <span style="font-size:15px;font-weight:600;color:var(--label)">가압보일러통 예약</span>
+      </span>
+      <span style="font-size:18px;color:var(--label3)">›</span>
+    </button>
+    <button onclick="selectReserve('container')" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:16px;cursor:pointer;font-family:inherit;margin-bottom:20px">
+      <span style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px">🫙</span>
+        <span style="display:flex;flex-direction:column;align-items:flex-start;gap:2px">
+          <span style="font-size:15px;font-weight:600;color:var(--label)">2컵 매커포트 컨테이너 본체 예약</span>
+          <span style="font-size:12px;color:var(--label2)">가압보일러통 사용자용 · 27년 1월 발송</span>
+        </span>
       </span>
       <span style="font-size:18px;color:var(--label3)">›</span>
     </button>
@@ -1712,6 +1722,38 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeBoilerInfoModal()">취소</button>
       <button class="btn btn-primary" style="flex:2" onclick="goToBoilerPage()">확인 후 예약하기 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- 2컵 매커포트 컨테이너 본체 예약 안내 모달 -->
+<div class="modal-bg" id="containerInfoModal">
+  <div class="modal-sheet" style="max-height:92vh;overflow-y:auto">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:8px 0 4px">
+      <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:14px;word-break:keep-all">2컵 매커포트 컨테이너 본체 예약</div>
+    </div>
+    <img src="/maekeo-container.jpg" alt="2컵 매커포트 컨테이너 본체" onclick="openLightbox(this.src)" style="display:block;width:100%;max-width:280px;margin:0 auto 14px;border-radius:14px;cursor:zoom-in">
+    <div class="callout" style="margin-bottom:10px;font-size:13px;line-height:1.6;word-break:keep-all">
+      ℹ️ 이 컨테이너는 <b>가압보일러통 사용자 요청</b>으로 <b>임시 판매</b>하는 상품입니다.
+    </div>
+    <div style="background:var(--fill);border-radius:14px;padding:14px 16px;margin-bottom:10px">
+      <div style="font-size:13px;color:var(--label2);margin-bottom:8px">📦 기본 구성품</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <span style="font-size:13px;font-weight:600;color:var(--label);background:var(--bg2);border:1px solid var(--sep);border-radius:999px;padding:5px 11px">컨테이너 본체</span>
+        <span style="font-size:13px;font-weight:600;color:var(--label);background:var(--bg2);border:1px solid var(--sep);border-radius:999px;padding:5px 11px">바스켓</span>
+        <span style="font-size:13px;font-weight:600;color:var(--label);background:var(--bg2);border:1px solid var(--sep);border-radius:999px;padding:5px 11px">금속필터</span>
+        <span style="font-size:13px;font-weight:600;color:var(--label);background:var(--bg2);border:1px solid var(--sep);border-radius:999px;padding:5px 11px">실리콘 가스켓</span>
+      </div>
+    </div>
+    <div style="background:var(--fill);border:1.5px solid var(--orange);border-radius:14px;padding:14px 16px;margin-bottom:20px;text-align:center">
+      <div style="font-size:13px;color:var(--label2)">🚚 발송 예정</div>
+      <div style="font-size:20px;font-weight:800;color:var(--orange);margin-top:2px">27년 1월</div>
+      <div style="font-size:12px;color:var(--label2);margin-top:6px;line-height:1.6;word-break:keep-all">연말 매커포트 본품 물량의 제조 일정이 이미 마감되어<br>27년 1월에 발송될 예정입니다.</div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeContainerInfoModal()">취소</button>
+      <button class="btn btn-primary" style="flex:2" onclick="goToContainerPage()">확인 후 예약하기 →</button>
     </div>
   </div>
 </div>
@@ -3040,6 +3082,14 @@ function selectReserve(type) {
   if (type === 'preorder') openPreorderModal();
   else if (type === 'onecup') openReserveInfoModal();
   else if (type === 'boiler') openBoilerInfoModal();
+  else if (type === 'container') openContainerInfoModal();
+}
+function openContainerInfoModal() { document.getElementById('containerInfoModal').classList.add('show'); }
+function closeContainerInfoModal() { document.getElementById('containerInfoModal').classList.remove('show'); }
+function goToContainerPage() {
+  track('go', 'container');
+  window.open('https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000056', '_blank');
+  closeContainerInfoModal();
 }
 
 // ═══ 1주년 기념 이벤트 ═══
@@ -3802,7 +3852,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.29';
+const CURRENT_VERSION = 'v3.2.30';
 
 async function checkVersionFromServer() {
   try {
