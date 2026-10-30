@@ -1336,7 +1336,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.32</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.33</div>
 
 </div><!-- /fixSection -->
 
@@ -1745,7 +1745,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 
 <!-- 1컵 매커포트 예약 안내 모달 -->
 <div class="modal-bg" id="reserveInfoModal">
-  <div class="modal-sheet">
+  <div class="modal-sheet" style="max-height:92vh;overflow-y:auto">
     <div class="modal-handle"></div>
     <div style="text-align:center;padding:8px 0 4px">
       <div style="font-size:44px;margin-bottom:10px">☕</div>
@@ -1753,6 +1753,10 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </div>
     <div style="font-size:14px;color:var(--label2);line-height:1.8;margin-bottom:16px">
       해당 1컵 매커포트는 <b style="color:var(--label)">주문자 생산 방식</b>의 상품입니다.
+    </div>
+    <div style="background:var(--fill);border:1.5px solid var(--orange);border-radius:14px;padding:14px 16px;margin-bottom:12px;text-align:center">
+      <div style="font-size:16px;font-weight:800;color:var(--orange)">🔥 한정판 500개 생산 후 단종</div>
+      <div style="font-size:12px;color:var(--label2);margin-top:4px;line-height:1.6;word-break:keep-all">500개 생산을 마치면 1컵 매커포트는 더 이상 생산하지 않습니다.</div>
     </div>
     <div style="background:var(--fill);border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:center">
       <span style="font-size:13px;color:var(--label2)">📦 발송 예정</span>
@@ -3837,7 +3841,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.32';
+const CURRENT_VERSION = 'v3.2.33';
 
 async function checkVersionFromServer() {
   try {
