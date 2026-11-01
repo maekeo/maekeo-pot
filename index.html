@@ -1336,7 +1336,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.36</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.37</div>
 
 </div><!-- /fixSection -->
 
@@ -1477,7 +1477,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </div>
     <div style="background:var(--fill);border:1.5px solid var(--orange);border-radius:12px;padding:12px 14px;margin-bottom:10px;text-align:center">
       <div style="font-size:14px;font-weight:700;color:var(--orange)">🔥 100개 한정 · 선착순 예약</div>
-      <div id="limitedDeadline" style="font-size:13px;color:var(--label2);margin-top:2px">10월 31일(토)까지</div>
+      <div id="limitedDeadline" style="font-size:13px;color:var(--label2);margin-top:2px">예약 진행 중</div>
     </div>
     <div style="background:var(--fill);border-radius:12px;padding:12px 14px;margin-bottom:18px">
       <div style="font-size:13px;color:var(--label2);margin-bottom:8px">📦 발송 일정 <span style="font-size:12px">(예약 순서대로 발송)</span></div>
@@ -3078,7 +3078,7 @@ function goToContainerPage() {
 // ═══ 1주년 기념 이벤트 ═══
 // url이 비어 있으면 '오픈 예정'으로 표시되고 눌러도 이동하지 않음
 const EVENTS = [
-  { key: 'limited', icon: '☕', title: '1주년 특별 한정판 2컵 매커포트 예약', desc: '100개 한정 · 마지막 한정판', url: '', verify: true },
+  { key: 'limited', icon: '☕', title: '1주년 특별 한정판 2컵 매커포트 예약', desc: '기존 구매자 전용 · 100개 한정', url: '', verify: true },
 ];
 function renderEventList() {
   const box = document.getElementById('eventList');
@@ -3089,7 +3089,7 @@ function renderEventList() {
     const chip = ((ev.verify || ev.preorder || (ev.sets && open)) && closed)
       ? '<span style="font-size:12px;font-weight:600;color:var(--label2);background:var(--fill);padding:4px 10px;border-radius:999px;white-space:nowrap">예약 마감</span>'
       : ev.verify
-      ? '<span style="font-size:12px;font-weight:700;color:#C9A24B;border:1.5px solid #C9A24B;padding:3px 9px;border-radius:999px;white-space:nowrap">구매자 전용</span>'
+      ? '<span style="font-size:12px;font-weight:700;color:#fff;background:linear-gradient(90deg,#C9A24B,#E08A5B);padding:4px 10px;border-radius:999px;white-space:nowrap">예약 중</span>'
       : open
       ? '<span style="font-size:12px;font-weight:700;color:#fff;background:linear-gradient(90deg,#C9A24B,#E08A5B);padding:4px 10px;border-radius:999px;white-space:nowrap">참여하기</span>'
       : '<span style="font-size:12px;font-weight:600;color:var(--label2);background:var(--fill);padding:4px 10px;border-radius:999px;white-space:nowrap">오픈 예정</span>';
@@ -3123,10 +3123,10 @@ function goEvent(i) {
 // ── 1주년 한정판: 기존 구매자 확인 (서버에서 HMAC 비교, 앱에는 고객 정보 없음) ──
 let _buyerUrl = '';
 let _buyerBusy = false;
-const LIMITED_DEADLINE = new Date(2026, 9, 31, 23, 59, 59); // 10월 31일 마감
+// 1주년 한정판: 마감일 없음 (예약 진행 중). 마감이 필요하면 isLimitedClosed에 날짜 비교를 다시 넣을 것
 const PREORDER_DEADLINE = new Date(2026, 9, 31, 23, 59, 59); // 2컵 프리오더 10월 31일 마감
 function isPreorderClosed() { return Date.now() > PREORDER_DEADLINE.getTime(); }
-function isLimitedClosed() { return Date.now() > LIMITED_DEADLINE.getTime(); }
+function isLimitedClosed() { return false; }
 function openBuyerVerify() {
   _buyerUrl = '';
   const inp = document.getElementById('buyerIdInput');
@@ -3832,7 +3832,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.36';
+const CURRENT_VERSION = 'v3.2.37';
 
 async function checkVersionFromServer() {
   try {
