@@ -23,6 +23,8 @@ body{margin:0;background:var(--bg);color:var(--label);font-family:-apple-system,
 .hero h1{font-size:30px;line-height:1.15;margin:8px 0 10px;letter-spacing:-.5px}
 .hero p{margin:0;color:rgba(245,237,227,.75);font-size:15px}
 .gallery img{display:block;width:100%;height:auto;border-radius:16px;margin:0 0 12px;background:var(--card)}
+.sec{font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin:28px 4px 12px}
+.sec:first-child{margin-top:4px}
 .empty{border:1.5px dashed var(--sep);border-radius:16px;padding:28px 16px;text-align:center;color:var(--label3);font-size:14px;margin-bottom:12px}
 .card{background:var(--card);border-radius:20px;padding:22px 20px;margin:18px 0}
 .card h2{font-size:20px;margin:0 0 14px;letter-spacing:-.3px}
@@ -73,12 +75,25 @@ body{margin:0;background:var(--bg);color:var(--label);font-family:-apple-system,
 <div class="cta"><a href="#" data-mail>✉️ Order by Email</a></div>
 
 <script>
-// 상세 이미지: 고객이 궁금해하는 순서대로 배열 (파일은 저장소 /en/ 폴더)
-const IMAGES = [];
+// 상세 이미지: 관심을 끄는 순서대로 섹션별 배열 (파일은 저장소 /en/ 폴더)
+const SECTIONS = [
+  ['Rich Crema at 7 Bar', ['hero-7bar', 'crema-tagline', 'crema-flow', 'difference', 'flavor-tagline', 'crema-compare']],
+  ['Why We Built It', ['channel', 'story', 'details']],
+  ['The Problem with Conventional Moka Pots', ['ritual-burnt', 'heat-end', 'heat-trap', 'overheat']],
+  ['How MAEKEO POT Protects the Flavor', ['temp-test', 'air-gap', 'cool-chamber', 'materials-design']],
+  ['Engineered for Crema', ['three-valve', 'top-weight', 'filter-basket', 'puck-screen', 'metal-filter', 'gasket']],
+  ['Tune It to Your Taste', ['dual-pressure', 'tuned-taste', 'pressure-cap', 'lower-valve', 'perfect-pour']],
+  ['Stainless Steel, Easy Care', ['upkeep-problem', 'sus316-care', 'sus316-compare', 'sus304-durable', 'sus304-parts', 'inside-modular', 'easy-care', 'easy-dry']],
+  ['Cooktops & Induction', ['cooktop-guide', 'induction']],
+  ['Specifications', ['specs']],
+  ['Pricing', ['price-single', 'price-pro-set']],
+];
 const g = document.getElementById('gallery');
-g.innerHTML = IMAGES.length
-  ? IMAGES.map((src, i) => '<img src="' + src + '" alt="MAEKEO POT detail ' + (i + 1) + '" loading="' + (i < 2 ? 'eager' : 'lazy') + '">').join('')
-  : '<div class="empty">Product images coming soon.</div>';
+let idx = 0;
+g.innerHTML = SECTIONS.map(([title, files], si) =>
+  '<h2 class="sec" id="s' + si + '">' + title + '</h2>' +
+  files.map(f => '<img src="/en/' + f + '.jpg" alt="MAEKEO POT — ' + title + '" loading="' + (idx++ < 2 ? 'eager' : 'lazy') + '" decoding="async">').join('')
+).join('');
 
 // 주문 메일 (미리 채운 양식)
 const subject = 'MAEKEO POT Order Inquiry';
