@@ -1348,7 +1348,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.39</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.40</div>
 
 </div><!-- /fixSection -->
 
@@ -1488,13 +1488,13 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div style="font-size:12px;margin-top:12px;opacity:.95;word-break:keep-all">다시 만나기 어려운, 이번이 마지막 한정판입니다.</div>
     </div>
     <div style="background:var(--fill);border:1.5px solid var(--orange);border-radius:12px;padding:12px 14px;margin-bottom:10px;text-align:center">
-      <div style="font-size:14px;font-weight:700;color:var(--orange)">🔥 100개 한정 · 선착순 예약</div>
-      <div id="limitedDeadline" style="font-size:13px;color:var(--label2);margin-top:2px">예약 진행 중</div>
+      <div style="font-size:14px;font-weight:700;color:var(--orange)">🔥 2차 50개 한정 · 선착순 예약</div>
+      <div id="limitedDeadline" style="font-size:13px;color:var(--label2);margin-top:2px">1차(12월 발송) 마감 · 2차 예약 진행 중</div>
     </div>
     <div style="background:var(--fill);border-radius:12px;padding:12px 14px;margin-bottom:18px">
       <div style="font-size:13px;color:var(--label2);margin-bottom:8px">📦 발송 일정 <span style="font-size:12px">(예약 순서대로 발송)</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:4px"><span style="color:var(--label2)">1차 <span style="font-size:12px;font-weight:600;color:var(--orange);margin-left:4px">50개</span></span><b style="color:var(--label)">12월말 예정</b></div>
-      <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:var(--label2)">2차 <span style="font-size:12px;font-weight:600;color:var(--orange);margin-left:4px">50개</span></span><b style="color:var(--label)">27년 1월말 예정</b></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;margin-bottom:6px;opacity:.55"><span style="color:var(--label2)">1차 <span style="font-size:12px;font-weight:600;margin-left:4px">50개</span> <span style="font-size:11px;font-weight:700;color:#fff;background:var(--label2);padding:2px 7px;border-radius:999px;margin-left:4px">마감</span></span><b style="color:var(--label2);text-decoration:line-through">12월말 예정</b></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:14px"><span style="color:var(--label2)">2차 <span style="font-size:12px;font-weight:600;color:var(--orange);margin-left:4px">50개</span> <span style="font-size:11px;font-weight:700;color:#fff;background:var(--orange);padding:2px 7px;border-radius:999px;margin-left:4px">예약 중</span></span><b style="color:var(--label)">27년 1월말 예정</b></div>
     </div>
     <div style="font-size:14px;font-weight:700;color:var(--label);margin-bottom:4px">기존 구매자 확인</div>
     <div style="font-size:13px;color:var(--label2);margin-bottom:10px;line-height:1.5;word-break:keep-all">매커포트 주문 시 사용하신 <b style="color:var(--label)">이메일 아이디(@ 앞부분)</b>를 입력해 주세요.</div>
@@ -3090,7 +3090,7 @@ function goToContainerPage() {
 // ═══ 1주년 기념 이벤트 ═══
 // url이 비어 있으면 '오픈 예정'으로 표시되고 눌러도 이동하지 않음
 const EVENTS = [
-  { key: 'limited', icon: '☕', title: '1주년 특별 한정판 2컵 매커포트 예약', desc: '기존 구매자 전용 · 100개 한정', url: '', verify: true },
+  { key: 'limited', icon: '☕', title: '1주년 특별 한정판 2컵 매커포트 예약', desc: '1차 마감 · 2차 예약 중', url: '', verify: true },
 ];
 function renderEventList() {
   const box = document.getElementById('eventList');
@@ -3844,7 +3844,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.39';
+const CURRENT_VERSION = 'v3.2.40';
 
 async function checkVersionFromServer() {
   try {
