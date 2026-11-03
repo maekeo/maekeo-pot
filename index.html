@@ -1357,7 +1357,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.45</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.46</div>
 
 </div><!-- /fixSection -->
 
@@ -3443,7 +3443,7 @@ function closePartsModal() {
   document.getElementById('partsModal').classList.remove('show');
 }
 
-// 2컵 프리오더 마감: 11월 8일(일) 23:59까지
+// 2컵 프리오더 마감 안내: 11월 8일(일) 23:59까지 (지나도 예약 버튼은 막지 않음)
 const PREORDER_END = new Date(2026, 10, 9); // 이 시각(11/9 0시)부터 마감
 function preorderClosed() { return Date.now() >= PREORDER_END.getTime(); }
 function openPreorderModal() {
@@ -3454,7 +3454,6 @@ function closePreorderModal() {
   document.getElementById('preorderModal').classList.remove('show');
 }
 function goToPreorderPage() {
-  if (preorderClosed()) { updatePreorderCountdown(); return; }
   track('go', 'preorder');
   window.open('https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000052', '_blank');
   closePreorderModal();
@@ -3469,13 +3468,10 @@ function updatePreorderCountdown() {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const diff = Math.round((PREORDER_END - today) / 86400000) - 1; // 마감일까지 남은 날
+  // 마감일이 지나면 카운트다운·마감일 문구만 숨기고 예약은 계속 받는다
   if (preorderClosed()) {
-    el.textContent = '예약 마감';
-    el.style.color = 'var(--label2)';
-    if (sub) sub.textContent = '11월 8일(일) 예약이 마감되었습니다';
-    if (box) box.style.borderColor = 'var(--sep)';
-    if (btn) { btn.disabled = true; btn.textContent = '예약 마감'; btn.style.opacity = '.45'; }
-    if (list) { list.textContent = '예약 마감'; list.style.color = 'var(--label2)'; }
+    if (box) box.style.display = 'none';
+    if (list) list.style.display = 'none';
     return;
   }
   if (diff > 1) {
@@ -3865,7 +3861,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.45';
+const CURRENT_VERSION = 'v3.2.46';
 
 async function checkVersionFromServer() {
   try {
