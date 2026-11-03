@@ -1357,7 +1357,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.44</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.45</div>
 
 </div><!-- /fixSection -->
 
@@ -1530,7 +1530,10 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <button onclick="selectReserve('preorder')" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:16px;cursor:pointer;font-family:inherit;margin-bottom:8px">
       <span style="display:flex;align-items:center;gap:10px">
         <span style="font-size:22px">☕☕</span>
-        <span style="font-size:15px;font-weight:600;color:var(--label)">2컵 매커포트 예약</span>
+        <span style="display:flex;flex-direction:column;align-items:flex-start;gap:2px">
+          <span style="font-size:15px;font-weight:600;color:var(--label)">2컵 매커포트 예약</span>
+          <span id="preorderListSub" style="font-size:12px;font-weight:600;color:var(--red)">11월 8일(일)까지 예약</span>
+        </span>
       </span>
       <span style="font-size:18px;color:var(--label3)">›</span>
     </button>
@@ -1573,6 +1576,11 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div style="display:inline-block;font-size:12px;font-weight:700;color:#fff;background:linear-gradient(90deg,#C9A24B,#E08A5B);padding:4px 12px;border-radius:999px;margin-bottom:8px">올해 마지막 프리오더</div>
       <div style="font-size:19px;font-weight:700;color:var(--label);margin-bottom:16px">12월 발송 2컵 매커포트<br>프리오더 예약</div>
     </div>
+    <div id="preorderCountdown" style="background:var(--fill);border:1.5px solid var(--red);border-radius:14px;padding:16px;margin-bottom:10px;text-align:center">
+      <div style="font-size:12px;color:var(--red);font-weight:600;margin-bottom:4px">⏰ 예약 마감까지</div>
+      <div id="preorderDday" style="font-size:30px;font-weight:800;color:var(--red);letter-spacing:.5px">D-5</div>
+      <div id="preorderDdaySub" style="font-size:13px;color:var(--label2);margin-top:4px">11월 8일(일) 마감</div>
+    </div>
     <div style="background:var(--fill);border:1.5px solid var(--orange);border-radius:12px;padding:12px 14px;margin-bottom:14px;text-align:center">
       <span style="font-size:13px;font-weight:700;color:var(--orange)">🔥 한정 수량 100개 · 조기 마감될 수 있습니다</span>
     </div>
@@ -1585,7 +1593,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </div>
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closePreorderModal()">취소</button>
-      <button class="btn btn-primary" style="flex:2" onclick="goToPreorderPage()">예약하러 가기 →</button>
+      <button class="btn btn-primary" id="preorderGoBtn" style="flex:2" onclick="goToPreorderPage()">예약하러 가기 →</button>
     </div>
   </div>
 </div>
@@ -3070,6 +3078,7 @@ function closeStoreModal() { document.getElementById('storeModal').classList.rem
 function goStoreLink(url) { track('store', url.includes('776e7d77') ? 'beans' : 'parts'); window.open(url, '_blank'); closeStoreModal(); }
 
 function openReserveSelectModal() {
+  updatePreorderCountdown();
   document.getElementById('reserveSelectModal').classList.add('show');
 }
 function closeReserveSelectModal() {
@@ -3434,7 +3443,9 @@ function closePartsModal() {
   document.getElementById('partsModal').classList.remove('show');
 }
 
-// 프리오더 마감 카운트다운 (9월 4일 마감)
+// 2컵 프리오더 마감: 11월 8일(일) 23:59까지
+const PREORDER_END = new Date(2026, 10, 9); // 이 시각(11/9 0시)부터 마감
+function preorderClosed() { return Date.now() >= PREORDER_END.getTime(); }
 function openPreorderModal() {
   updatePreorderCountdown();
   document.getElementById('preorderModal').classList.add('show');
@@ -3443,6 +3454,7 @@ function closePreorderModal() {
   document.getElementById('preorderModal').classList.remove('show');
 }
 function goToPreorderPage() {
+  if (preorderClosed()) { updatePreorderCountdown(); return; }
   track('go', 'preorder');
   window.open('https://www.maekeo.kr/goods/goods_view.php?goodsNo=1000000052', '_blank');
   closePreorderModal();
@@ -3451,25 +3463,30 @@ function updatePreorderCountdown() {
   const el = document.getElementById('preorderDday');
   const sub = document.getElementById('preorderDdaySub');
   const box = document.getElementById('preorderCountdown');
+  const btn = document.getElementById('preorderGoBtn');
+  const list = document.getElementById('preorderListSub');
   if (!el) return;
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const deadline = new Date(2026, 9, 31); // 10월 31일 (2컵)
-  const diff = Math.round((deadline - today) / 86400000);
-  if (diff > 1) {
-    el.textContent = 'D-' + diff;
-    if (sub) sub.textContent = '10월 31일(토) 마감';
-  } else if (diff === 1) {
-    el.textContent = 'D-1';
-    if (sub) sub.textContent = '내일(10월 31일) 마감 · 서둘러 주세요';
-  } else if (diff === 0) {
-    el.textContent = 'D-DAY';
-    if (sub) sub.textContent = '오늘 마감 · 마지막 기회입니다';
-  } else {
+  const diff = Math.round((PREORDER_END - today) / 86400000) - 1; // 마감일까지 남은 날
+  if (preorderClosed()) {
     el.textContent = '예약 마감';
     el.style.color = 'var(--label2)';
-    if (sub) sub.textContent = '10월 31일(토) 예약이 마감되었습니다';
+    if (sub) sub.textContent = '11월 8일(일) 예약이 마감되었습니다';
     if (box) box.style.borderColor = 'var(--sep)';
+    if (btn) { btn.disabled = true; btn.textContent = '예약 마감'; btn.style.opacity = '.45'; }
+    if (list) { list.textContent = '예약 마감'; list.style.color = 'var(--label2)'; }
+    return;
+  }
+  if (diff > 1) {
+    el.textContent = 'D-' + diff;
+    if (sub) sub.textContent = '11월 8일(일) 마감';
+  } else if (diff === 1) {
+    el.textContent = 'D-1';
+    if (sub) sub.textContent = '내일(11월 8일) 마감 · 서둘러 주세요';
+  } else {
+    el.textContent = 'D-DAY';
+    if (sub) sub.textContent = '오늘 마감 · 마지막 기회입니다';
   }
 }
 
@@ -3848,7 +3865,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.44';
+const CURRENT_VERSION = 'v3.2.45';
 
 async function checkVersionFromServer() {
   try {
