@@ -151,6 +151,27 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;-webkit-font-smoothin
 .tp-foot .screen-warn-text strong{color:#E3C27A;font-weight:600}
 .tp-reset{border:0;background:none;color:rgba(245,237,227,.55);font-family:inherit;font-size:13px;cursor:pointer;padding:6px 4px;white-space:nowrap;text-decoration:underline;text-underline-offset:3px}
 @media (prefers-color-scheme:dark){.tp-card{box-shadow:inset 0 0 0 1px rgba(255,236,210,.09)}}
+.tph{padding:16px 2px 4px !important;align-items:stretch !important}
+.tph-time{display:flex;align-items:baseline;justify-content:center;gap:8px}
+.tph-time .timer-digits{font-size:78px;font-weight:200;color:#FFF7EC;letter-spacing:-3px;line-height:1;font-variant-numeric:tabular-nums}
+.tph-time .timer-sub{font-size:16px;color:rgba(245,237,227,.5);letter-spacing:.5px}
+.tph .stage-name{text-align:center;margin-top:10px}
+.tph .stage-desc{text-align:center}
+.tp-bar{position:relative;height:14px;border-radius:99px;background:rgba(255,255,255,.08);margin:18px 6px 0;overflow:visible}
+.tp-bar .zone{position:absolute;top:0;bottom:0}
+.tp-bar .zone.warn{background:rgba(255,159,10,.16)}
+.tp-bar .zone.danger{background:rgba(255,69,58,.22);border-radius:0 99px 99px 0}
+.tp-bar .fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:99px;background:linear-gradient(90deg,#B9773C,#D4AA55 55%,#F3DB9E);
+  box-shadow:0 0 10px rgba(226,190,110,.45);transition:width 1s linear,background .35s ease}
+.tp-bar .fill::after{content:'';position:absolute;right:-5px;top:50%;width:18px;height:18px;margin-top:-9px;border-radius:50%;background:#FFF7EC;box-shadow:0 0 0 3px rgba(243,219,158,.35),0 0 12px rgba(243,219,158,.6)}
+.tp-bar .fill.zero::after{display:none}
+.tp-bar .mk{position:absolute;top:-4px;bottom:-4px;width:3px;margin-left:-1.5px;border-radius:2px}
+.tp-bar-lbl{position:relative;height:38px;margin:8px 6px 0}
+.tp-bar-lbl>span{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;font-size:11px;color:rgba(245,237,227,.55);white-space:nowrap}
+.tp-bar-lbl b{font-size:13px;font-weight:700;color:#F5EDE3;display:flex;align-items:center;gap:4px}
+.tp-bar-lbl i{display:inline-block;width:7px;height:7px;border-radius:50%}
+.tph .tp-rec{text-align:center;margin-top:4px}
+.tph-info{margin-top:12px !important}
 .tp-info{width:100%;margin-top:14px;display:flex;flex-direction:column;gap:8px}
 .tp-tip{min-height:58px;display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.06);border-radius:14px;padding:11px 13px;
   font-size:13px;line-height:1.5;color:rgba(245,237,227,.86);text-align:left;transition:opacity .35s;word-break:keep-all}
@@ -567,46 +588,32 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         <button id="cup2Btn" onclick="setCupMode(2)">2컵<span>4분 전후</span></button>
       </div>
       <div id="cupLockNote" class="tp-lock">추출 중에는 컵 수를 변경할 수 없습니다 · 초기화 후 변경 가능</div>
-      <div class="tp-hero">
-        <div class="tp-ring">
-          <svg viewBox="0 0 248 248">
-            <defs>
-              <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#F3DB9E"/>
-                <stop offset="55%" stop-color="#D4AA55"/>
-                <stop offset="100%" stop-color="#B9773C"/>
-              </linearGradient>
-            </defs>
-            <g id="ringTicks"></g>
-            <circle class="ring-bg" cx="124" cy="124" r="104"/>
-            <circle class="ring-fill" id="ringFill" cx="124" cy="124" r="104" style="stroke:url(#rg)"/>
-            <g id="ringMarks"></g>
-          </svg>
-          <div class="tp-center">
-            <div class="timer-digits" id="timerDisplay">0:00</div>
-            <div class="timer-sub" id="timerSub">/ 4:00</div>
-          </div>
-        </div>
+      <div class="tp-hero tph">
+        <div class="tph-time"><span class="timer-digits" id="timerDisplay">0:00</span><span class="timer-sub" id="timerSub">/ 4:00</span></div>
         <div class="stage-name" id="stageName">시작 준비</div>
         <div class="stage-desc" id="stageDesc">버튼을 눌러 추출을 시작하세요</div>
+        <div class="tp-bar" id="tpBar">
+          <div class="zone warn" id="zoneWarn"></div>
+          <div class="zone danger" id="zoneDanger"></div>
+          <div class="fill" id="ringFill"></div>
+          <div id="ringMarks"></div>
+        </div>
+        <div class="tp-bar-lbl" id="tpBarLbl">
+          <span class="w" id="lblWarn"><b><i style="background:#FF9F0A"></i><span id="lgWarn">2:00</span></b>불 줄이기</span>
+          <span class="d" id="lblDanger"><b><i style="background:#FF453A"></i><span id="lgDanger">3:30</span></b>과추출 주의</span>
+        </div>
         <div class="tp-rec" id="timerRecommendText">권장 추출 시간 3분 전후 (1컵)</div>
-        <div class="tp-legend"><span><i style="background:#FF9F0A"></i><span id="lgWarn">2:00</span> 불 줄이기</span><span><i style="background:#FF453A"></i><span id="lgDanger">3:30</span> 과추출 주의</span></div>
-        <div class="prog-dots">
-          <div class="prog-dot" id="dot0"></div>
-          <div class="prog-dot" id="dot1"></div>
-          <div class="prog-dot" id="dot2"></div>
-        </div>
-        <div class="tp-info">
-          <div class="tp-tip" id="tpTip" style="display:none"><span class="ic">💡</span><span id="tpTipText"></span></div>
-          <div class="tp-prev" id="tpPrev" style="display:none"></div>
-          <div class="tp-count" id="tpCount" style="display:none"></div>
-          <div class="tp-week" id="tpWeek" style="display:none" onclick="openCalModal('timer')" role="button" aria-label="커피 달력 보기"></div>
-        </div>
       </div>
       <div class="tp-btns">
         <button class="tp-start" id="startBtn" onclick="toggleTimer()">시작</button>
         <button class="tp-stop" id="stopBtn" onclick="stopExtraction()" style="display:none">추출 종료</button>
       </div>
+      <div class="tp-info tph-info">
+          <div class="tp-tip" id="tpTip" style="display:none"><span class="ic">💡</span><span id="tpTipText"></span></div>
+          <div class="tp-prev" id="tpPrev" style="display:none"></div>
+          <div class="tp-count" id="tpCount" style="display:none"></div>
+          <div class="tp-week" id="tpWeek" style="display:none" onclick="openCalModal('timer')" role="button" aria-label="커피 달력 보기"></div>
+        </div>
       <div class="tp-opt">
         <span>🔔 알람 10초 전 음성 예고</span>
         <button class="tp-sw" id="preAlertSw" onclick="togglePreAlert()" aria-label="알람 10초 전 음성 예고"></button>
@@ -2872,30 +2879,18 @@ function checkPreAlerts(elapsed) {
   }
 }
 
-// 링 바깥 눈금 + 불 줄이기/과추출 지점 표시
+// 가로 막대: 불 줄이기/과추출 구간·눈금·라벨 위치
 function renderRingMarks() {
-  const ticks = document.getElementById('ringTicks'), marks = document.getElementById('ringMarks');
-  if (!ticks || !marks) return;
-  const C = 124, NS = 'http://www.w3.org/2000/svg';
-  if (!ticks.childNodes.length) {
-    for (let i = 0; i < 60; i++) {
-      const a = i / 60 * Math.PI * 2, major = i % 5 === 0;
-      const r1 = 114, r2 = major ? 121 : 118;
-      const l = document.createElementNS(NS, 'line');
-      l.setAttribute('x1', C + r1 * Math.cos(a)); l.setAttribute('y1', C + r1 * Math.sin(a));
-      l.setAttribute('x2', C + r2 * Math.cos(a)); l.setAttribute('y2', C + r2 * Math.sin(a));
-      l.setAttribute('class', 'tick' + (major ? ' major' : ''));
-      ticks.appendChild(l);
-    }
-  }
-  marks.innerHTML = '';
-  [[WARN_AT, '#FF9F0A'], [DANGER_AT, '#FF453A']].forEach(([sec, col]) => {
-    const a = sec / STOP_AT * Math.PI * 2;
-    const c = document.createElementNS(NS, 'circle');
-    c.setAttribute('cx', C + 104 * Math.cos(a)); c.setAttribute('cy', C + 104 * Math.sin(a));
-    c.setAttribute('r', 5); c.setAttribute('fill', col); c.setAttribute('stroke', '#1b1411'); c.setAttribute('stroke-width', 2.5);
-    marks.appendChild(c);
-  });
+  const marks = document.getElementById('ringMarks');
+  if (!marks) return;
+  const pw = WARN_AT / STOP_AT * 100, pd = DANGER_AT / STOP_AT * 100;
+  const zw = document.getElementById('zoneWarn'), zd = document.getElementById('zoneDanger');
+  if (zw) { zw.style.left = pw + '%'; zw.style.width = (pd - pw) + '%'; }
+  if (zd) { zd.style.left = pd + '%'; zd.style.right = '0'; }
+  marks.innerHTML = '<div class="mk" style="left:' + pw + '%;background:#FF9F0A"></div><div class="mk" style="left:' + pd + '%;background:#FF453A"></div>';
+  const lw = document.getElementById('lblWarn'), ld = document.getElementById('lblDanger');
+  if (lw) lw.style.left = pw + '%';
+  if (ld) ld.style.left = Math.min(pd, 88) + '%';
   const w = document.getElementById('lgWarn'), d = document.getElementById('lgDanger');
   if (w) w.textContent = fmt(WARN_AT);
   if (d) d.textContent = fmt(DANGER_AT);
@@ -2967,8 +2962,9 @@ function updateTimerUI() {
   updateTip(elapsed);
 
   const rf = document.getElementById('ringFill');
-  rf.style.strokeDashoffset = RING_C - RING_C * Math.min(elapsed/STOP_AT, 1);
-  rf.style.stroke = elapsed>=DANGER_AT ? '#FF3B30' : elapsed>=WARN_AT ? '#FF9500' : 'url(#rg)';
+  rf.style.width = (Math.min(elapsed/STOP_AT, 1) * 100) + '%';
+  rf.classList.toggle('zero', elapsed === 0);
+  rf.style.background = elapsed>=DANGER_AT ? '#FF3B30' : elapsed>=WARN_AT ? '#FF9500' : '';
 
   const sd = (i,c) => { const d=document.getElementById('dot'+i); if(d) d.className='prog-dot '+c; };
   if      (elapsed===0)       { sd(0,'');      sd(1,'');      sd(2,''); }
@@ -3179,7 +3175,7 @@ function resetTimer() {
   document.getElementById('stopBtn').style.display = 'none';
   document.getElementById('alertWarn').classList.remove('show');
   document.getElementById('alertDanger').classList.remove('show');
-  document.getElementById('ringFill').style.stroke = 'url(#rg)';
+  document.getElementById('ringFill').style.background = '';
   updateCupBtnState();
   renderStages(); updateTimerUI(); renderTimerInfo();
 }
