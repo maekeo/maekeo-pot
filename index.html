@@ -876,9 +876,13 @@ body.flash-danger{animation:flashDanger .35s ease 6}
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">2.</span>
             <span>세척을 마친 뒤 <b>압력캡을 분리</b>합니다.</span>
           </div>
-          <div style="display:flex;gap:10px">
+          <div style="display:flex;gap:10px;margin-bottom:8px">
             <span style="color:var(--blue);font-weight:700;flex-shrink:0">3.</span>
             <span><b>압력추와 압력스프링을 분리</b>해서 따로 보관합니다.</span>
+          </div>
+          <div style="display:flex;gap:10px">
+            <span style="color:var(--blue);font-weight:700;flex-shrink:0">4.</span>
+            <span>바스켓 봉은 <b>구멍이 좁아</b> 이물질이 남기 쉽습니다. 보관 전에 <b>봉 끝의 구멍을 입으로 '후' 불어</b> 남아 있을 수 있는 이물질을 제거한 뒤 보관해 주세요.</span>
           </div>
         </div>
       </div>
@@ -1486,7 +1490,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.62</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.63</div>
 
 </div><!-- /fixSection -->
 
@@ -4154,7 +4158,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.62';
+const CURRENT_VERSION = 'v3.2.63';
 
 async function checkVersionFromServer() {
   try {
