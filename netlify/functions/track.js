@@ -10,9 +10,9 @@ const RULES = {
   banner:  /^event$/,
   cal:     /^(timer|history|end)$/,  // 커피 달력 열기: 타이머 도장줄 / 기록 탭 / 추출 종료 직후
   story:   /^(open|reserve)$/,  // 매커포트 개발 이야기: 열기 / 예약하기 버튼
-  ev:      /^(limited|preorder|sets|beans|cafe)$/,
+  ev:      /^(limited|preorder|sets|beans)$/,
   verify:  /^(ok|fail)$/,
-  go:      /^(limited|preorder|setmid|setlarge|beans|container|cafe)$/,
+  go:      /^(limited|preorder|setmid|setlarge|beans|container)$/,
   reserve: /^(preorder|onecup|boiler|container)$/,
   store:   /^(open|beans|parts)$/,
   install: /^android$/,
