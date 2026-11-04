@@ -1407,7 +1407,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.55</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.56</div>
 
 </div><!-- /fixSection -->
 
@@ -1580,8 +1580,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div style="background:var(--fill);border-radius:14px;padding:14px 16px;margin-bottom:10px">
       <div style="font-size:13px;font-weight:700;color:#B8862F;margin-bottom:10px">이렇게 함께합니다</div>
       <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--label2);line-height:1.55;word-break:keep-all"><span style="font-size:18px">☕</span><span><b style="color:var(--label)">매커포트가 궁금한 손님을 카페로 안내</b><br>구매 전에 매커포트 커피를 맛보고 싶은 분, 궁금해하시는 분들을 가까운 사장님 카페로 안내해 드립니다 (매커랩 · 매커 유튜브 · 구매 문의)</span></div>
         <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--label2);line-height:1.55;word-break:keep-all"><span style="font-size:18px">🔧</span><span><b style="color:var(--label)">매커가 직접 방문해 점검</b><br>매장의 매커포트 상태를 점검하고, 추출 노하우를 직접 공유해 드립니다 (지역·일정 협의)</span></div>
-        <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--label2);line-height:1.55;word-break:keep-all"><span style="font-size:18px">📍</span><span><b style="color:var(--label)">매커랩 카페 소개</b><br>'매커포트 커피를 마실 수 있는 카페'로 소개해, 구매 전 맛보고 싶은 분들을 안내합니다</span></div>
         <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--label2);line-height:1.55;word-break:keep-all"><span style="font-size:18px">▶️</span><span><b style="color:var(--label)">매커 유튜브 소개</b><br>영상·게시글로 카페를 소개합니다 (사장님과 협의 후)</span></div>
       </div>
     </div>
@@ -3345,7 +3345,7 @@ function goToContainerPage() {
 // url이 비어 있으면 '오픈 예정'으로 표시되고 눌러도 이동하지 않음
 const EVENTS = [
   { key: 'limited', icon: '☕', title: '1주년 특별 한정판 2컵 매커포트 예약', desc: '1차 마감 · 2차 예약 중', url: '', verify: true },
-  { key: 'cafe', icon: '📍', title: '매커포트 카페를 찾습니다', desc: '매커포트로 커피를 파는 카페 무료 소개 · 방문 점검', url: '', cafe: true },
+  { key: 'cafe', icon: '📍', title: '매커포트 카페를 찾습니다', desc: '무료 소개 · 손님 안내 · 방문 점검', url: '', cafe: true },
 ];
 function renderEventList() {
   const box = document.getElementById('eventList');
@@ -4132,7 +4132,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.55';
+const CURRENT_VERSION = 'v3.2.56';
 
 async function checkVersionFromServer() {
   try {
