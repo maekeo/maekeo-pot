@@ -1407,7 +1407,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.52</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.53</div>
 
 </div><!-- /fixSection -->
 
@@ -2638,6 +2638,8 @@ function applyCupTimings() {
 }
 
 function setCupMode(n, silent) {
+  // 추출이 끝난 뒤에는 바로 컵 수를 바꿀 수 있게 타이머를 초기화
+  if (timerEnded && !isRunning) resetTimer();
   // 추출 진행 중(실행 또는 일시정지 상태)에는 컵 수 변경 차단
   if (isRunning || accElapsed > 0) {
     toast('추출 중에는 컵 수를 변경할 수 없습니다. 초기화 후 변경해주세요.');
@@ -3093,7 +3095,7 @@ function flash(type) {
 }
 
 function updateCupBtnState() {
-  const locked = isRunning || accElapsed > 0;
+  const locked = (isRunning || accElapsed > 0) && !timerEnded; // 추출 종료 후에는 잠그지 않음
   const b1 = document.getElementById('cup1Btn');
   const b2 = document.getElementById('cup2Btn');
   [b1, b2].forEach(b => {
@@ -4073,7 +4075,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.52';
+const CURRENT_VERSION = 'v3.2.53';
 
 async function checkVersionFromServer() {
   try {
