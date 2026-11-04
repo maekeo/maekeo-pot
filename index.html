@@ -1407,7 +1407,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.53</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.54</div>
 
 </div><!-- /fixSection -->
 
@@ -1564,6 +1564,39 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeBuyerVerify()">취소</button>
       <button class="btn btn-primary" style="flex:2" id="buyerVerifyBtn" onclick="submitBuyerVerify()">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- 매커포트 카페 접수 모달 -->
+<div class="modal-bg" id="cafeModal">
+  <div class="modal-sheet" style="max-height:92vh;overflow-y:auto">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:8px 0 4px">
+      <div style="font-size:44px;margin-bottom:10px">📍</div>
+      <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:8px;word-break:keep-all">매커포트로 커피를 내리는<br>카페를 찾습니다</div>
+      <div style="font-size:14px;color:var(--label2);line-height:1.6;margin-bottom:16px;word-break:keep-all">매장에서 매커포트로 커피를 판매하고 계신가요?<br>매커랩과 매커 유튜브 채널에서 사장님의 카페를 소개해 드립니다.</div>
+    </div>
+    <div style="background:var(--fill);border-radius:14px;padding:14px 16px;margin-bottom:10px">
+      <div style="font-size:13px;font-weight:700;color:#B8862F;margin-bottom:10px">이렇게 함께합니다</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--label2);line-height:1.55;word-break:keep-all"><span style="font-size:18px">🔧</span><span><b style="color:var(--label)">매커 대표가 직접 방문해 점검</b><br>매장의 매커포트 상태를 점검하고, 추출 노하우를 직접 공유해 드립니다 (지역·일정 협의)</span></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--label2);line-height:1.55;word-break:keep-all"><span style="font-size:18px">📍</span><span><b style="color:var(--label)">매커랩 카페 소개</b><br>'매커포트 커피를 마실 수 있는 카페'로 소개해, 구매 전 맛보고 싶은 분들을 안내합니다</span></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--label2);line-height:1.55;word-break:keep-all"><span style="font-size:18px">▶️</span><span><b style="color:var(--label)">매커 유튜브 소개</b><br>영상·게시글로 카페를 소개합니다 (사장님과 협의 후)</span></div>
+      </div>
+    </div>
+    <div style="background:var(--fill);border:1.5px solid #C9A24B;border-radius:12px;padding:11px 14px;margin-bottom:10px;text-align:center;font-size:14px;font-weight:700;color:var(--label)">소개·방문 점검 비용은 없습니다</div>
+    <div style="display:flex;gap:10px;align-items:flex-start;background:var(--fill);border:1.5px solid var(--orange);border-radius:12px;padding:12px 14px;margin-bottom:10px;font-size:14px;color:var(--label2);line-height:1.55;word-break:keep-all">
+      <span style="font-size:20px">📸</span>
+      <span><b style="color:var(--label)">매장에서 매커포트를 사용하는 사진을 꼭 첨부해 주세요</b><br>매커포트로 커피를 내리는 모습 1~3장이면 충분합니다. 매장 외관·메뉴판 사진도 함께 보내 주시면 소개에 큰 도움이 됩니다.</span>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--sep);border-radius:12px;padding:12px 14px;margin-bottom:18px;font-size:13px;color:var(--label2);line-height:1.65;word-break:keep-all">
+      <b style="color:var(--label)">접수 방법</b> · 아래 버튼을 누르면 메일 양식이 열립니다. 카페 이름, 지역, 매커포트 메뉴, 연락처를 적어 보내 주세요.<br>
+      소개 전에 먼저 연락드려 내용을 확인하며, 보내 주신 정보는 카페 소개에만 사용합니다.
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeCafeModal()">닫기</button>
+      <button class="btn btn-primary" style="flex:2" onclick="sendCafeMail()">메일로 접수하기 →</button>
     </div>
   </div>
 </div>
@@ -3312,6 +3345,7 @@ function goToContainerPage() {
 // url이 비어 있으면 '오픈 예정'으로 표시되고 눌러도 이동하지 않음
 const EVENTS = [
   { key: 'limited', icon: '☕', title: '1주년 특별 한정판 2컵 매커포트 예약', desc: '1차 마감 · 2차 예약 중', url: '', verify: true },
+  { key: 'cafe', icon: '📍', title: '매커포트 카페를 찾습니다', desc: '매커포트로 커피를 파는 카페 무료 소개 · 방문 점검', url: '', cafe: true },
 ];
 function renderEventList() {
   const box = document.getElementById('eventList');
@@ -3319,7 +3353,9 @@ function renderEventList() {
   box.innerHTML = EVENTS.map((ev, i) => {
     const open = ev.sets ? hasSetLinks() : !!ev.url;
     const closed = ev.preorder ? isPreorderClosed() : isLimitedClosed();
-    const chip = ((ev.verify || ev.preorder || (ev.sets && open)) && closed)
+    const chip = ev.cafe
+      ? '<span style="font-size:12px;font-weight:700;color:#fff;background:linear-gradient(90deg,#C9A24B,#E08A5B);padding:4px 10px;border-radius:999px;white-space:nowrap">접수 중</span>'
+      : ((ev.verify || ev.preorder || (ev.sets && open)) && closed)
       ? '<span style="font-size:12px;font-weight:600;color:var(--label2);background:var(--fill);padding:4px 10px;border-radius:999px;white-space:nowrap">예약 마감</span>'
       : ev.verify
       ? '<span style="font-size:12px;font-weight:700;color:#fff;background:linear-gradient(90deg,#C9A24B,#E08A5B);padding:4px 10px;border-radius:999px;white-space:nowrap">예약 중</span>'
@@ -3345,12 +3381,33 @@ function goEvent(i) {
   const ev = EVENTS[i];
   if (ev) track('ev', ev.key);
   if (ev && ev.verify) { closeEventModal(); openBuyerVerify(); return; }
+  if (ev && ev.cafe) { closeEventModal(); openCafeModal(); return; }
   if (ev && ev.preorder) { closeEventModal(); openPreorderModal(); return; }
   if (ev && ev.sets && hasSetLinks()) { closeEventModal(); openSetsModal(); return; }
   if (!ev || !ev.url) { toast('곧 오픈됩니다. 조금만 기다려 주세요!'); return; }
   track('go', 'beans');
   window.open(ev.url, '_blank');
   closeEventModal();
+}
+
+// ── 매커포트 카페 접수 (앱에 저장하지 않고 대표 메일로 받음) ──
+function openCafeModal() { document.getElementById('cafeModal').classList.add('show'); }
+function closeCafeModal() { document.getElementById('cafeModal').classList.remove('show'); }
+function sendCafeMail() {
+  track('go', 'cafe');
+  const subject = '[매커포트 카페 접수] 카페 이름: ';
+  const body = '안녕하세요, 매커포트로 커피를 판매하는 카페입니다.\n\n'
+    + '1. 카페 이름:\n'
+    + '2. 지역(주소):\n'
+    + '3. 매커포트로 내리는 메뉴:\n'
+    + '4. 매커포트 사용 기간:\n'
+    + '5. 연락받으실 번호:\n'
+    + '6. 희망하는 소개 (매커랩 소개 / 유튜브 소개 / 방문 점검·노하우 공유 중 선택):\n\n'
+    + '📸 사진 첨부 부탁드립니다\n'
+    + '- 매장에서 매커포트로 커피를 내리는 모습 (1~3장)\n'
+    + '- 매장 외관이나 메뉴판 (선택)\n';
+  location.href = 'mailto:maeilcoffees@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  closeCafeModal();
 }
 
 // ── 1주년 한정판: 기존 구매자 확인 (서버에서 HMAC 비교, 앱에는 고객 정보 없음) ──
@@ -4075,7 +4132,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.53';
+const CURRENT_VERSION = 'v3.2.54';
 
 async function checkVersionFromServer() {
   try {
