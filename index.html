@@ -161,6 +161,27 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;-webkit-font-smoothin
 .tp-prev b{color:#F5EDE3;font-weight:600}
 .tp-count{font-size:12px;color:rgba(245,237,227,.55);text-align:center}
 .tp-count b{color:#E3C27A}
+.tp-count.link{cursor:pointer}
+.tp-week{display:flex;align-items:center;gap:6px;justify-content:center;cursor:pointer;padding:4px 0}
+.tp-week .d{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:rgba(245,237,227,.45)}
+.tp-week .d i{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:14px;background:rgba(255,255,255,.07)}
+.tp-week .d.on i{background:linear-gradient(135deg,#E3C27A,#B9773C)}
+.tp-week .d.today{color:#E3C27A;font-weight:700}
+.tp-week .d.today i{box-shadow:0 0 0 1.5px #E3C27A}
+.tp-week .more{font-size:12px;color:rgba(245,237,227,.6);margin-left:4px;white-space:nowrap}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-grid .h{font-size:12px;font-weight:600;color:var(--label2);text-align:center;padding:4px 0}
+.cal-grid .h.sun{color:var(--red)}
+.cal-grid .c{aspect-ratio:1/1.1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:4px;font-size:12px;color:var(--label2);position:relative}
+.cal-grid .c.sun{color:var(--red)}
+.cal-grid .c.today{box-shadow:inset 0 0 0 1.5px #C9A24B;color:var(--label);font-weight:700}
+.cal-grid .c .st{margin-top:2px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#F3DB9E,#C9A24B);box-shadow:0 1px 3px rgba(150,100,30,.35);transform:rotate(-8deg)}
+.cal-grid .c .n{position:absolute;right:1px;top:1px;font-size:10px;font-weight:800;color:#fff;background:#B8862F;border-radius:8px;padding:0 4px;line-height:15px}
+.cal-grid .c.future{opacity:.35}
+.cal-sum{display:flex;gap:8px;margin:14px 0}
+.cal-sum div{flex:1;background:var(--fill);border-radius:12px;padding:10px 6px;text-align:center}
+.cal-sum b{display:block;font-size:20px;color:var(--label);font-weight:800}
+.cal-sum span{font-size:12px;color:var(--label2)}
 .tp-opt{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;font-size:13px;color:rgba(245,237,227,.75)}
 .tp-sw{position:relative;width:44px;height:26px;flex:none;border:0;border-radius:99px;background:rgba(255,255,255,.18);cursor:pointer;transition:background .2s;padding:0}
 .tp-sw::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
@@ -579,6 +600,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <div class="tp-tip" id="tpTip" style="display:none"><span class="ic">💡</span><span id="tpTipText"></span></div>
           <div class="tp-prev" id="tpPrev" style="display:none"></div>
           <div class="tp-count" id="tpCount" style="display:none"></div>
+          <div class="tp-week" id="tpWeek" style="display:none" onclick="openCalModal('timer')" role="button" aria-label="커피 달력 보기"></div>
         </div>
       </div>
       <div class="tp-btns">
@@ -616,6 +638,16 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 <!-- ═══ 기록 ═══ -->
 <div class="section" id="historySection">
   <div class="gap"></div>
+  <div class="group">
+    <div id="calEntry" role="button" onclick="openCalModal('history')" style="display:flex;align-items:center;gap:12px;background:var(--bg2);border-radius:12px;padding:14px 16px;cursor:pointer">
+      <span style="font-size:26px;line-height:1">📅</span>
+      <span style="flex:1;min-width:0">
+        <span style="display:block;font-size:15px;font-weight:700;color:var(--label)">커피 달력</span>
+        <span id="calEntrySub" style="display:block;font-size:13px;color:var(--label2);margin-top:2px">커피를 내린 날마다 도장이 찍혀요</span>
+      </span>
+      <span style="font-size:18px;color:var(--label3)">›</span>
+    </div>
+  </div>
   <div class="group">
     <div class="group-hd" id="historyHd">추출 기록</div>
     <div id="historyList"></div>
@@ -1368,7 +1400,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.50</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.51</div>
 
 </div><!-- /fixSection -->
 
@@ -1525,6 +1557,32 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeBuyerVerify()">취소</button>
       <button class="btn btn-primary" style="flex:2" id="buyerVerifyBtn" onclick="submitBuyerVerify()">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- 커피 달력 모달 -->
+<div class="modal-bg" id="calModal">
+  <div class="modal-sheet" style="max-height:92vh;overflow-y:auto">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:4px 0 10px">
+      <div style="font-size:20px;font-weight:700;color:var(--label)">☕ 커피 달력</div>
+      <div style="font-size:13px;color:var(--label2);margin-top:4px">타이머로 커피를 내린 날마다 도장이 찍혀요</div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:6px 0 10px">
+      <button onclick="calMove(-1)" aria-label="이전 달" style="width:40px;height:40px;border:none;border-radius:12px;background:var(--fill);color:var(--label);font-size:20px;cursor:pointer;font-family:inherit">‹</button>
+      <div id="calTitle" style="font-size:18px;font-weight:800;color:var(--label)"></div>
+      <button onclick="calMove(1)" id="calNext" aria-label="다음 달" style="width:40px;height:40px;border:none;border-radius:12px;background:var(--fill);color:var(--label);font-size:20px;cursor:pointer;font-family:inherit">›</button>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div class="cal-sum">
+      <div><b id="calMonthCups">0</b><span>이달의 커피</span></div>
+      <div><b id="calMonthDays">0</b><span>커피 마신 날</span></div>
+      <div><b id="calStreak">0</b><span>연속 기록</span></div>
+    </div>
+    <div id="calTotal" style="background:var(--fill);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--label2);text-align:center;line-height:1.6;margin-bottom:18px"></div>
+    <div class="modal-btns">
+      <button class="btn btn-primary" style="flex:1" onclick="closeCalModal()">닫기</button>
     </div>
   </div>
 </div>
@@ -2635,8 +2693,26 @@ function getBrewStats() {
     st.total = loadRecords().filter(r => r.type === 'timer').length;
   }
   const d = new Date(), today = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); // 기기 현지 날짜
+  if (!st.days || typeof st.days !== 'object') {
+    // 커피 달력 첫 사용: 저장된 타이머 기록 날짜로 도장을 채워 시작
+    st.days = {};
+    loadRecords().filter(r => r.type === 'timer' && r.date).forEach(r => {
+      const m = String(r.date).match(/^(\d{4})\.(\d{2})\.(\d{2})/);
+      if (m) { const k = m[1] + '-' + m[2] + '-' + m[3]; st.days[k] = (st.days[k] || 0) + 1; }
+    });
+    if (st.day === today && st.today > 0) { const k = dayKey(d); st.days[k] = Math.max(st.days[k] || 0, st.today); }
+  }
   if (st.day !== today) { st.day = today; st.today = 0; }
   return st;
+}
+function dayKey(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+// 오늘(또는 어제)까지 이어진 연속 일수
+function brewStreak(days) {
+  const d = new Date();
+  if (!days[dayKey(d)]) d.setDate(d.getDate() - 1);
+  let n = 0;
+  while (days[dayKey(d)]) { n++; d.setDate(d.getDate() - 1); }
+  return n;
 }
 function saveBrewStats(st) { try { localStorage.setItem('maekeo_brew_stats', JSON.stringify(st)); } catch (e) {} }
 const BREW_MILESTONES = [10, 30, 50, 100, 200, 300, 365, 500, 700, 1000];
@@ -2646,6 +2722,8 @@ function countBrew() {
   if (getElapsed() < 30) { _lastBrewNo = 0; return; }
   const st = getBrewStats();
   st.total += 1; st.today += 1;
+  const k = dayKey(new Date());
+  st.days[k] = (st.days[k] || 0) + 1;
   saveBrewStats(st);
   _lastBrewNo = st.total;
   _lastMilestone = BREW_MILESTONES.includes(st.total);
@@ -2669,15 +2747,78 @@ function renderTimerInfo() {
     prevEl.style.display = 'flex';
   } else prevEl.style.display = 'none';
   const st = getBrewStats();
-  if (!isRunning && accElapsed === 0 && !timerEnded) {
+  const weekEl = document.getElementById('tpWeek');
+  const idle = !isRunning && accElapsed === 0 && !timerEnded;
+  cntEl.classList.remove('link'); cntEl.onclick = null;
+  if (idle) {
     cntEl.innerHTML = st.total > 0
       ? '매커포트와 함께한 커피 <b>' + st.total + '잔</b>' + (st.today > 0 ? ' · 오늘 ' + st.today + '잔' : '')
       : '오늘의 첫 커피를 내려 보세요';
     cntEl.style.display = 'block';
   } else if (timerEnded && _lastBrewNo) {
-    cntEl.innerHTML = '매커포트와 함께한 <b>' + _lastBrewNo + '번째</b> 커피';
+    cntEl.innerHTML = '매커포트와 함께한 <b>' + _lastBrewNo + '번째</b> 커피 · 달력에 도장 쾅! ☕ ›';
+    cntEl.classList.add('link'); cntEl.onclick = () => openCalModal('end');
     cntEl.style.display = 'block';
   } else cntEl.style.display = 'none';
+  if (weekEl) {
+    if (idle) { renderWeekStrip(weekEl, st.days); weekEl.style.display = 'flex'; }
+    else weekEl.style.display = 'none';
+  }
+}
+// 타이머 아래 이번 주(월~일) 도장 줄
+function renderWeekStrip(el, days) {
+  const now = new Date(), dow = (now.getDay() + 6) % 7; // 월=0
+  const mon = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dow);
+  const names = ['월', '화', '수', '목', '금', '토', '일'];
+  let h = '';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + i);
+    const on = !!days[dayKey(d)], today = i === dow;
+    h += '<span class="d' + (on ? ' on' : '') + (today ? ' today' : '') + '"><i>' + (on ? '☕' : '') + '</i>' + names[i] + '</span>';
+  }
+  el.innerHTML = h + '<span class="more">달력 ›</span>';
+}
+
+// ═══ 커피 달력 ═══
+let _calY = 0, _calM = 0;
+function openCalModal(from) {
+  track('cal', from || 'timer');
+  const d = new Date(); _calY = d.getFullYear(); _calM = d.getMonth();
+  renderCal();
+  document.getElementById('calModal').classList.add('show');
+}
+function closeCalModal() { document.getElementById('calModal').classList.remove('show'); }
+function calMove(n) {
+  const d = new Date(_calY, _calM + n, 1), now = new Date();
+  if (d > new Date(now.getFullYear(), now.getMonth(), 1)) return; // 미래 달로는 이동하지 않음
+  _calY = d.getFullYear(); _calM = d.getMonth();
+  renderCal();
+}
+function renderCal() {
+  const st = getBrewStats(), days = st.days;
+  const now = new Date(), todayK = dayKey(now);
+  const first = new Date(_calY, _calM, 1), last = new Date(_calY, _calM + 1, 0).getDate();
+  document.getElementById('calTitle').textContent = _calY + '년 ' + (_calM + 1) + '월';
+  const isThisMonth = _calY === now.getFullYear() && _calM === now.getMonth();
+  document.getElementById('calNext').style.visibility = isThisMonth ? 'hidden' : 'visible';
+  let h = ['일', '월', '화', '수', '목', '금', '토'].map((n, i) => '<div class="h' + (i === 0 ? ' sun' : '') + '">' + n + '</div>').join('');
+  for (let i = 0; i < first.getDay(); i++) h += '<div></div>';
+  let cups = 0, dcount = 0;
+  for (let day = 1; day <= last; day++) {
+    const d = new Date(_calY, _calM, day), k = dayKey(d), n = days[k] || 0;
+    if (n) { cups += n; dcount++; }
+    const cls = 'c' + (d.getDay() === 0 ? ' sun' : '') + (k === todayK ? ' today' : '') + (d > now ? ' future' : '');
+    h += '<div class="' + cls + '">' + day + (n ? '<span class="st">☕</span>' + (n > 1 ? '<span class="n">×' + n + '</span>' : '') : '') + '</div>';
+  }
+  document.getElementById('calGrid').innerHTML = h;
+  document.getElementById('calMonthCups').textContent = cups + '잔';
+  document.getElementById('calMonthDays').textContent = dcount + '일';
+  const sk = brewStreak(days);
+  document.getElementById('calStreak').textContent = sk + '일';
+  const next = BREW_MILESTONES.find(m => m > st.total);
+  document.getElementById('calTotal').innerHTML = st.total > 0
+    ? '매커포트와 함께한 커피 <b style="color:var(--label)">총 ' + st.total + '잔</b>' + (next ? '<br>' + next + '잔 기념까지 <b style="color:#B8862F">' + (next - st.total) + '잔</b> 남았어요' : '')
+    : '타이머로 첫 커피를 내리면 오늘 날짜에 도장이 찍혀요';
 }
 function updateTip(elapsed) {
   const box = document.getElementById('tpTip'), txt = document.getElementById('tpTipText');
@@ -3786,6 +3927,12 @@ function deleteRecord(id) {
 }
 
 function renderHistory() {
+  try {
+    const st = getBrewStats(), now = new Date(), pre = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-';
+    const m = Object.keys(st.days).filter(k => k.startsWith(pre)).reduce((a, k) => a + st.days[k], 0);
+    const sub = document.getElementById('calEntrySub');
+    if (sub && m > 0) sub.textContent = '이번 달 ' + m + '잔 · 연속 ' + brewStreak(st.days) + '일';
+  } catch (e) {}
   const records = loadRecords();
   const list = document.getElementById('historyList');
   const empty = document.getElementById('historyEmpty');
@@ -3930,7 +4077,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.50';
+const CURRENT_VERSION = 'v3.2.51';
 
 async function checkVersionFromServer() {
   try {

@@ -8,6 +8,7 @@ const RULES = {
   visit:   /^(-|direct|app|c-[a-z0-9]{3,12}|r-[a-z0-9-]{2,20})$/,  // 유입 경로: 전용링크(c-코드)·사이트(r-이름)·직접·앱
   tab:     /^(grind|timer|history|fix)$/,
   banner:  /^event$/,
+  cal:     /^(timer|history|end)$/,  // 커피 달력 열기: 타이머 도장줄 / 기록 탭 / 추출 종료 직후
   story:   /^(open|reserve)$/,  // 매커포트 개발 이야기: 열기 / 예약하기 버튼
   ev:      /^(limited|preorder|sets|beans)$/,
   verify:  /^(ok|fail)$/,
