@@ -1,6 +1,6 @@
 // MAEKEO LAB Service Worker
 // 캐시 없이 항상 최신 버전 제공
-const VERSION = 'v3.2.63';
+const VERSION = 'v3.2.64';
 
 // 자동 skipWaiting 제거 — 사용자가 업데이트를 수락할 때만 활성화
 self.addEventListener('install', () => {
@@ -39,4 +39,38 @@ self.addEventListener('message', (e) => {
   if (e.data && e.data.action === 'skipWaiting') {
     self.skipWaiting();
   }
+});
+
+// ═══ 매커 소식 알림 (웹 푸시) ═══
+// 아이폰은 푸시를 받을 때마다 반드시 알림을 띄워야 함 (안 띄우면 구독이 취소될 수 있음)
+self.addEventListener('push', (e) => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (_) { d = { body: e.data ? e.data.text() : '' }; }
+  const title = d.title || '매커랩';
+  e.waitUntil(self.registration.showNotification(title, {
+    body: d.body || '',
+    icon: '/icon-192.png',
+    badge: '/icon-192.png',
+    tag: d.tag || 'maekeo',
+    data: { url: d.url || '/' },
+  }));
+});
+
+// 알림을 누르면 매커랩(또는 지정 링크)을 열고, 유입 경로를 'push'로 기록
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  let url;
+  try { url = new URL((e.notification.data && e.notification.data.url) || '/', self.location.origin); } catch (_) { url = new URL('/', self.location.origin); }
+  const mine = url.origin === self.location.origin;
+  if (mine) url.searchParams.set('s', 'push');
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+    if (mine) {
+      for (const c of list) {
+        if (c.url.startsWith(self.location.origin) && 'focus' in c) {
+          return c.focus().then((w) => (w && 'navigate' in w ? w.navigate(url.href) : null)).catch(() => self.clients.openWindow(url.href));
+        }
+      }
+    }
+    return self.clients.openWindow(url.href);
+  }));
 });

@@ -16,6 +16,7 @@ const RULES = {
   reserve: /^(preorder|onecup|boiler|container)$/,
   store:   /^(open|beans|parts)$/,
   install: /^android$/,
+  push:    /^(on|on_sched|off|denied|ios|unsupported)$/,  // 매커 소식 알림: 켬(타이머/발송일정) · 끔 · 거부 · 아이폰 미설치 · 미지원
   en:      /^(view|order)$/,  // 영문 상품소개: 방문 / 주문 메일 클릭
   guide:   /^[ol]-[a-z0-9]{1,8}$/,
   brew:    /^[a-z0-9]{2,12}_[0-9.]{1,6}_[12]_[0-9]{2,3}_[gob]$/,  // 그라인더_설정_컵_추출초_맛평가(g좋음/o보통/b아쉬움)

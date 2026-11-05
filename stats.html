@@ -88,6 +88,25 @@ details summary{cursor:pointer;font-size:13px;color:var(--blue);margin-top:10px}
       <table id="sources"></table>
     </div>
 
+    <div class="card" id="pushCard">
+      <h2>📣 매커 소식 알림 보내기</h2>
+      <p class="hint">매커랩에서 '매커 소식 알림'을 켠 기기에 알림을 보냅니다. 예약 오픈·발송·안전 공지만, 한 달에 2~4번 이내를 권장합니다.</p>
+      <div id="pushCount" class="muted" style="margin-bottom:10px">불러오는 중…</div>
+      <div class="row" style="margin-bottom:12px">
+        <button class="sec" onclick="adminSub()">이 기기를 테스트 기기로 등록</button>
+        <span class="muted" id="adminMsg"></span>
+      </div>
+      <input id="pTitle" maxlength="60" placeholder="제목 (예: 2컵 매커포트 12월 발송 시작)" style="width:100%;margin-bottom:8px">
+      <textarea id="pBody" maxlength="200" rows="3" placeholder="내용 (최대 200자)" style="width:100%;margin-bottom:8px;font:inherit;font-size:15px;border:1px solid var(--sep);background:var(--fill);color:var(--label);border-radius:10px;padding:10px 12px;resize:vertical"></textarea>
+      <input id="pUrl" placeholder="눌렀을 때 열 링크 (비우면 매커랩 첫 화면)" style="width:100%;margin-bottom:10px">
+      <div class="row">
+        <button class="sec" onclick="sendPush(true)">테스트 기기에만 보내기</button>
+        <button onclick="sendPush(false)">전체 발송</button>
+      </div>
+      <div id="pushMsg" class="muted" style="margin-top:8px"></div>
+      <details><summary>최근 발송 기록</summary><table id="pushLogs" style="margin-top:6px"></table></details>
+    </div>
+
     <div class="card">
       <h2>전용 링크 만들기</h2>
       <p class="hint">유튜브 영상 설명란·고정 댓글, 카페 게시글 등에 이 링크를 넣으면 어디서 들어왔는지 구분됩니다.</p>
@@ -192,6 +211,7 @@ async function load(fromLogin) {
     try { sessionStorage.setItem('maekeo_stats_pw', PW); } catch (e) {}
     $('login').style.display = 'none'; $('dash').style.display = 'block';
     render(data);
+    loadPush();
   } catch (e) {
     if (fromLogin || $('dash').style.display === 'none') showLogin('불러오지 못했습니다. 잠시 후 다시 시도해 주세요.');
   }
@@ -260,6 +280,11 @@ function render(d) {
     ['영문 상품소개 방문', g('en:view'), '해외 구매자용 /en.html (세션당 1회)'],
     ['영문 상품소개 → 주문 메일', g('en:order')],
     ['안드로이드 새 설치', g('install:android'), '아이폰은 설치 순간을 알 수 없어 집계되지 않음'],
+    ['매커 소식 알림 켬 (타이머)', g('push:on')],
+    ['매커 소식 알림 켬 (발송 일정)', g('push:on_sched')],
+    ['매커 소식 알림 끔', g('push:off')],
+    ['알림 권한 거부', g('push:denied')],
+    ['아이폰 홈 화면 미설치로 안내', g('push:ios')],
   ]);
   rows('tabs', ['탭', '세션'], [
     ['분쇄분석AI', g('tab:grind')], ['타이머', g('tab:timer')], ['기록', g('tab:history')], ['가이드', g('tab:fix')],
@@ -406,6 +431,56 @@ function toggleOpt() {
   optState();
 }
 optState();
+// ═══ 매커 소식 알림 (관리자) ═══
+const VAPID_PUBLIC = 'BNb5Gds8YFALY-HudPEnYvD6NBHWIqNFhlK8FhNEkJ__SqBAyOCdV5RxwiLDnfGFU4_EfrUbo9DZbXPna-mg7B0';
+async function pushApi(body) {
+  const res = await fetch('/.netlify/functions/push-send', { method: 'POST', headers: { 'x-stats-pass': encodeURIComponent(PW), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  let j = {}; try { j = await res.json(); } catch (e) {}
+  return { status: res.status, ...j };
+}
+const DVN = { ios: '아이폰', android: '안드로이드', pc: 'PC', other: '기타', admin: '테스트 기기' };
+async function loadPush() {
+  try {
+    const r = await pushApi({ action: 'count' });
+    if (r.status !== 200) { $('pushCount').textContent = '알림 정보를 불러오지 못했습니다.'; return; }
+    const parts = Object.entries(r.dv || {}).map(([k, v]) => (DVN[k] || k) + ' ' + v);
+    $('pushCount').innerHTML = '알림을 켠 기기 <b style="color:var(--label);font-size:16px">' + fmt(r.total) + '대</b>' + (parts.length ? ' · ' + esc(parts.join(' · ')) : '') +
+      (r.ready ? '' : '<div style="color:var(--red);margin-top:4px">⚠️ Netlify 환경변수 VAPID_PRIVATE_KEY가 아직 등록되지 않아 발송할 수 없습니다.</div>');
+    const l = await pushApi({ action: 'logs' });
+    $('pushLogs').innerHTML = (l.logs || []).length
+      ? '<tr><th>보낸 시각</th><th>내용</th><th class="n">전달</th></tr>' + l.logs.map(x => '<tr><td style="white-space:nowrap">' + esc(new Date(x.at).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })) + '</td><td><b>' + esc(x.title) + '</b><div class="muted">' + esc(x.body) + '</div></td><td class="n">' + fmt(x.sent) + '</td></tr>').join('')
+      : '<tr><td class="muted">아직 보낸 알림이 없습니다.</td></tr>';
+  } catch (e) { $('pushCount').textContent = '알림 정보를 불러오지 못했습니다.'; }
+}
+function b64ToU8(s) { const pad = '='.repeat((4 - s.length % 4) % 4), b = atob((s + pad).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(b, c => c.charCodeAt(0)); }
+async function adminSub() {
+  const m = $('adminMsg');
+  try {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) { m.textContent = '이 브라우저는 알림을 지원하지 않습니다. (아이폰은 홈 화면에 추가한 앱에서만 가능)'; return; }
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') { m.textContent = '알림 권한이 허용되지 않았습니다.'; return; }
+    const reg = await navigator.serviceWorker.register('/sw.js');
+    await navigator.serviceWorker.ready;
+    const sub = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToU8(VAPID_PUBLIC) });
+    const r = await pushApi({ action: 'adminSub', sub: sub.toJSON() });
+    m.textContent = r.status === 200 ? '✅ 이 기기를 테스트 기기로 등록했습니다.' : '등록에 실패했습니다.';
+    loadPush();
+  } catch (e) { m.textContent = '등록에 실패했습니다: ' + e.message; }
+}
+async function sendPush(test) {
+  const title = $('pTitle').value.trim(), body = $('pBody').value.trim(), url = $('pUrl').value.trim();
+  const m = $('pushMsg');
+  if (!title || !body) { m.textContent = '제목과 내용을 입력해 주세요.'; return; }
+  if (!test && !confirm('알림을 켠 모든 기기에 보냅니다.\n\n제목: ' + title + '\n내용: ' + body + '\n\n보낸 뒤에는 취소할 수 없습니다. 보낼까요?')) return;
+  m.textContent = '보내는 중…';
+  const r = await pushApi({ action: 'send', test, title, body, url });
+  if (r.status === 200) m.textContent = (test ? '테스트 기기 ' : '') + fmt(r.total) + '대 중 ' + fmt(r.sent) + '대에 전달했습니다.' + (r.removed ? ' (알림을 끈 기기 ' + r.removed + '대 정리)' : '') + (test && !r.total ? ' — 먼저 테스트 기기를 등록해 주세요.' : '');
+  else if (r.error === 'no_vapid') m.textContent = 'Netlify 환경변수 VAPID_PRIVATE_KEY를 먼저 등록해 주세요.';
+  else if (r.error === 'url') m.textContent = '링크는 매커랩 경로(/...) 또는 매커 스토어·스마트스토어·유튜브 주소만 넣을 수 있습니다.';
+  else m.textContent = '보내지 못했습니다 (' + r.status + ').';
+  loadPush();
+}
+
 if (PW) load();
 </script>
 </body>

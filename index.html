@@ -618,6 +618,10 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         <span>🔔 알람 10초 전 음성 예고</span>
         <button class="tp-sw" id="preAlertSw" onclick="togglePreAlert()" aria-label="알람 10초 전 음성 예고"></button>
       </div>
+      <div class="tp-opt">
+        <span>📣 매커 소식 알림<small style="display:block;font-size:11px;color:rgba(245,237,227,.5);margin-top:2px">예약 오픈 · 발송 · 안전 공지만 (월 2~4회)</small></span>
+        <button class="tp-sw" id="pushSw" onclick="togglePush('timer')" aria-label="매커 소식 알림"></button>
+      </div>
       <div class="tp-foot">
         <span class="screen-warn-text"><strong>화면을 끄지 마세요.</strong> 화면이 꺼지면 알람이 울리지 않을 수 있습니다.</span>
         <button class="tp-reset" onclick="confirmReset()">초기화</button>
@@ -1490,7 +1494,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.63</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.64</div>
 
 </div><!-- /fixSection -->
 
@@ -1647,6 +1651,21 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeBuyerVerify()">취소</button>
       <button class="btn btn-primary" style="flex:2" id="buyerVerifyBtn" onclick="submitBuyerVerify()">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- 매커 소식 알림 안내 모달 -->
+<div class="modal-bg" id="pushHelpModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="text-align:center;padding:8px 0 4px">
+      <div style="font-size:44px;margin-bottom:10px">📣</div>
+      <div id="pushHelpTitle" style="font-size:19px;font-weight:700;color:var(--label);margin-bottom:10px;word-break:keep-all"></div>
+    </div>
+    <div id="pushHelpBody" style="font-size:14px;color:var(--label2);line-height:1.75;margin-bottom:18px;word-break:keep-all"></div>
+    <div class="modal-btns">
+      <button class="btn btn-primary" style="flex:1" onclick="document.getElementById('pushHelpModal').classList.remove('show')">확인</button>
     </div>
   </div>
 </div>
@@ -1901,6 +1920,14 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         </div>
       </div>
     </div>
+    <button id="pushSchedBtn" onclick="togglePush('schedule')" style="width:100%;display:flex;align-items:center;gap:10px;background:var(--bg2);border:1.5px solid #C9A24B;border-radius:14px;padding:13px 14px;cursor:pointer;font-family:inherit;margin-bottom:12px;text-align:left">
+      <span style="font-size:22px">📣</span>
+      <span style="flex:1;min-width:0">
+        <span id="pushSchedTitle" style="display:block;font-size:15px;font-weight:700;color:var(--label)">발송 소식 알림 받기</span>
+        <span id="pushSchedSub" style="display:block;font-size:12px;color:var(--label2);margin-top:2px">발송 시작·일정 변경을 알림으로 알려 드려요</span>
+      </span>
+      <span style="font-size:18px;color:var(--label3)">›</span>
+    </button>
     <div class="modal-btns">
       <button class="btn btn-primary" style="flex:1" onclick="closeScheduleModal()">확인</button>
     </div>
@@ -2871,6 +2898,113 @@ function renderWeekStrip(el, days) {
   el.innerHTML = h + '<span class="more">달력 ›</span>';
 }
 
+// ═══ 매커 소식 알림 (웹 푸시) ═══
+// 구독 정보(푸시 주소)만 서버에 저장 · 이름·전화번호 없음 · 보내기는 통계 페이지(관리자)에서만
+const VAPID_PUBLIC = 'BNb5Gds8YFALY-HudPEnYvD6NBHWIqNFhlK8FhNEkJ__SqBAyOCdV5RxwiLDnfGFU4_EfrUbo9DZbXPna-mg7B0';
+const PUSH_MIN_SW = 'v3.2.64'; // 알림 처리 코드가 들어간 서비스워커 버전
+let _pushBusy = false;
+function pushSupported() { return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window; }
+function isIOSDevice() { return /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
+function isStandaloneApp() { try { return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; } }
+function b64ToU8(s) {
+  const pad = '='.repeat((4 - s.length % 4) % 4), b = atob((s + pad).replace(/-/g, '+').replace(/_/g, '/'));
+  return Uint8Array.from(b, c => c.charCodeAt(0));
+}
+function verNum(v) { return String(v || '').replace(/^v/, '').split('.').map(n => parseInt(n, 10) || 0).reduce((a, n) => a * 1000 + n, 0); }
+// 지금 작동 중인 서비스워커가 알림을 처리할 수 있는 버전인지
+function swVersion(reg) {
+  return new Promise(res => {
+    const w = reg && reg.active;
+    if (!w) return res('');
+    const t = setTimeout(() => { navigator.serviceWorker.removeEventListener('message', on); res(''); }, 1500);
+    function on(e) { if (e.data && e.data.type === 'SW_VERSION') { clearTimeout(t); navigator.serviceWorker.removeEventListener('message', on); res(e.data.version); } }
+    navigator.serviceWorker.addEventListener('message', on);
+    w.postMessage({ action: 'GET_VERSION' });
+  });
+}
+async function getPushSub() {
+  if (!pushSupported()) return null;
+  try { const r = await navigator.serviceWorker.getRegistration(); return r ? await r.pushManager.getSubscription() : null; } catch (e) { return null; }
+}
+// 알림 권한 상태 (일부 브라우저는 Notification.permission 값이 늦게 바뀌어 권한 API로 한 번 더 확인)
+async function notifPerm() {
+  try { const r = await navigator.permissions.query({ name: 'notifications' }); if (r && r.state) return r.state === 'prompt' ? 'default' : r.state; } catch (e) {}
+  return Notification.permission;
+}
+async function isPushOn() { return pushSupported() && (await notifPerm()) === 'granted' && !!(await getPushSub()); }
+async function renderPushUI() {
+  const on = await isPushOn();
+  const sw = document.getElementById('pushSw');
+  if (sw) { sw.classList.toggle('on', on); sw.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+  const t = document.getElementById('pushSchedTitle'), sub = document.getElementById('pushSchedSub');
+  if (t) t.textContent = on ? '🔔 발송 소식 알림을 받고 있어요' : '발송 소식 알림 받기';
+  if (sub) sub.textContent = on ? '발송이 시작되면 알림으로 알려 드려요 · 누르면 끌 수 있어요' : '발송 시작·일정 변경을 알림으로 알려 드려요';
+}
+function showPushHelp(kind) {
+  const T = document.getElementById('pushHelpTitle'), B = document.getElementById('pushHelpBody');
+  if (kind === 'ios') {
+    T.textContent = '아이폰은 홈 화면에 추가한 매커랩에서 알림을 받을 수 있어요';
+    B.innerHTML = '① 사파리 아래쪽 <b style="color:var(--label)">공유 버튼(□↑)</b>을 누르고<br>② <b style="color:var(--label)">\'홈 화면에 추가\'</b>를 누른 뒤<br>③ 홈 화면에 생긴 <b style="color:var(--label)">매커랩 아이콘</b>으로 열어 알림 버튼을 다시 눌러 주세요.<br><br><span style="font-size:12px">iOS 16.4 이상에서 사용할 수 있습니다.</span>';
+  } else if (kind === 'denied') {
+    T.textContent = '알림이 꺼져 있어요';
+    B.innerHTML = '휴대폰 <b style="color:var(--label)">설정 → 알림</b>에서 ' + (isStandaloneApp() ? '<b style="color:var(--label)">매커랩</b>' : '사용 중인 <b style="color:var(--label)">브라우저</b>') + ' 알림을 허용한 뒤, 다시 눌러 주세요.';
+  } else if (kind === 'update') {
+    T.textContent = '앱을 최신 버전으로 업데이트해 주세요';
+    B.innerHTML = '알림 기능은 최신 버전에서 사용할 수 있어요. 업데이트 안내가 보이면 <b style="color:var(--label)">업데이트</b>를 누르고, 앱이 다시 열리면 알림 버튼을 한 번 더 눌러 주세요.';
+  } else {
+    T.textContent = '이 브라우저는 알림을 지원하지 않아요';
+    B.innerHTML = '크롬, 삼성 인터넷, 또는 홈 화면에 추가한 매커랩에서 사용해 주세요.';
+  }
+  document.getElementById('pushHelpModal').classList.add('show');
+}
+async function togglePush(from) {
+  if (_pushBusy) return;
+  if (!pushSupported()) {
+    const ios = isIOSDevice() && !isStandaloneApp();
+    track('push', ios ? 'ios' : 'unsupported');
+    showPushHelp(ios ? 'ios' : 'unsupported');
+    return;
+  }
+  _pushBusy = true;
+  try {
+    const cur = await getPushSub();
+    if (cur && (await notifPerm()) === 'granted') {
+      // 끄기
+      fetch('/.netlify/functions/push-subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'unsub', endpoint: cur.endpoint }) }).catch(() => {});
+      await cur.unsubscribe().catch(() => {});
+      track('push', 'off');
+      toast('매커 소식 알림을 껐습니다');
+      return;
+    }
+    const reg = await navigator.serviceWorker.getRegistration();
+    if (!reg || verNum(await swVersion(reg)) < verNum(PUSH_MIN_SW)) {
+      if (reg && reg.waiting) showUpdateBanner(reg.waiting); else if (reg) reg.update().catch(() => {});
+      showPushHelp('update');
+      return;
+    }
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') { track('push', 'denied'); showPushHelp('denied'); return; }
+    const sub = cur || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToU8(VAPID_PUBLIC) });
+    const r = await fetch('/.netlify/functions/push-subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'sub', sub: sub.toJSON() }) });
+    if (!r.ok) throw new Error('save ' + r.status);
+    track('push', from === 'schedule' ? 'on_sched' : 'on');
+    toast('🔔 매커 소식 알림을 켰습니다');
+  } catch (e) {
+    toast('알림 설정에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+  } finally {
+    _pushBusy = false;
+    renderPushUI();
+  }
+}
+// 알림을 켜 둔 기기는 앱을 열 때 구독 정보를 다시 보내 서버 목록을 최신으로 유지
+async function refreshPushSub() {
+  try {
+    if (!(await isPushOn())) return;
+    const sub = await getPushSub();
+    fetch('/.netlify/functions/push-subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'sub', sub: sub.toJSON() }) }).catch(() => {});
+  } catch (e) {}
+}
+
 // ═══ 커피 달력 ═══
 let _calY = 0, _calM = 0;
 function openCalModal(from) {
@@ -2980,7 +3114,7 @@ function renderRingMarks() {
   if (w) w.textContent = fmt(WARN_AT);
   if (d) d.textContent = fmt(DANGER_AT);
 }
-function initTimer() { renderStages(); renderRingMarks(); renderPreAlertSw(); updateTimerUI(); renderTimerInfo(); }
+function initTimer() { renderStages(); renderRingMarks(); renderPreAlertSw(); updateTimerUI(); renderTimerInfo(); renderPushUI(); setTimeout(refreshPushSub, 3000); }
 
 function renderStages() {
   const warnStr = fmt(WARN_AT);
@@ -3617,6 +3751,7 @@ function goToBoilerPage() {
   closeBoilerInfoModal();
 }
 function openScheduleModal() {
+  renderPushUI();
   document.getElementById('scheduleModal').classList.add('show');
 }
 function closeScheduleModal() {
@@ -4158,7 +4293,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.63';
+const CURRENT_VERSION = 'v3.2.64';
 
 async function checkVersionFromServer() {
   try {
