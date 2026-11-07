@@ -1490,7 +1490,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.64</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.65</div>
 
 </div><!-- /fixSection -->
 
@@ -3768,7 +3768,7 @@ function updatePreorderCountdown() {
     const set = (id, html) => { const e = document.getElementById(id); if (e) e.innerHTML = html; };
     set('preorderBadge', '다음 발송분 프리오더');
     set('preorderTitle', '27년 1월말 발송 2컵 매커포트<br>프리오더 예약');
-    set('preorderQty', '🔥 예약 순서대로 발송 · 조기 마감될 수 있습니다');
+    set('preorderQty', '🔥 한정 수량 100개 · 조기 마감될 수 있습니다');
     set('preorderShip', '27년 1월말 예정');
     set('preorderNote', 'ℹ️ 12월말 발송분 예약은 마감되었습니다. 지금 예약하시면 <b style="color:var(--label)">27년 1월말</b>에 예약 순서대로 발송되며, 이전 예약 물량에 따라 다소 늦어질 수 있습니다.');
     return;
@@ -4166,7 +4166,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.64';
+const CURRENT_VERSION = 'v3.2.65';
 
 async function checkVersionFromServer() {
   try {
