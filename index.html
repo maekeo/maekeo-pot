@@ -388,13 +388,6 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <button onclick="openReserveSelectModal()" class="nav-cta" style="flex:1;text-align:center" id="navProduct">🛒 매커포트 예약</button>
     <button onclick="openScheduleModal()" class="nav-link" style="flex:1;text-align:center;font-size:12px;padding:7px 10px;border:none;font-family:inherit;cursor:pointer">📅 예약발송일정</button>
   </div>
-  <!-- 1주년 이벤트 배너 -->
-  <div style="padding:0 16px 8px">
-    <div id="eventBanner" role="button" onclick="openEventModal()" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-radius:12px;background:linear-gradient(90deg,#C9A24B,#E08A5B);color:#fff;cursor:pointer">
-      <span style="font-size:13px;font-weight:700;letter-spacing:-.2px">🎉 매커포트 1주년 기념 이벤트</span>
-      <span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;opacity:.95">자세히 보기 <span style="font-size:16px;line-height:1">›</span></span>
-    </div>
-  </div>
   <!-- 매커포트 개발 이야기 -->
   <div style="padding:0 16px 8px">
     <div id="storyCard" role="button" onclick="openStoryModal()" style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:12px;background:var(--bg2);border:1px solid var(--sep);cursor:pointer">
@@ -1490,7 +1483,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.65</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.66</div>
 
 </div><!-- /fixSection -->
 
@@ -1731,6 +1724,17 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:6px">매커포트 예약</div>
       <div style="font-size:13px;color:var(--label2);margin-bottom:16px">예약하실 상품을 선택해주세요.</div>
     </div>
+    <button onclick="selectReserve('limited')" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(90deg,rgba(201,162,75,.14),rgba(224,138,91,.14));border:1.5px solid #C9A24B;border-radius:14px;padding:16px;cursor:pointer;font-family:inherit;margin-bottom:8px;text-align:left">
+      <span style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px">🎉</span>
+        <span style="display:flex;flex-direction:column;align-items:flex-start;gap:2px">
+          <span style="font-size:11px;font-weight:800;color:#fff;background:linear-gradient(90deg,#C9A24B,#E08A5B);border-radius:6px;padding:1px 7px">1주년 기념 · 기존 구매자 전용</span>
+          <span style="font-size:15px;font-weight:600;color:var(--label)">한정판 2컵 매커포트 예약</span>
+          <span style="font-size:12px;color:var(--label2)">1차 마감 · 2차 예약 중</span>
+        </span>
+      </span>
+      <span style="font-size:18px;color:var(--label3)">›</span>
+    </button>
     <button onclick="selectReserve('preorder')" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:16px;cursor:pointer;font-family:inherit;margin-bottom:8px">
       <span style="display:flex;align-items:center;gap:10px">
         <span style="font-size:22px">☕☕</span>
@@ -3378,7 +3382,8 @@ function closeReserveSelectModal() {
 function selectReserve(type) {
   track('reserve', type);
   closeReserveSelectModal();
-  if (type === 'preorder') openPreorderModal();
+  if (type === 'limited') { track('ev', 'limited'); openBuyerVerify(); }
+  else if (type === 'preorder') openPreorderModal();
   else if (type === 'onecup') openReserveInfoModal();
   else if (type === 'boiler') openBoilerInfoModal();
   else if (type === 'container') openContainerInfoModal();
@@ -4166,7 +4171,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.65';
+const CURRENT_VERSION = 'v3.2.66';
 
 async function checkVersionFromServer() {
   try {

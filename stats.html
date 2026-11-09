@@ -232,7 +232,8 @@ function render(d) {
     d.daily.slice().reverse().map(x => '<tr><td>' + x.date + '</td><td class="n">' + fmt(x.visitors) + '</td><td class="n">' + fmt(x.appVisitors) + '</td><td class="n">' + fmt(x.visits) + '</td></tr>').join('');
 
   rows('funnel', ['단계', '클릭'], [
-    ['① 1주년 배너 클릭', g('banner:event')],
+    ['① 1주년 배너 클릭 (11/9 배너 제거 → 아래 예약 목록 클릭으로 대체)', g('banner:event')],
+    ['① 매커포트 예약 → 1주년 한정판', g('reserve:limited')],
     ['② 한정판 2컵 매커포트 카드', g('ev:limited')],
     ['③ 구매자 확인 성공', g('verify:ok'), '실패 ' + fmt(g('verify:fail')) + '회'],
     ['④ 한정판 예약 페이지 이동', g('go:limited')],

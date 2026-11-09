@@ -13,7 +13,7 @@ const RULES = {
   ev:      /^(limited|preorder|sets|beans)$/,
   verify:  /^(ok|fail)$/,
   go:      /^(limited|preorder|setmid|setlarge|beans|container)$/,
-  reserve: /^(preorder|onecup|boiler|container)$/,
+  reserve: /^(limited|preorder|onecup|boiler|container)$/,
   store:   /^(open|beans|parts)$/,
   install: /^android$/,
   en:      /^(view|order)$/,  // 영문 상품소개: 방문 / 주문 메일 클릭
