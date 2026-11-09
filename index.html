@@ -1483,7 +1483,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.66</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.67</div>
 
 </div><!-- /fixSection -->
 
@@ -1637,6 +1637,10 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     <div id="buyerVerifyMsg" style="display:none;margin-bottom:10px"></div>
     <div style="font-size:12px;color:var(--label3);margin-bottom:8px;line-height:1.5">🔒 입력하신 아이디는 구매 이력 확인에만 사용되며 저장되지 않습니다.</div>
     <div style="font-size:12px;color:var(--label2);margin-bottom:16px">구매자 확인이 안 되시나요? <a href="javascript:void(0)" onclick="openBuyerInquiry()" style="color:var(--blue);font-weight:600">대표 이메일로 문의하기</a></div>
+    <div class="careful-box" style="background:var(--fill);border:1.5px solid #C9A24B;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--label2);line-height:1.65;word-break:keep-all">
+      <div style="font-weight:700;color:var(--label);margin-bottom:4px">🙏 신중한 예약을 부탁드립니다</div>
+      매커포트는 예약해 주신 수량에 맞춰 생산하는 <b style="color:var(--label)">주문 생산 방식</b>입니다. 예약 수량만큼 부품과 소재를 미리 준비하기 때문에, 중간에 취소가 생기면 생산 일정과 <b style="color:var(--label)">다른 예약자분들의 발송</b>에도 영향을 줄 수 있습니다. 발송 일정을 꼭 확인하신 뒤, 신중하게 예약해 주시면 감사하겠습니다.
+    </div>
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeBuyerVerify()">취소</button>
       <button class="btn btn-primary" style="flex:2" id="buyerVerifyBtn" onclick="submitBuyerVerify()">확인</button>
@@ -1777,7 +1781,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 
 <!-- 11월 발송 프리오더 예약 모달 -->
 <div class="modal-bg" id="preorderModal">
-  <div class="modal-sheet">
+  <div class="modal-sheet" style="max-height:92vh;overflow-y:auto">
     <div class="modal-handle"></div>
     <div style="text-align:center;padding:8px 0 4px">
       <div style="font-size:44px;margin-bottom:10px">🛒</div>
@@ -1796,8 +1800,12 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <span style="font-size:13px;color:var(--label2)">📦 발송 예정</span>
       <span id="preorderShip" style="font-size:14px;font-weight:700;color:var(--label);margin-left:8px">12월말 예정</span>
     </div>
-    <div id="preorderNote" style="background:var(--fill);border:1px solid var(--sep);border-radius:12px;padding:12px 14px;margin-bottom:20px;font-size:12px;color:var(--label2);line-height:1.6">
+    <div id="preorderNote" style="background:var(--fill);border:1px solid var(--sep);border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:var(--label2);line-height:1.6">
       ℹ️ 이전 예약 물량과 <b style="color:var(--label)">연말 시즌</b>이 겹쳐 발송 시점이 다소 늦어질 수 있습니다.
+    </div>
+    <div class="careful-box" style="background:var(--fill);border:1.5px solid #C9A24B;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--label2);line-height:1.65;word-break:keep-all">
+      <div style="font-weight:700;color:var(--label);margin-bottom:4px">🙏 신중한 예약을 부탁드립니다</div>
+      매커포트는 예약해 주신 수량에 맞춰 생산하는 <b style="color:var(--label)">주문 생산 방식</b>입니다. 예약 수량만큼 부품과 소재를 미리 준비하기 때문에, 중간에 취소가 생기면 생산 일정과 <b style="color:var(--label)">다른 예약자분들의 발송</b>에도 영향을 줄 수 있습니다. 발송 일정을 꼭 확인하신 뒤, 신중하게 예약해 주시면 감사하겠습니다.
     </div>
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closePreorderModal()">취소</button>
@@ -1913,13 +1921,10 @@ body.flash-danger{animation:flashDanger .35s ease 6}
 
 <!-- 가압보일러통 예약 안내 모달 -->
 <div class="modal-bg" id="boilerInfoModal">
-  <div class="modal-sheet">
+  <div class="modal-sheet" style="max-height:92vh;overflow-y:auto">
     <div class="modal-handle"></div>
     <div style="text-align:center;padding:8px 0 4px">
       <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:16px">가압보일러통 예약 안내</div>
-    </div>
-    <div style="font-size:14px;color:var(--label2);line-height:1.8;margin-bottom:14px">
-      해당 가압보일러통은 <b style="color:var(--label)">주문자 생산 방식</b>으로 예약되는 상품입니다.
     </div>
     <div style="background:var(--fill);border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:center">
       <div style="font-size:13px;color:var(--label2)">📦 발송 예정</div>
@@ -1927,10 +1932,14 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div style="font-size:16px;font-weight:800;color:var(--red);margin-top:4px">12월말 발송 예정</div>
       <div style="font-size:12px;color:var(--label3);margin-top:6px">제작 상황에 따라 다소 늦어질 수 있습니다.</div>
     </div>
-    <a href="https://www.youtube.com/watch?v=arD6T-FYglI&t=1s" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--bg2);border:1.5px solid var(--red);border-radius:12px;text-decoration:none;margin-bottom:20px">
+    <a href="https://www.youtube.com/watch?v=arD6T-FYglI&t=1s" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--bg2);border:1.5px solid var(--red);border-radius:12px;text-decoration:none;margin-bottom:12px">
       <span style="font-size:16px">▶️</span>
       <span style="font-size:14px;font-weight:700;color:var(--red)">가압보일러통 사용 공식 영상</span>
     </a>
+    <div class="careful-box" style="background:var(--fill);border:1.5px solid #C9A24B;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--label2);line-height:1.65;word-break:keep-all">
+      <div style="font-weight:700;color:var(--label);margin-bottom:4px">🙏 신중한 예약을 부탁드립니다</div>
+      가압보일러통는 예약해 주신 수량에 맞춰 생산하는 <b style="color:var(--label)">주문 생산 방식</b>입니다. 예약 수량만큼 부품과 소재를 미리 준비하기 때문에, 중간에 취소가 생기면 생산 일정과 <b style="color:var(--label)">다른 예약자분들의 발송</b>에도 영향을 줄 수 있습니다. 발송 일정을 꼭 확인하신 뒤, 신중하게 예약해 주시면 감사하겠습니다.
+    </div>
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeBoilerInfoModal()">취소</button>
       <button class="btn btn-primary" style="flex:2" onclick="goToBoilerPage()">확인 후 예약하기 →</button>
@@ -1962,6 +1971,10 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div style="font-size:13px;color:var(--label2)">🚚 발송 예정</div>
       <div style="font-size:20px;font-weight:800;color:var(--orange);margin-top:2px">27년 1월</div>
       <div style="font-size:12px;color:var(--label2);margin-top:6px;line-height:1.6;word-break:keep-all">연말 매커포트 본품 물량의 제조 일정이 이미 마감되어<br>27년 1월에 발송될 예정입니다.</div>
+    </div>
+    <div class="careful-box" style="background:var(--fill);border:1.5px solid #C9A24B;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--label2);line-height:1.65;word-break:keep-all">
+      <div style="font-weight:700;color:var(--label);margin-bottom:4px">🙏 신중한 예약을 부탁드립니다</div>
+      컨테이너 본체는 예약해 주신 수량에 맞춰 생산하는 <b style="color:var(--label)">주문 생산 방식</b>입니다. 예약 수량만큼 부품과 소재를 미리 준비하기 때문에, 중간에 취소가 생기면 생산 일정과 <b style="color:var(--label)">다른 예약자분들의 발송</b>에도 영향을 줄 수 있습니다. 발송 일정을 꼭 확인하신 뒤, 신중하게 예약해 주시면 감사하겠습니다.
     </div>
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeContainerInfoModal()">취소</button>
@@ -2004,6 +2017,10 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <span style="font-size:16px">▶️</span>
       <span style="font-size:14px;font-weight:700;color:var(--red)">1컵 매커포트 영상 보기 (2차 과정)</span>
     </a>
+    <div class="careful-box" style="background:var(--fill);border:1.5px solid #C9A24B;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--label2);line-height:1.65;word-break:keep-all">
+      <div style="font-weight:700;color:var(--label);margin-bottom:4px">🙏 신중한 예약을 부탁드립니다</div>
+      매커포트는 예약해 주신 수량에 맞춰 생산하는 <b style="color:var(--label)">주문 생산 방식</b>입니다. 예약 수량만큼 부품과 소재를 미리 준비하기 때문에, 중간에 취소가 생기면 생산 일정과 <b style="color:var(--label)">다른 예약자분들의 발송</b>에도 영향을 줄 수 있습니다. 발송 일정을 꼭 확인하신 뒤, 신중하게 예약해 주시면 감사하겠습니다.
+    </div>
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeReserveInfoModal()">취소</button>
       <button class="btn btn-primary" style="flex:2" onclick="goToReservePage()">확인 후 예약하기 →</button>
@@ -4171,7 +4188,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.66';
+const CURRENT_VERSION = 'v3.2.67';
 
 async function checkVersionFromServer() {
   try {
