@@ -1483,7 +1483,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.70</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.71</div>
 
 </div><!-- /fixSection -->
 
@@ -1797,6 +1797,10 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div style="font-size:12px;color:var(--red);font-weight:600;margin-bottom:4px">⏰ 예약 마감까지</div>
       <div id="preorderDday" style="font-size:30px;font-weight:800;color:var(--red);letter-spacing:.5px">D-5</div>
       <div id="preorderDdaySub" style="font-size:13px;color:var(--label2);margin-top:4px">11월 8일(일) 마감</div>
+    </div>
+    <div id="preorderPriceUp" style="background:var(--bg2);border:1.5px solid var(--red);border-radius:12px;padding:12px 14px;margin-bottom:10px;text-align:center;word-break:keep-all">
+      <div style="font-size:14px;font-weight:800;color:var(--red)">📈 2월 예약분부터 프리오더 가격이 인상됩니다</div>
+      <div style="font-size:12px;color:var(--label2);margin-top:3px">지금 예약하시면 현재 프리오더 가격이 적용됩니다.</div>
     </div>
     <div style="background:var(--fill);border:1.5px solid var(--orange);border-radius:12px;padding:12px 14px;margin-bottom:14px;text-align:center">
       <span id="preorderQty" style="font-size:13px;font-weight:700;color:var(--orange)">🔥 한정 수량 100개 · 조기 마감될 수 있습니다</span>
@@ -4196,7 +4200,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.70';
+const CURRENT_VERSION = 'v3.2.71';
 
 async function checkVersionFromServer() {
   try {
