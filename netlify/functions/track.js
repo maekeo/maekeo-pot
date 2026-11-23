@@ -12,7 +12,7 @@ const RULES = {
   story:   /^(open|reserve)$/,  // 매커포트 개발 이야기: 열기 / 예약하기 버튼
   ev:      /^(limited|preorder|sets|beans)$/,
   verify:  /^(ok|fail)$/,
-  go:      /^(limited|preorder|setmid|setlarge|beans|container)$/,
+  go:      /^(limited|preorder|setmid|setlarge|beans|container|gamemodal|game1)$/,
   reserve: /^(limited|preorder|onecup|boiler|container)$/,
   store:   /^(open|beans|parts)$/,
   install: /^android$/,
