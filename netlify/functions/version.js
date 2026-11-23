@@ -5,5 +5,5 @@ exports.handler = async () => ({
     'Cache-Control': 'no-cache, no-store, must-revalidate',
     'Access-Control-Allow-Origin': '*',
   },
-  body: JSON.stringify({ version: 'v3.2.71' }),
+  body: JSON.stringify({ version: 'v3.2.72' }),
 });

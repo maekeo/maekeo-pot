@@ -1494,7 +1494,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.71</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.72</div>
 
 </div><!-- /fixSection -->
 
@@ -1689,7 +1689,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       </div>
       <img src="/game-alley-banner.jpg" alt="골목 카페 일기" onclick="openLightbox(this.src)" style="display:block;width:100%;border-radius:12px;margin:12px 0;cursor:zoom-in">
       <a href="https://play.google.com/store/apps/details?id=com.junmaxstudio.alleycafediary&referrer=utm_source%3Dmaekeolab" target="_blank" onclick="track('go','game1')" style="display:block;width:220px;margin:4px auto 0"><img src="/google-play-badge-ko.svg" alt="Google Play에서 다운로드하기" style="display:block;width:100%;height:auto"></a>
-      <div style="margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--fill,rgba(120,120,128,.12));font-size:12.5px;line-height:1.55;color:var(--label2);text-align:center">현재는 <b>Google Play(안드로이드)</b>에서만 받으실 수 있어요.<br>아이폰(iOS) 버전은 <b>App Store에 추후 공개</b>될 예정입니다.</div>
+      <div style="margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--fill,rgba(120,120,128,.12));font-size:12.5px;line-height:1.55;color:var(--label2);text-align:center;word-break:keep-all">📱 현재는 <b>Google Play(안드로이드)</b>에서만<br>받으실 수 있어요.<br>🍎 아이폰(iOS) 버전은 <b>App Store에 추후 공개</b>됩니다.</div>
     </div>
     <div style="border:1.5px dashed var(--sep);border-radius:16px;padding:14px;margin-bottom:12px;text-align:center;font-size:13px;color:var(--label3)">
       🎮 두 번째 커피 게임도 곧 공개됩니다
@@ -4248,7 +4248,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.71';
+const CURRENT_VERSION = 'v3.2.72';
 
 async function checkVersionFromServer() {
   try {
