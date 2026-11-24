@@ -1494,7 +1494,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.76</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.77</div>
 
 </div><!-- /fixSection -->
 
@@ -1949,7 +1949,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
           <span style="font-size:14px;font-weight:700;color:var(--blue)">27년 1월~3월 예정</span>
         </div>
         <div style="font-size:12px;color:var(--label3);margin-top:6px;line-height:1.6">
-          🎬 1컵 매커포트 샘플은 11월 중 유튜브 영상으로 소개될 예정입니다.
+          🎬 1컵 매커포트 샘플은 12월 초 유튜브 영상으로 소개될 예정입니다.
         </div>
       </div>
     </div>
@@ -2031,6 +2031,10 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div style="font-size:44px;margin-bottom:10px">☕</div>
       <div style="font-size:20px;font-weight:700;color:var(--label);margin-bottom:16px">1컵 매커포트 예약 안내</div>
     </div>
+    <div class="careful-box" style="background:rgba(201,162,75,.13);border:2px solid #C9A24B;border-radius:14px;padding:14px 16px;margin-bottom:14px;font-size:13.5px;color:var(--label);line-height:1.65;word-break:keep-all">
+      <div style="font-size:16px;font-weight:800;color:#B07A1E;margin-bottom:6px;text-align:center">🙏 신중한 예약을 부탁드립니다</div>
+      매커포트는 예약해 주신 수량에 맞춰 생산하는 <b style="color:var(--label)">주문 생산 방식</b>입니다. 예약 수량만큼 부품과 소재를 미리 준비하기 때문에, 중간에 취소가 생기면 생산 일정과 <b style="color:var(--label)">다른 예약자분들의 발송</b>에도 영향을 줄 수 있습니다. 발송 일정을 꼭 확인하신 뒤, 신중하게 예약해 주시면 감사하겠습니다.
+    </div>
     <div style="font-size:14px;color:var(--label2);line-height:1.8;margin-bottom:16px">
       해당 1컵 매커포트는 <b style="color:var(--label)">주문자 생산 방식</b>의 상품입니다.
     </div>
@@ -2043,7 +2047,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <span style="font-size:14px;font-weight:700;color:var(--label);margin-left:8px">27년 1월 ~ 3월</span>
     </div>
     <div class="callout" style="margin-bottom:14px">
-      🎬 <b>1컵 매커포트 샘플</b>은 <b>11월 중</b> 유튜브 영상으로 소개될 예정입니다.
+      🎬 <b>1컵 매커포트 샘플</b>은 <b>12월 초</b> 유튜브 영상으로 소개될 예정입니다.
     </div>
     <div style="font-size:13px;color:var(--label2);line-height:1.7;margin-bottom:16px">
       자세한 내용은 앞으로 채널에서 과정을 소개할 예정입니다.<br>
@@ -2057,10 +2061,6 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <span style="font-size:16px">▶️</span>
       <span style="font-size:14px;font-weight:700;color:var(--red)">1컵 매커포트 영상 보기 (2차 과정)</span>
     </a>
-    <div class="careful-box" style="background:var(--fill);border:1.5px solid #C9A24B;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--label2);line-height:1.65;word-break:keep-all">
-      <div style="font-weight:700;color:var(--label);margin-bottom:4px">🙏 신중한 예약을 부탁드립니다</div>
-      매커포트는 예약해 주신 수량에 맞춰 생산하는 <b style="color:var(--label)">주문 생산 방식</b>입니다. 예약 수량만큼 부품과 소재를 미리 준비하기 때문에, 중간에 취소가 생기면 생산 일정과 <b style="color:var(--label)">다른 예약자분들의 발송</b>에도 영향을 줄 수 있습니다. 발송 일정을 꼭 확인하신 뒤, 신중하게 예약해 주시면 감사하겠습니다.
-    </div>
     <div class="modal-btns">
       <button class="btn btn-secondary" style="flex:1" onclick="closeReserveInfoModal()">취소</button>
       <button class="btn btn-primary" style="flex:2" onclick="goToReservePage()">확인 후 예약하기 →</button>
@@ -4242,7 +4242,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.76';
+const CURRENT_VERSION = 'v3.2.77';
 
 async function checkVersionFromServer() {
   try {
