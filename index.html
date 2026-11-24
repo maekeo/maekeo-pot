@@ -1494,7 +1494,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
     </a>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.74</div>
+  <div style="text-align:center;font-size:12px;color:var(--label3);padding:4px 0 8px">MAEKEO LAB v3.2.75</div>
 
 </div><!-- /fixSection -->
 
@@ -1799,27 +1799,10 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       </span>
       <span style="font-size:18px;color:var(--label3)">›</span>
     </button>
-    <button onclick="selectReserve('onecup')" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:16px;cursor:pointer;font-family:inherit;margin-bottom:8px">
+    <button onclick="selectReserve('onecup')" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:16px;cursor:pointer;font-family:inherit;margin-bottom:20px">
       <span style="display:flex;align-items:center;gap:10px">
         <span style="font-size:22px">☕</span>
         <span style="font-size:15px;font-weight:600;color:var(--label)">1컵 매커포트 예약</span>
-      </span>
-      <span style="font-size:18px;color:var(--label3)">›</span>
-    </button>
-    <button onclick="selectReserve('boiler')" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:16px;cursor:pointer;font-family:inherit;margin-bottom:8px">
-      <span style="display:flex;align-items:center;gap:10px">
-        <span style="font-size:22px">🔩</span>
-        <span style="font-size:15px;font-weight:600;color:var(--label)">가압보일러통 예약</span>
-      </span>
-      <span style="font-size:18px;color:var(--label3)">›</span>
-    </button>
-    <button onclick="selectReserve('container')" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg2);border:1.5px solid var(--sep);border-radius:14px;padding:16px;cursor:pointer;font-family:inherit;margin-bottom:20px">
-      <span style="display:flex;align-items:center;gap:10px">
-        <span style="font-size:22px">🫙</span>
-        <span style="display:flex;flex-direction:column;align-items:flex-start;gap:2px">
-          <span style="font-size:15px;font-weight:600;color:var(--label)">2컵 매커포트 컨테이너 본체 예약</span>
-          <span style="font-size:12px;color:var(--label2)">가압보일러통 사용자용 · 27년 1월 발송</span>
-        </span>
       </span>
       <span style="font-size:18px;color:var(--label3)">›</span>
     </button>
@@ -3818,6 +3801,8 @@ function closePartsModal() {
 
 // 2컵 프리오더 마감 안내: 11월 8일(일) 23:59까지 (지나도 예약 버튼은 막지 않음)
 const PREORDER_END = new Date(2026, 10, 9); // 이 시각(11/9 0시)부터 마감
+// 27년 1월말 발송분 예약 마감 안내: 11월 30일(월) 23:59까지 (지나도 예약 버튼은 막지 않음)
+const BATCH2_END = new Date(2026, 11, 1);
 function preorderClosed() { return Date.now() >= PREORDER_END.getTime(); }
 function openPreorderModal() {
   updatePreorderCountdown();
@@ -3844,13 +3829,22 @@ function updatePreorderCountdown() {
   const diff = Math.round((PREORDER_END - today) / 86400000) - 1; // 마감일까지 남은 날
   // 마감일이 지나면 카운트다운·마감일 문구만 숨기고 예약은 계속 받는다
   if (preorderClosed()) {
-    if (box) box.style.display = 'none';
-    if (list) list.style.display = 'none';
-    // 27년 1월말 발송분 안내로 전환
+    // 27년 1월말 발송분 안내로 전환 · 11월 30일(월) 마감 카운트다운
     const set = (id, html) => { const e = document.getElementById(id); if (e) e.innerHTML = html; };
+    const d2 = Math.round((BATCH2_END - today) / 86400000) - 1;
+    if (Date.now() < BATCH2_END.getTime()) {
+      if (box) box.style.display = '';
+      if (list) { list.style.display = ''; list.textContent = '11월 30일(월)까지 · 잔여 수량 얼마 안 남음'; }
+      if (d2 > 1) { el.textContent = 'D-' + d2; if (sub) sub.textContent = '11월 30일(월) 마감 · 수량 소진 시 조기 마감'; }
+      else if (d2 === 1) { el.textContent = 'D-1'; if (sub) sub.textContent = '내일(11월 30일) 마감 · 서둘러 주세요'; }
+      else { el.textContent = 'D-DAY'; if (sub) sub.textContent = '오늘 마감 · 마지막 기회입니다'; }
+    } else {
+      if (box) box.style.display = 'none';
+      if (list) list.style.display = 'none';
+    }
     set('preorderBadge', '다음 발송분 프리오더');
     set('preorderTitle', '27년 1월말 발송 2컵 매커포트<br>프리오더 예약');
-    set('preorderQty', '🔥 한정 수량 100개 · 조기 마감될 수 있습니다');
+    set('preorderQty', '🔥 잔여 수량이 얼마 남지 않았습니다<br><span style="font-weight:600;color:var(--label2)">수량이 모두 소진되면 11월 30일 전이라도 조기 마감됩니다</span>');
     set('preorderShip', '27년 1월말 예정');
     set('preorderNote', 'ℹ️ 12월말 발송분 예약은 마감되었습니다. 지금 예약하시면 <b style="color:var(--label)">27년 1월말</b>에 예약 순서대로 발송되며, 이전 예약 물량에 따라 다소 늦어질 수 있습니다.');
     return;
@@ -4248,7 +4242,7 @@ function saveApiKey() {
 }
 
 // ═══ 버전 체크 ═══
-const CURRENT_VERSION = 'v3.2.74';
+const CURRENT_VERSION = 'v3.2.75';
 
 async function checkVersionFromServer() {
   try {
