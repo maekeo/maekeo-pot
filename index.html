@@ -401,14 +401,15 @@ body.flash-danger{animation:flashDanger .35s ease 6}
   </div>
   <!-- 매커 커피 게임 (홈, 안드로이드에서만 표시) -->
   <div id="gameCardWrap" style="padding:0 16px 8px">
-    <div id="gameCard" role="button" onclick="openGameModal()" style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:12px;background:var(--bg2);border:1px solid var(--sep);cursor:pointer">
-      <img src="/game-alley-icon.jpg" alt="" style="flex:none;width:30px;height:30px;border-radius:8px;object-fit:cover">
+    <div id="gameCard" role="button" onclick="openGameModal()" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:radial-gradient(130% 120% at 0% 0%,#4a3626 0%,#241a14 60%,#140f0c 100%);cursor:pointer;color:#f5ede3">
+      <span style="flex:none;display:flex;gap:4px"><img src="/game-alley-icon.jpg" alt="" style="width:40px;height:40px;border-radius:10px"><img src="/game-merge-icon.jpg" alt="" style="width:40px;height:40px;border-radius:10px"></span>
       <span style="flex:1;min-width:0">
-        <span style="display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:#B8862F">매커가 만든 커피 게임 <span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:var(--label2);background:var(--fill);border-radius:999px;padding:1px 7px 1px 5px"><svg width="9" height="10" viewBox="0 0 16 18" aria-hidden="true" style="flex:none"><path d="M1 1l9 8-9 8z" fill="#34A853"/><path d="M1 1l12 7-3 1z" fill="#4285F4"/><path d="M1 17l12-7-3-1z" fill="#EA4335"/><path d="M13 8l2.2 1-2.2 1-3-1z" fill="#FBBC04"/></svg> Google Play</span></span>
-        <span style="display:block;font-size:13px;font-weight:700;color:var(--label);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">골목 카페 일기 · 머지 커피집</span>
+        <span style="display:block;font-size:11px;font-weight:800;color:#E3C27A">🎮 매커가 만든 커피 게임</span>
+        <span style="display:block;font-size:14px;font-weight:800;line-height:1.35;word-break:keep-all">게임 속에서 매커포트로<br>나만의 카페를 차려 보세요</span>
       </span>
-      <span style="font-size:18px;color:var(--label3);line-height:1">›</span>
+      <span style="flex:none;font-size:11.5px;font-weight:800;color:#241a14;background:#E3C27A;border-radius:999px;padding:6px 10px">무료 ›</span>
     </div>
+  </div>
   </div>
   <div class="seg-wrap" id="segWrap">
     <div class="segmented">
@@ -1694,13 +1695,13 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div style="display:flex;gap:12px;align-items:center">
         <img src="/game-merge-icon.jpg" alt="머지 커피집 아이콘" style="flex:none;width:64px;height:64px;border-radius:14px;object-fit:cover">
         <div style="flex:1;min-width:0">
-          <div style="font-size:17px;font-weight:800;color:var(--label)">머지 커피집</div>
+          <div style="font-size:17px;font-weight:800;color:var(--label)">머지 커피집: 골목 끝</div>
           <div style="font-size:12px;color:var(--label3);margin-top:1px">매커 · 머지 퍼즐</div>
           <div style="font-size:13px;color:var(--label2);margin-top:4px;word-break:keep-all">서른 넘어 다시 꿈을 꾼 바리스타, 매커포트 하나로 나만의 커피집에 도전합니다. 원두와 재료를 합쳐 새 메뉴를 만들고 가게를 키워 가는 머지 게임</div>
         </div>
       </div>
       <img src="/game-merge-banner.jpg" alt="머지 커피집" onclick="openLightbox(this.src)" style="display:block;width:100%;border-radius:12px;margin:12px 0;cursor:zoom-in">
-      <a href="__GAME2_URL__" target="_blank" onclick="track('go','game2')" style="display:block;width:220px;margin:4px auto 0"><img src="/google-play-badge-ko.svg" alt="Google Play에서 다운로드하기" style="display:block;width:100%;height:auto"></a>
+      <a href="https://play.google.com/store/apps/details?id=com.junmaxstudio.alleycafe&referrer=utm_source%3Dmaekeolab" target="_blank" onclick="track('go','game2')" style="display:block;width:220px;margin:4px auto 0"><img src="/google-play-badge-ko.svg" alt="Google Play에서 다운로드하기" style="display:block;width:100%;height:auto"></a>
     </div>
     <div style="margin:2px 0 12px;padding:10px 12px;border-radius:10px;background:var(--fill,rgba(120,120,128,.12));font-size:12.5px;line-height:1.55;color:var(--label2);text-align:center;word-break:keep-all">📱 현재는 <b>Google Play(안드로이드)</b>에서만<br>받으실 수 있어요.<br>🍎 아이폰(iOS) 버전은 <b>App Store에 추후 공개</b>됩니다.</div>
         <div class="modal-btns"><button class="btn btn-secondary" style="flex:1" onclick="document.getElementById('gameModal').classList.remove('show')">닫기</button></div>
