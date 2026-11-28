@@ -1635,8 +1635,8 @@ body.flash-danger{animation:flashDanger .35s ease 6}
       <div style="font-size:12px;margin-top:12px;opacity:.95;word-break:keep-all">다시 만나기 어려운, 이번이 마지막 한정판입니다.</div>
     </div>
     <div style="background:var(--fill);border:1.5px solid var(--orange);border-radius:12px;padding:12px 14px;margin-bottom:10px;text-align:center">
-      <div style="font-size:14px;font-weight:700;color:var(--orange)">🔥 2차 50개 한정 · 선착순 예약</div>
-      <div id="limitedDeadline" style="font-size:13px;color:var(--label2);margin-top:2px">1차(12월 발송) 마감 · 2차 예약 진행 중</div>
+      <div style="font-size:15px;font-weight:800;color:var(--orange)">⏰ 11월 30일(월) 예약 마감</div>
+      <div id="limitedDeadline" style="font-size:13px;color:var(--label2);margin-top:3px;word-break:keep-all">2차 50개 한정 · 수량 소진 시 조기 마감</div>
     </div>
     <div style="background:var(--fill);border-radius:12px;padding:12px 14px;margin-bottom:18px">
       <div style="font-size:13px;color:var(--label2);margin-bottom:8px">📦 발송 일정 <span style="font-size:12px">(예약 순서대로 발송)</span></div>
@@ -1794,7 +1794,7 @@ body.flash-danger{animation:flashDanger .35s ease 6}
         <span style="display:flex;flex-direction:column;align-items:flex-start;gap:2px">
           <span style="font-size:11px;font-weight:800;color:#fff;background:linear-gradient(90deg,#C9A24B,#E08A5B);border-radius:6px;padding:1px 7px">1주년 기념 · 기존 구매자 전용</span>
           <span style="font-size:15px;font-weight:600;color:var(--label)">한정판 2컵 매커포트 예약</span>
-          <span style="font-size:12px;color:var(--label2)">1차 마감 · 2차 예약 중</span>
+          <span style="font-size:12px;font-weight:700;color:var(--red)">⏰ 11월 30일(월) 마감 · 2차 예약 중</span>
         </span>
       </span>
       <span style="font-size:18px;color:var(--label3)">›</span>
@@ -3517,7 +3517,9 @@ let _buyerBusy = false;
 // 1주년 한정판: 마감일 없음 (예약 진행 중). 마감이 필요하면 isLimitedClosed에 날짜 비교를 다시 넣을 것
 const PREORDER_DEADLINE = new Date(2026, 9, 31, 23, 59, 59); // 2컵 프리오더 10월 31일 마감
 function isPreorderClosed() { return Date.now() > PREORDER_DEADLINE.getTime(); }
-function isLimitedClosed() { return false; }
+const LIMITED_END = new Date(2026, 11, 1); // 11월 30일(월) 23:59까지
+function isLimitedClosed() { return Date.now() >= LIMITED_END.getTime(); }
+function limitedDday() { const t = new Date(); t.setHours(0,0,0,0); return Math.round((LIMITED_END - t) / 86400000) - 1; }
 function openBuyerVerify() {
   _buyerUrl = '';
   const inp = document.getElementById('buyerIdInput');
@@ -3525,6 +3527,10 @@ function openBuyerVerify() {
   setBuyerMsg('', '');
   const btn = document.getElementById('buyerVerifyBtn');
   btn.textContent = '확인'; btn.disabled = false;
+  if (!isLimitedClosed()) {
+    const d = limitedDday();
+    document.getElementById('limitedDeadline').textContent = (d > 0 ? '마감까지 D-' + d : '오늘 마감 · 마지막 기회') + ' · 2차 50개 한정 · 수량 소진 시 조기 마감';
+  }
   if (isLimitedClosed()) {
     inp.disabled = true; btn.disabled = true; btn.textContent = '예약 마감';
     document.getElementById('limitedDeadline').textContent = '예약이 마감되었습니다';
